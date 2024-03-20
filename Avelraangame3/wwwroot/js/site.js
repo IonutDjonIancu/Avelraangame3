@@ -1,6 +1,7 @@
-﻿$(document).ready(function () {
-    $('#button').click(function () {
-        event.stopPropagation();
+﻿$(() => {
+    $('#button').click(() => {
         console.log('Button clicked using jQuery!');
     });
+
+
 });
