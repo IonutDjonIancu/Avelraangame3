@@ -1,7 +1,11 @@
+using Avelraangame3.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddSingleton<ISnapshotService, SnapshotService>();
 
 var app = builder.Build();
 

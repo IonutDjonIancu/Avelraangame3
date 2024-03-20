@@ -1,8 +1,15 @@
-﻿@{
+﻿@model Character;
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-
 <div class="text-center">
-    <button id="button" class="btn btn-outline-secondary">click</button>
+    <h3>some text goes here</h3>
+    <p class="primary-gray my-1">@Model.Name</p>
+    <p class="text-muted my-1">some other text goes here</p>
+    <button id="button" class="btn btn-outline-secondary primary-gray my-1">click</button>
 </div>
+
+
+<script src="~/js/Home/homeIndex.js" asp-append-version="true"></script>

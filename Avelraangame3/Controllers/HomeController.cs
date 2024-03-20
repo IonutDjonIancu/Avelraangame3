@@ -1,21 +1,19 @@
 using Avelraangame3.Models;
+using Avelraangame3.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace Avelraangame3.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController(ISnapshotService snapshotService) : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+        private readonly Snapshot snapshot = snapshotService.Snapshot;
 
         public IActionResult Index()
         {
-            return View();
+            var firstChar = snapshot.Characters.FirstOrDefault();
+
+            return View(firstChar);
         }
 
         public IActionResult Privacy()
