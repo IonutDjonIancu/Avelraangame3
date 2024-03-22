@@ -1,7 +1,5 @@
-using Avelraangame3.Models;
-using Avelraangame3.Services;
+using Avelraangame3.Persistence;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace Avelraangame3.Controllers
 {
@@ -19,12 +17,6 @@ namespace Avelraangame3.Controllers
         public IActionResult Privacy()
         {
             return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Avelraangame3.Models;
+﻿using Models;
+
+namespace Avelraangame3.Persistence;
 
 public class Snapshot
 {

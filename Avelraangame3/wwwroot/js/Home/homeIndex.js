@@ -1,6 +1,8 @@
 $(() => {
     $('#button').click(() => {
-        console.log('Button clicked using jQuery!');
+        const model = $('#model').value;
+
+        console.log(model)
     });
 
 

@@ -1,6 +1,6 @@
-﻿using Avelraangame3.Models;
+﻿using Models;
 
-namespace Avelraangame3.Services;
+namespace Avelraangame3.Persistence;
 
 public interface ISnapshotService
 {
@@ -22,8 +22,11 @@ public class SnapshotService : ISnapshotService
     {
         var defaultChar = new Character
         {
-            Id = Guid.Empty,
-            Name = "Joe Doe"
+            Identity = new CharacterIdentity
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "Joe Doe"
+            }
         };
 
         Snapshot.Characters.Add(defaultChar);
