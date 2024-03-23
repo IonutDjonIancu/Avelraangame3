@@ -24,7 +24,7 @@ public class SnapshotService : ISnapshotService
         {
             Identity = new CharacterIdentity
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = Guid.Empty.ToString(),
                 Name = "Joe Doe"
             }
         };

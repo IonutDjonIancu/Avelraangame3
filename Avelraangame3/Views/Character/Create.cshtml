@@ -1,0 +1,36 @@
+﻿@* Character/Create *@
+<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+    <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Index">Upload</a>
+    <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Create">Create</a>
+    <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Details">Details</a>
+</div>
+
+<div class="container mt-3 footer-border">
+    <div id="roll" class="row mt-2 justify-content-center">roll row</div>
+    <div id="race" class="row mt-2 justify-content-center" style="display:none">race row</div>
+    <div id="culture" class="row mt-2 justify-content-center" style="display:none">culture row</div>
+    <div id="name" class="row mt-2 justify-content-center" style="display:none">name row</div>
+
+    <div id="sections" class="row mt-4 justify-content-center" role="group">
+        <div class="btn-group btn-group-sm w-25">
+            <button onclick="toggleSections('roll')" type="button" class="btn btn-outline-secondary primary-gray">Roll</button>
+            <button onclick="toggleSections('race')" type="button" class="btn btn-outline-secondary primary-gray">Race</button>
+            <button onclick="toggleSections('culture')" type="button" class="btn btn-outline-secondary primary-gray">Culture</button>
+            <button onclick="toggleSections('name')" type="button" class="btn btn-outline-secondary primary-gray">Name</button>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    const toggleSections = (section) => {
+        section === "roll" ? $("#roll").slideDown(400) : $("#roll").slideUp(200)
+        section === "race" ? $("#race").slideDown(400) : $("#race").slideUp(200)
+        section === "culture" ? $("#culture").slideDown(400) : $("#culture").slideUp(200)
+        section === "name" ? $("#name").slideDown(400) : $("#name").slideUp(200)
+    }
+
+
+
+</script>

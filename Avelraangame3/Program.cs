@@ -1,4 +1,5 @@
 using Avelraangame3.Persistence;
+using Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSingleton<ISnapshotService, SnapshotService>();
+builder.Services.AddSingleton<IDiceService, DiceService>();
 
 var app = builder.Build();
 
