@@ -17,7 +17,16 @@ body {
   margin-bottom: 60px;
 }
 
-.primary-gray {
+.input-with-color {
+    background-color: #7b8a8b;
+    color: #000;
+}
+
+.form-select:hover{
+    border-color: lightslategray;
+}
+
+.primary-green {
     color: #7b8a8b;
 }
 
@@ -33,3 +42,4 @@ body {
 .text-white {
     color: #fff
 }
+

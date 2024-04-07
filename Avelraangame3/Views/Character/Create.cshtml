@@ -6,29 +6,81 @@
 </div>
 
 <div class="container mt-3 footer-border">
-    <div id="roll" class="row mt-2 justify-content-center">roll row</div>
-    <div id="race" class="row mt-2 justify-content-center" style="display:none">race row</div>
-    <div id="culture" class="row mt-2 justify-content-center" style="display:none">culture row</div>
-    <div id="name" class="row mt-2 justify-content-center" style="display:none">name row</div>
-
-    <div id="sections" class="row mt-4 justify-content-center" role="group">
-        <div class="btn-group btn-group-sm w-25">
-            <button onclick="toggleSections('roll')" type="button" class="btn btn-outline-secondary primary-gray">Roll</button>
-            <button onclick="toggleSections('race')" type="button" class="btn btn-outline-secondary primary-gray">Race</button>
-            <button onclick="toggleSections('culture')" type="button" class="btn btn-outline-secondary primary-gray">Culture</button>
-            <button onclick="toggleSections('name')" type="button" class="btn btn-outline-secondary primary-gray">Name</button>
+    <div class="row mt-2">
+        <div class="col d-flex justify-content-center align-items-center">
+            <p class="mb-0 text-muted">Character creation</p>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col d-inline-flex justify-content-center align-items-center">
+            <input id="name" class="input-with-color w-25 mt-2 p-0 ps-2 rounded-2" title="name your character" placeholder="name..." value="Joe"/>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col d-inline-flex justify-content-center align-items-center">
+            <select id="race" class="input-with-color form-select form-select-sm w-25 mt-2 p-0 ps-2" aria-label="Race">
+                <option value="" selected>Race</option>
+                <option value="human">Human</option>
+                <option value="elf">Elf</option>
+                <option value="dwarf">Dwarf</option>
+            </select>
+        </div>
+    </div>
+    <div class="row mt-1">
+        <div class="col d-flex justify-content-center align-items-center">
+            <select id="culture" class="input-with-color form-select form-select-sm w-25 mt-2 p-0 ps-2" aria-label="Culture">
+                <option value="" selected>Culture</option>
+                <option value="danarian">human - Danarian</option>
+                <option value="highborn">elven - Highborn</option>
+                <option value="undermountain">dwarvish - Undermountain</option>
+            </select>
+        </div>
+    </div>
+    <div class="row mt-1">
+        <div class="col d-flex justify-content-center align-items-center">
+            <select id="spec" class="input-with-color form-select form-select-sm w-25 mt-2 p-0 ps-2" aria-label="Spec">
+                <option value="" selected>Specialization</option>
+                <option value="combat">Combat</option>
+                <option value="sorcery">Sorcery</option>
+                <option value="hunting">Hunting</option>
+            </select>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col d-flex justify-content-center align-items-center">
+            <button onclick="createCharacter()" id="createBtn" class="btn btn-outline-secondary primary-green">Create</button>
         </div>
     </div>
 </div>
 
-
-
 <script>
-    const toggleSections = (section) => {
-        section === "roll" ? $("#roll").slideDown(400) : $("#roll").slideUp(200)
-        section === "race" ? $("#race").slideDown(400) : $("#race").slideUp(200)
-        section === "culture" ? $("#culture").slideDown(400) : $("#culture").slideUp(200)
-        section === "name" ? $("#name").slideDown(400) : $("#name").slideUp(200)
+    const createCharacter = () => {
+        var name = $("#name").val();
+        var race = $("#race").val();
+        var culture = $("#culture").val();
+        var spec = $("#spec").val();
+
+        var createCharacter = {
+            name: name,
+            race: race,
+            culture: culture,
+            spec: spec
+        }
+
+        console.log(createCharacter);
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("CreateCharacter", "Character")',
+            contentType: 'application/json',
+            data: JSON.stringify(createCharacter),
+            success: function (response) {
+                alert("create character success");
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText); 
+            }
+        });
     }
 
 

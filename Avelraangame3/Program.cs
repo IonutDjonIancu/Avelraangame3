@@ -1,13 +1,13 @@
-using Avelraangame3.Persistence;
 using Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
-
-builder.Services.AddSingleton<ISnapshotService, SnapshotService>();
+builder.Services.AddSingleton<ISnapshot, Snapshot>();
 builder.Services.AddSingleton<IDiceService, DiceService>();
+builder.Services.AddSingleton<ICharacterService, CharacterService>();
+
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 

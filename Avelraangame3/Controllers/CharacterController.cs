@@ -1,16 +1,17 @@
-﻿using Avelraangame3.Persistence;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Models;
 using Services;
 
 namespace Avelraangame3.Controllers
 {
     public class CharacterController(
-        ISnapshotService snapshotService,
-        IDiceService diceService) : Controller
+        IDiceService diceService,
+        ICharacterService characterService) : Controller
     {
-        private readonly Snapshot snapshot = snapshotService.Snapshot;
-        private readonly IDiceService diceService = diceService;
+        private readonly IDiceService _diceService = diceService;
+        private readonly ICharacterService _characterService = characterService;
 
+        #region views
         // GET: Character/Index
         public IActionResult Index()
         {
@@ -24,26 +25,36 @@ namespace Avelraangame3.Controllers
         }
 
         // GET: Character/Details/5
-        public IActionResult Details(string id, string sessionId)
-        {
-            var character = snapshot.Characters.Find(s => s.Identity.Id == id && s.Identity.SessionId == sessionId);
-
-            return View(character);
-        }
-
-
-        // POST: CharacterController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(IFormCollection collection)
+        public IActionResult Details(Guid id, Guid sessionId)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var character = _characterService.GetCharacter(id, sessionId);
+
+                return View(character);
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return BadRequest($"Create character failed with exception: {ex.Message}");
+            }
+
+        }
+        #endregion
+
+        #region requests
+        // POST: Character/CreateCharacter
+        [HttpPost]
+        public IActionResult CreateCharacter([FromBody] CreateCharacter createCharacter)
+        {
+            try
+            {
+                var character = _characterService.CreateCharacter(createCharacter);
+
+                return Ok(character);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Create character failed with exception: {ex.Message}");
             }
         }
 
@@ -93,7 +104,8 @@ namespace Avelraangame3.Controllers
         [HttpGet]
         public int Rolld20()
         {
-            return diceService.Roll_d20_withReroll();
+            return _diceService.Roll_d20rr();
         }
+        #endregion
     }
 }
