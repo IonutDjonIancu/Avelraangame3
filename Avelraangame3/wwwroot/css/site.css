@@ -8,10 +8,6 @@ html {
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
 html {
   position: relative;
   min-height: 100%;
@@ -20,3 +16,30 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.input-with-color {
+    background-color: #7b8a8b;
+    color: #000;
+}
+
+.form-select:hover{
+    border-color: lightslategray;
+}
+
+.primary-green {
+    color: #7b8a8b;
+}
+
+.primary-dark {
+    color: #010504;
+}
+
+.footer-border {
+    border-top: 1px solid;
+    border-color: #7b8a8b;
+}
+
+.text-white {
+    color: #fff
+}
+

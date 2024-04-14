@@ -1,0 +1,18 @@
+﻿@model Character;
+
+<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+    <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Index">Upload</a>
+    <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Create">Create</a>
+    <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Details">Details</a>
+</div>
+
+@if(Model == null)
+{
+    <p>No character found</p>
+} 
+else
+{
+
+    <p>@Model.Details.Name</p>
+}
+

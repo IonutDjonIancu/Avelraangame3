@@ -1,0 +1,89 @@
+﻿@* Character/Create *@
+<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+    <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Index">Upload</a>
+    <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Create">Create</a>
+    <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Details">Details</a>
+</div>
+
+<div class="container mt-3 footer-border">
+    <div class="row mt-2">
+        <div class="col d-flex justify-content-center align-items-center">
+            <p class="mb-0 text-muted">Character creation</p>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col d-inline-flex justify-content-center align-items-center">
+            <input id="name" class="input-with-color w-25 mt-2 p-0 ps-2 rounded-2" title="name your character" placeholder="name..." value="Joe"/>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col d-inline-flex justify-content-center align-items-center">
+            <select id="race" class="input-with-color form-select form-select-sm w-25 mt-2 p-0 ps-2" aria-label="Race">
+                <option value="" selected>Race</option>
+                <option value="Human">Human</option>
+                <option value="Elf">Elf</option>
+                <option value="Dwarf">Dwarf</option>
+            </select>
+        </div>
+    </div>
+    <div class="row mt-1">
+        <div class="col d-flex justify-content-center align-items-center">
+            <select id="culture" class="input-with-color form-select form-select-sm w-25 mt-2 p-0 ps-2" aria-label="Culture">
+                <option value="" selected>Culture</option>
+                <option value="Danarian">human - Danarian</option>
+                <option value="Highborn">elven - Highborn</option>
+                <option value="Undermountain">dwarvish - Undermountain</option>
+            </select>
+        </div>
+    </div>
+    <div class="row mt-1">
+        <div class="col d-flex justify-content-center align-items-center">
+            <select id="spec" class="input-with-color form-select form-select-sm w-25 mt-2 p-0 ps-2" aria-label="Spec">
+                <option value="" selected>Specialization</option>
+                <option value="Warring">Warring</option>
+                <option value="Sorcery">Sorcery</option>
+                <option value="Tracking">Tracking</option>
+            </select>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col d-flex justify-content-center align-items-center">
+            <button onclick="createCharacter()" id="createBtn" class="btn btn-outline-secondary primary-green">Create</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const createCharacter = () => {
+        var name = $("#name").val();
+        var race = $("#race").val();
+        var culture = $("#culture").val();
+        var spec = $("#spec").val();
+
+        var createCharacter = {
+            name: name,
+            race: race,
+            culture: culture,
+            spec: spec
+        }
+
+        console.log(createCharacter);
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("CreateCharacter", "Character")',
+            contentType: 'application/json',
+            data: JSON.stringify(createCharacter),
+            success: function (response) {
+                alert("create character success");
+                console.log(response);
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText); 
+            }
+        });
+    }
+
+
+
+</script>

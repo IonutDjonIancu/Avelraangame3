@@ -1,8 +1,29 @@
-﻿@{
+﻿@* @model Character; *@
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
+@* <div id="model" hidden value="@Model"></div> *@
 
 <div class="text-center">
-    <button id="button" class="btn btn-outline-secondary">click</button>
+    <h3>some text goes here</h3>
+    <p class="primary-green my-1">Some text stuff</p>
+    <p class="text-muted my-1">some other text goes here</p>
+    <button onclick="logCharacter()" class="btn btn-outline-secondary primary-green my-1">click</button>
 </div>
+
+
+<script>
+    const logCharacter = () => {
+        console.log('joe');
+    }
+
+    // const toggleSections = (section) => {
+    //     section === "roll" ? $("#roll").slideDown(400) : $("#roll").slideUp(200)
+    //     section === "race" ? $("#race").slideDown(400) : $("#race").slideUp(200)
+    //     section === "culture" ? $("#culture").slideDown(400) : $("#culture").slideUp(200)
+    //     section === "name" ? $("#name").slideDown(400) : $("#name").slideUp(200)
+    // }
+
+</script>
