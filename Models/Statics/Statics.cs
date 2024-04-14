@@ -55,18 +55,24 @@ public static class Statics
                 Linothorax, Chainmail, Scalemail, Halfplate, Fullplate, Brigandine
             ];
         }
-    }
 
-    public enum ItemType
-    {
-        Weapon,
-        Shield,
-        Armour
+        public static class Types
+        {
+            public const string Weapon = "Weapon";
+            public const string Shield = "Shield";
+            public const string Armour = "Armour";
+            public const string Trinket = "Trinket";
+
+            public static readonly List<string> All =
+            [
+                Weapon, Shield, Armour, Trinket
+            ];
+        }
     }
 
     public static class Races
     {
-        public const string Human = "human";
+        public const string Human = "Human";
         public static class Humans
         {
             // stats
@@ -85,9 +91,16 @@ public static class Statics
             public const int Tactics    = 1;
             public const int Travelling = 2;
             public const int Medicine   = 1;
+            // assets
+            public const int Hitpoints  = 10;
+            public const int Mana       = 0;
+            public const int Actions    = 1;
+            public const int Defense    = 0;
+            public const int Resist     = 0;
+            public const int Reflex     = 1;
         }
 
-        public const string Elf = "elf";
+        public const string Elf = "Elf";
         public static class Elves
         {
             // stats
@@ -106,9 +119,16 @@ public static class Statics
             public const int Tactics    = 1;
             public const int Travelling = 1;
             public const int Medicine   = 1;
+            // assets
+            public const int Hitpoints  = 8;
+            public const int Mana       = 5;
+            public const int Actions    = 1;
+            public const int Defense    = 0;
+            public const int Resist     = 0;
+            public const int Reflex     = 3;
         }
 
-        public const string Dwarf = "dwarf";
+        public const string Dwarf = "Dwarf";
         public static class Dwarves
         {
             // stats
@@ -127,6 +147,13 @@ public static class Statics
             public const int Tactics    = 1;
             public const int Travelling = 0;
             public const int Medicine   = 2;
+            // assets
+            public const int Hitpoints  = 15;
+            public const int Mana       = 0;
+            public const int Actions    = 1;
+            public const int Defense    = 0;
+            public const int Resist     = 0;
+            public const int Reflex     = 1;
         }
 
         public static readonly List<string> All =
@@ -139,7 +166,7 @@ public static class Statics
 
     public static class Cultures
     {
-        public const string Danarian = "danarian";
+        public const string Danarian = "Danarian";
         public static class Danarians
         {
             // stats
@@ -158,9 +185,16 @@ public static class Statics
             public const int Tactics    = 1;
             public const int Travelling = 0;
             public const int Medicine   = 0;
+            // assets
+            public const int Hitpoints  = 2;
+            public const int Mana       = 0;
+            public const int Actions    = 0;
+            public const int Defense    = 2;
+            public const int Resist     = 0;
+            public const int Reflex     = 0;
         }
 
-        public const string Highborn = "highborn";
+        public const string Highborn = "Highborn";
         public static class Highborns
         {
             // stats
@@ -179,9 +213,16 @@ public static class Statics
             public const int Tactics    = 1;
             public const int Travelling = 0;
             public const int Medicine   = 0;
+            // assets
+            public const int Hitpoints  = 1;
+            public const int Mana       = 10;
+            public const int Actions    = 0;
+            public const int Defense    = 0;
+            public const int Resist     = 0;
+            public const int Reflex     = 0;
         }
 
-        public const string Undermountain = "undermountain";
+        public const string Undermountain = "Undermountain";
         public static class Undermountains
         {
             // stats
@@ -200,6 +241,13 @@ public static class Statics
             public const int Tactics    = 1;
             public const int Travelling = 0;
             public const int Medicine   = 0;
+            // assets
+            public const int Hitpoints  = 5;
+            public const int Mana       = 0;
+            public const int Actions    = 0;
+            public const int Defense    = 5;
+            public const int Resist     = 5;
+            public const int Reflex     = 0;
         }
 
         public static readonly List<string> All =
@@ -212,7 +260,7 @@ public static class Statics
 
     public static class Specs
     {
-        public const string Warring = "warring";
+        public const string Warring = "Warring";
         public static class Warrings
         {
             // stats
@@ -231,9 +279,17 @@ public static class Statics
             public const int Tactics    = 1;
             public const int Travelling = 0;
             public const int Medicine   = 1;
+            // assets
+            public const int Hitpoints  = 15;
+            public const int Mana       = 0;
+            public const int Actions    = 0;
+            public const int Defense    = 5;
+            public const int Resist     = 0;
+            public const int Reflex     = 0;
+
         }
 
-        public const string Sorcery = "sorcery";
+        public const string Sorcery = "Sorcery";
         public static class Sorcerys
         {
             // stats
@@ -252,10 +308,17 @@ public static class Statics
             public const int Tactics    = 0;
             public const int Travelling = 0;
             public const int Medicine   = 0;
+            // assets
+            public const int Hitpoints  = 2;
+            public const int Mana       = 15;
+            public const int Actions    = 0;
+            public const int Defense    = 0;
+            public const int Resist     = 5;
+            public const int Reflex     = 0;
         }
 
-        public const string Tracker = "tracker";
-        public static class Trackers
+        public const string Tracking = "Tracking";
+        public static class Trackings
         {
             // stats
             public const int Strength   = 0;
@@ -273,14 +336,20 @@ public static class Statics
             public const int Tactics    = 0;
             public const int Travelling = 1;
             public const int Medicine   = 1;
+            // assets
+            public const int Hitpoints  = 5;
+            public const int Mana       = 0;
+            public const int Actions    = 0;
+            public const int Defense    = 1;
+            public const int Resist     = 0;
+            public const int Reflex     = 1;
         }
 
         public static readonly List<string> All =
         [
             Warring,
             Sorcery,
-            Tracker
+            Tracking
         ];
     }
-
 }

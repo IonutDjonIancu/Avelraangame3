@@ -12,5 +12,11 @@ public class Character
     public CharacterCrafts Crafts { get; set; } = new();
 
     [MaxLength(4)]
-    public List<Item> Items { get; set; } = [];
+    public List<Item> Inventory { get; set; } = [];
+    public HashSet<Item> Supplies { get; set; } = [];
+
+    [MaxLength(10)]
+    public HashSet<Trinket> Trinkets { get; set;} = [];
+
+    // TODO: add special skills
 }

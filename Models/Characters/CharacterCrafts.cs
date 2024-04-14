@@ -4,7 +4,7 @@ public class CharacterCrafts
 {
     public int Combat { get; set; } // dodge included
     public int Arcane { get; set; }
-    public int Alchemy { get; set; }
+    public int Alchemy { get; set; } // potions and wearables
     public int Psionics { get; set; }
     public int Hunting { get; set; } // hide included
     public int Advocacy { get; set; }

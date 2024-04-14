@@ -66,7 +66,6 @@ namespace Avelraangame3.Controllers
 
         // POST: CharacterController/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, IFormCollection collection)
         {
             try
@@ -104,7 +103,7 @@ namespace Avelraangame3.Controllers
         [HttpGet]
         public int Rolld20()
         {
-            return _diceService.Roll_d20rr();
+            return _diceService.Roll_d20_rr();
         }
         #endregion
     }

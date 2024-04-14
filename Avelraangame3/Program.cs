@@ -5,7 +5,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddSingleton<ISnapshot, Snapshot>();
 builder.Services.AddSingleton<IDiceService, DiceService>();
-builder.Services.AddSingleton<ICharacterService, CharacterService>();
+builder.Services.AddTransient<IItemService, ItemService>();
+builder.Services.AddTransient<ICharacterService, CharacterService>();
 
 builder.Services.AddControllersWithViews();
 

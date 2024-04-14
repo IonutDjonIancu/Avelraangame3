@@ -20,9 +20,9 @@
         <div class="col d-inline-flex justify-content-center align-items-center">
             <select id="race" class="input-with-color form-select form-select-sm w-25 mt-2 p-0 ps-2" aria-label="Race">
                 <option value="" selected>Race</option>
-                <option value="human">Human</option>
-                <option value="elf">Elf</option>
-                <option value="dwarf">Dwarf</option>
+                <option value="Human">Human</option>
+                <option value="Elf">Elf</option>
+                <option value="Dwarf">Dwarf</option>
             </select>
         </div>
     </div>
@@ -30,9 +30,9 @@
         <div class="col d-flex justify-content-center align-items-center">
             <select id="culture" class="input-with-color form-select form-select-sm w-25 mt-2 p-0 ps-2" aria-label="Culture">
                 <option value="" selected>Culture</option>
-                <option value="danarian">human - Danarian</option>
-                <option value="highborn">elven - Highborn</option>
-                <option value="undermountain">dwarvish - Undermountain</option>
+                <option value="Danarian">human - Danarian</option>
+                <option value="Highborn">elven - Highborn</option>
+                <option value="Undermountain">dwarvish - Undermountain</option>
             </select>
         </div>
     </div>
@@ -40,9 +40,9 @@
         <div class="col d-flex justify-content-center align-items-center">
             <select id="spec" class="input-with-color form-select form-select-sm w-25 mt-2 p-0 ps-2" aria-label="Spec">
                 <option value="" selected>Specialization</option>
-                <option value="combat">Combat</option>
-                <option value="sorcery">Sorcery</option>
-                <option value="hunting">Hunting</option>
+                <option value="Warring">Warring</option>
+                <option value="Sorcery">Sorcery</option>
+                <option value="Tracking">Tracking</option>
             </select>
         </div>
     </div>
@@ -76,6 +76,7 @@
             data: JSON.stringify(createCharacter),
             success: function (response) {
                 alert("create character success");
+                console.log(response);
             },
             error: function (xhr, status, error) {
                 console.error(xhr.responseText); 

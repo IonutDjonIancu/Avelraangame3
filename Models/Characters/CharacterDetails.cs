@@ -8,6 +8,7 @@ public class CharacterDetails
     public bool IsHidden { get; set; }
     public bool IsAlive { get; set; }
     public bool IsLocked { get; set; }
+    public bool IsNpc { get; set; }
 
     public int Wealth { get; set; }
 }
