@@ -1,10 +1,11 @@
 ﻿using Models;
+using Newtonsoft.Json;
 
 namespace Services;
 
 public interface ICharacterService
 {
-    Character CreateCharacter(CreateCharacter createCharacter);
+    string CreateCharacter(CreateCharacter createCharacter);
     Character GetCharacter(Guid id, Guid sessionId);
     Character GetCharacterActual(Guid id, Guid sessionId);
 }
@@ -39,7 +40,7 @@ public class CharacterService : ICharacterService
         return character!;
     }
 
-    public Character CreateCharacter(CreateCharacter create)
+    public string CreateCharacter(CreateCharacter create)
     {
         Validators.ValidateOnCreateCharacter(create);
 
@@ -64,7 +65,9 @@ public class CharacterService : ICharacterService
 
         _snapshot.Characters.Add(character);
 
-        return character;
+        var characterEncr = EncryptionService.EncryptString(JsonConvert.SerializeObject(character));
+
+        return characterEncr;
     }
 
     #region private methods
