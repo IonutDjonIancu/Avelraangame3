@@ -6,84 +6,104 @@
 </div>
 
 <div class="container mt-3 footer-border">
-    <div class="row mt-2">
-        <div class="col d-flex justify-content-center align-items-center">
-            <p class="mb-0 text-muted">Character creation</p>
+    <div id="characterCreate">
+        <div class="row mt-2">
+            <div class="col d-flex justify-content-center align-items-center">
+                <p class="mb-0 text-muted">Character creation</p>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col d-inline-flex justify-content-center align-items-center">
+                <input id="name" class="input-with-color w-25 mt-2 p-0 ps-2 rounded-2" title="name your character" placeholder="name..." value="Joe"/>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col d-inline-flex justify-content-center align-items-center">
+                <select id="race" class="input-with-color form-select form-select-sm w-25 mt-2 p-0 ps-2" aria-label="Race">
+                    <option value="" selected>Race</option>
+                    <option value="Human">Human</option>
+                    <option value="Elf">Elf</option>
+                    <option value="Dwarf">Dwarf</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mt-1">
+            <div class="col d-flex justify-content-center align-items-center">
+                <select id="culture" class="input-with-color form-select form-select-sm w-25 mt-2 p-0 ps-2" aria-label="Culture">
+                    <option value="" selected>Culture</option>
+                    <option value="Danarian">Danarian</option>
+                    <option value="Highborn">Highborn</option>
+                    <option value="Undermountain">Undermountain</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mt-1">
+            <div class="col d-flex justify-content-center align-items-center">
+                <select id="spec" class="input-with-color form-select form-select-sm w-25 mt-2 p-0 ps-2" aria-label="Spec">
+                    <option value="" selected>Specialization</option>
+                    <option value="Warring">Warring</option>
+                    <option value="Sorcery">Sorcery</option>
+                    <option value="Tracking">Tracking</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col d-flex justify-content-center align-items-center">
+                <button onclick="createCharacter()" id="createBtn" class="btn btn-sm btn-outline-secondary primary-green">Create</button>
+            </div>
         </div>
     </div>
-    <div class="row mt-2">
-        <div class="col d-inline-flex justify-content-center align-items-center">
-            <input id="name" class="input-with-color w-25 mt-2 p-0 ps-2 rounded-2" title="name your character" placeholder="name..." value="Joe"/>
+    <div id="characterString" style="display:none">
+        <div class="row mt-2">
+            <div class="col d-flex justify-content-center align-items-center">
+                <p class="mb-0 text-muted">Character encrypted string</p>
+            </div>
         </div>
-    </div>
-    <div class="row mt-2">
-        <div class="col d-inline-flex justify-content-center align-items-center">
-            <select id="race" class="input-with-color form-select form-select-sm w-25 mt-2 p-0 ps-2" aria-label="Race">
-                <option value="" selected>Race</option>
-                <option value="Human">Human</option>
-                <option value="Elf">Elf</option>
-                <option value="Dwarf">Dwarf</option>
-            </select>
+        <div class="row mt-2">
+            <div class="col d-flex justify-content-center align-items-center">
+                <textarea id="characterStringArea" class="input-with-color w-75 mt-2 p-0 ps-2 rounded-2" title="this is your character's encrypted string" style="font-size:xx-small"></textarea>
+            </div>
         </div>
-    </div>
-    <div class="row mt-1">
-        <div class="col d-flex justify-content-center align-items-center">
-            <select id="culture" class="input-with-color form-select form-select-sm w-25 mt-2 p-0 ps-2" aria-label="Culture">
-                <option value="" selected>Culture</option>
-                <option value="Danarian">human - Danarian</option>
-                <option value="Highborn">elven - Highborn</option>
-                <option value="Undermountain">dwarvish - Undermountain</option>
-            </select>
-        </div>
-    </div>
-    <div class="row mt-1">
-        <div class="col d-flex justify-content-center align-items-center">
-            <select id="spec" class="input-with-color form-select form-select-sm w-25 mt-2 p-0 ps-2" aria-label="Spec">
-                <option value="" selected>Specialization</option>
-                <option value="Warring">Warring</option>
-                <option value="Sorcery">Sorcery</option>
-                <option value="Tracking">Tracking</option>
-            </select>
-        </div>
-    </div>
-    <div class="row mt-4">
-        <div class="col d-flex justify-content-center align-items-center">
-            <button onclick="createCharacter()" id="createBtn" class="btn btn-outline-secondary primary-green">Create</button>
+        <div class="row mt-4">
+            <div class="col d-flex justify-content-center align-items-center">
+                <button onclick="copyCharacter()" id="copyBtn" class="btn btn-sm btn-outline-secondary primary-green">Copy</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
+    const copyCharacter = () => {
+        $("#characterStringArea").select();
+        document.execCommand('copy');
+    }
+
     const createCharacter = () => {
         var name = $("#name").val();
         var race = $("#race").val();
         var culture = $("#culture").val();
         var spec = $("#spec").val();
 
-        var createCharacter = {
+        var data = {
             name: name,
             race: race,
             culture: culture,
             spec: spec
         }
 
-        console.log(createCharacter);
-
         $.ajax({
             type: 'POST',
             url: '@Url.Action("CreateCharacter", "Character")',
             contentType: 'application/json',
-            data: JSON.stringify(createCharacter),
+            data: JSON.stringify(data),
             success: function (response) {
-                alert("create character success");
-                console.log(response);
+                $("#characterStringArea").val(response);
+                $('#characterCreate').slideUp(200)
+                $('#characterString').slideDown(400)
             },
             error: function (xhr, status, error) {
-                console.error(xhr.responseText); 
+                window.location.href = "/character/error?info=" + xhr.responseText;
             }
         });
     }
-
-
-
 </script>

@@ -1,4 +1,5 @@
 ﻿using Models;
+using Newtonsoft.Json;
 
 namespace Services;
 
@@ -19,6 +20,22 @@ internal class Validators
     #endregion
 
     #region characters
+    internal static void ValidateOnImportCharacter(ImportCharacter import)
+    {
+        ValidateAgainstNull(import, "Import object is either missing or invalid.");
+        ValidateString(import.CharacterString, "Import character string cannot be null.");
+        var decryptString = EncryptionService.DecryptString(import.CharacterString);
+
+        var character = JsonConvert.DeserializeObject<Character>(decryptString) ?? throw new Exception("Unable to properly deserialize character.");
+
+        if (character.Details.IsNpc)
+            throw new Exception("Cannot play an NPC character.");
+        if (character.Details.IsLocked)
+            throw new Exception("Unable to import: character is locked.");
+        if (!character.Details.IsAlive)
+            throw new Exception("Unable to import: character is dead.");
+    }
+
     internal static void ValidateOnGetCharacter(Guid id, Guid sessionId)
     {
         if (id == Guid.Empty || sessionId == Guid.Empty)
@@ -27,7 +44,7 @@ internal class Validators
 
     internal static void ValidateOnCreateCharacter(CreateCharacter character)
     {
-        ValidateAgainstNull(character, "CreateCharacter is null");
+        ValidateAgainstNull(character, "Create character is either missing or invalid.");
         ValidateString(character.Name, "Name cannot be empty.");
         ValidateString(character.Race, "Race cannot be empty.");
         ValidateString(character.Culture, "Culture cannot be empty.");

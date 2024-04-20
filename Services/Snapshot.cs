@@ -4,10 +4,10 @@ namespace Services;
 
 public interface ISnapshot
 {
-    List<Character> Characters { get; set; }
+    HashSet<Character> Characters { get; set; }
 }
 
 public class Snapshot : ISnapshot
 {
-    public List<Character> Characters { get; set; } = [];
+    public HashSet<Character> Characters { get; set; } = [];
 }

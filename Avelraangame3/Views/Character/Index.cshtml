@@ -5,3 +5,59 @@
     <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Details">Details</a>
 </div>
 
+<div class="container mt-3 footer-border">
+    <div id="importCharacterContainer">
+        <div class="row mt-2">
+            <div class="col d-flex justify-content-center align-items-center">
+                <p class="mb-0 text-muted">Import your character string</p>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col d-flex justify-content-center align-items-center">
+                <textarea id="characterStringArea" class="input-with-color w-75 mt-2 p-0 ps-2 rounded-2" style="font-size:xx-small"></textarea>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col d-flex justify-content-center align-items-center">
+                <button onclick="importCharacter()" id="importBtn" class="btn btn-sm btn-outline-secondary primary-green">Import</button>
+            </div>
+        </div>
+    </div>
+    <div id="importCharacterSuccessContainer" style="display:none">
+        <div class="row mt-2">
+            <div class="col d-flex justify-content-center align-items-center">
+                <p class="mb-0 text-muted">Character imported successfully!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const importCharacter = () => {
+        var characterImportString = $("#characterStringArea").val();
+
+        var data = {
+            characterString: characterImportString
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("ImportCharacter", "Character")',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (response) {
+                $("#characterStringArea").val("")
+                
+                localStorage.setItem("characterId", response.characterId);
+                localStorage.setItem("sessionId", response.sessionId);
+                localStorage.setItem("characterName", response.characterName);
+                
+                $('#importCharacterContainer').slideUp(200)
+                $('#importCharacterSuccessContainer').slideDown(400)
+            },
+            error: function (xhr, status, error) {
+                window.location.href = "/character/error?info=" + xhr.responseText;
+            }
+        });
+    }
+</script>

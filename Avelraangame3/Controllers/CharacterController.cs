@@ -25,19 +25,15 @@ namespace Avelraangame3.Controllers
         }
 
         // GET: Character/Details/5
-        public IActionResult Details(Guid id, Guid sessionId)
+        public IActionResult Details()
         {
-            try
-            {
-                var character = _characterService.GetCharacter(id, sessionId);
+            return View();
+        }
 
-                return View(character);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Create character failed with exception: {ex.Message}");
-            }
-
+        // GET: Character/Error?info=infoToDisplay
+        public IActionResult Error(string info)
+        {
+            return Content(info);
         }
         #endregion
 
@@ -48,63 +44,32 @@ namespace Avelraangame3.Controllers
         {
             try
             {
-                var character = _characterService.CreateCharacter(createCharacter);
+                var characterString = _characterService.CreateCharacter(createCharacter);
 
-                return Ok(character);
+                return Ok(characterString);
             }
             catch (Exception ex)
             {
-                return BadRequest($"Create character failed with exception: {ex.Message}");
+                return BadRequest(ex.Message);
             }
         }
 
-        // GET: CharacterController/Edit/5
-        public IActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: CharacterController/Edit/5
+        // POST: Character/CreateCharacter
         [HttpPost]
-        public IActionResult Edit(int id, IFormCollection collection)
+        public IActionResult ImportCharacter([FromBody] ImportCharacter characterString)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var characterResponse = _characterService.ImportCharacter(characterString);
+
+                return Ok(characterResponse);
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return BadRequest(ex.Message);
             }
         }
 
-        // GET: CharacterController/Delete/5
-        public IActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: CharacterController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Character/Rolld20
-        [HttpGet]
-        public int Rolld20()
-        {
-            return _diceService.Roll_d20_rr();
-        }
         #endregion
     }
 }

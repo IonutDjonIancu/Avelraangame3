@@ -5,9 +5,10 @@ namespace Services;
 
 public interface ICharacterService
 {
-    string CreateCharacter(CreateCharacter createCharacter);
     Character GetCharacter(Guid id, Guid sessionId);
     Character GetCharacterActual(Guid id, Guid sessionId);
+    string CreateCharacter(CreateCharacter createCharacter);
+    ImportCharacterResponse ImportCharacter(ImportCharacter characterString);
 }
 
 public class CharacterService : ICharacterService
@@ -23,21 +24,26 @@ public class CharacterService : ICharacterService
         _items = itemService;
     }
 
-    public Character GetCharacterActual(Guid id, Guid sessionId)
+    public ImportCharacterResponse ImportCharacter(ImportCharacter import)
     {
-        // TODO: calculate ACTUALS based on items, trinkets and special skills
-        throw new NotImplementedException();
-    }
+        Validators.ValidateOnImportCharacter(import);
+        var decryptString = EncryptionService.DecryptString(import.CharacterString);
 
-    public Character GetCharacter(Guid id, Guid sessionId)
-    {
-        Validators.ValidateOnGetCharacter(id, sessionId);
+        var character = JsonConvert.DeserializeObject<Character>(decryptString)!;
 
-        var character = _snapshot.Characters.Find(s => s.Identity.Id == id && s.Identity.SessionId == sessionId);
+        var oldChar = _snapshot.Characters.FirstOrDefault(s => s.Identity.Id == character.Identity.Id);
 
-        Validators.ValidateAgainstNull(character!, "No character found");
+        if (oldChar != null)
+            _snapshot.Characters.Remove(oldChar);
+        
+        _snapshot.Characters.Add(character);
 
-        return character!;
+        return new ImportCharacterResponse
+        {
+            CharacterId = character.Identity.Id,
+            SessionId = character.Identity.SessionId,
+            CharacterName = character.Details.Name
+        };
     }
 
     public string CreateCharacter(CreateCharacter create)
@@ -68,6 +74,23 @@ public class CharacterService : ICharacterService
         var characterEncr = EncryptionService.EncryptString(JsonConvert.SerializeObject(character));
 
         return characterEncr;
+    }
+
+    public Character GetCharacterActual(Guid id, Guid sessionId)
+    {
+        // TODO: calculate ACTUALS based on items, trinkets and special skills
+        throw new NotImplementedException();
+    }
+
+    public Character GetCharacter(Guid id, Guid sessionId)
+    {
+        Validators.ValidateOnGetCharacter(id, sessionId);
+
+        var character = _snapshot.Characters.FirstOrDefault(s => s.Identity.Id == id && s.Identity.SessionId == sessionId);
+
+        Validators.ValidateAgainstNull(character!, "No character found");
+
+        return character!;
     }
 
     #region private methods

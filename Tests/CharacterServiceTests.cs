@@ -28,6 +28,6 @@ public class CharacterServiceTests : TestBase
         // assert
         character.Should().NotBeNull();
         character!.Details.Name.Should().Be(name);
-        _snapshot.Characters.Exists(c => c.Identity.Id == character.Identity.Id).Should().BeTrue();
+        _snapshot.Characters.FirstOrDefault(c => c.Identity.Id == character.Identity.Id).Should().NotBeNull();
     }
 }
