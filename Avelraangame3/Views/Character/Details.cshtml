@@ -1,11 +1,94 @@
-﻿<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-    <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Index">Upload</a>
+﻿@* Character/Details *@
+
+<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+    <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Upload">Upload</a>
     <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Create">Create</a>
     <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Details">Details</a>
 </div>
 
+<div class="container mt-3" id="spinner">
+    <div class="spinner-grow text-secondary" role="status" title="Loading...">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+<div class="container mt-3 footer-border" id="content" style="display:none">
+    <div class="row mt-3">
+        <div class="col-3">
+            <ul>
+                <li class="text-muted">
+                    item 1
+                </li>
+                <li>
+                    item 2
+                </li>
+                <li>
+                    item 3
+                </li>
+            </ul>
+        </div>
+        <div class="col-3">
+            <ul>
+                <li>
+                    item 1
+                </li>
+                <li>
+                    item 2
+                </li>
+                <li>
+                    item 3
+                </li>
+            </ul>
+        </div>
+        <div class="col-3">
+            <ul>
+                <li>
+                    item 1
+                </li>
+                <li>
+                    item 2
+                </li>
+                <li>
+                    item 3
+                </li>
+            </ul>
+        </div>
+        <div class="col-3">
+            <ul>
+                <li>
+                    item 1
+                </li>
+                <li>
+                    item 2
+                </li>
+                <li>
+                    item 3
+                </li>
+            </ul>
+        </div>
+    </div>    
+</div>
+
 <script>
     const getCharacter = () => {
-        
+
+        var characterId = localStorage.getItem("characterId");
+        var sessionId = localStorage.getItem("sessionId");
+
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("GetCharacter", "Character")' +
+                '?characterId=' + encodeURIComponent(characterId) +
+                '&sessionId=' + encodeURIComponent(sessionId),
+            dataType: 'json',
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (xhr, status, error) {
+                window.location.href = "/character/error?info=" + xhr.responseText;
+            }
+        });
     }
+
+    // run logic
+    getCharacter();
 </script>

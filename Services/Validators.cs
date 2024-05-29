@@ -46,6 +46,7 @@ internal class Validators
     {
         ValidateAgainstNull(character, "Create character is either missing or invalid.");
         ValidateString(character.Name, "Name cannot be empty.");
+        ValidateString(character.Portrait, "Portrait URL cannot be empty.");
         ValidateString(character.Race, "Race cannot be empty.");
         ValidateString(character.Culture, "Culture cannot be empty.");
         ValidateString(character.Spec, "Spec cannot be empty.");

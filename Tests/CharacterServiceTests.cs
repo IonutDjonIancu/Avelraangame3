@@ -12,9 +12,11 @@ public class CharacterServiceTests : TestBase
     {
         // arrange
         var name = "asda";
+        var portrait = "https://i.pinimg.com/564x/74/3d/a5/743da528a04dd29198cb2f3c46a8c84c.jpg";
         var create = new CreateCharacter
         {
             Name = name,
+            Portrait = portrait,
             Race = Statics.Races.Human,
             Culture = Statics.Cultures.Danarian,
             Spec = Statics.Specs.Warring

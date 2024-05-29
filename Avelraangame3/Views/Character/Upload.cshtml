@@ -1,6 +1,7 @@
-﻿@* Character/Index *@
+﻿@* Character/Upload *@
+
 <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-    <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Index">Upload</a>
+    <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Upload">Upload</a>
     <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Create">Create</a>
     <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Details">Details</a>
 </div>
@@ -50,7 +51,6 @@
                 
                 localStorage.setItem("characterId", response.characterId);
                 localStorage.setItem("sessionId", response.sessionId);
-                localStorage.setItem("characterName", response.characterName);
                 
                 $('#importCharacterContainer').slideUp(200)
                 $('#importCharacterSuccessContainer').slideDown(400)

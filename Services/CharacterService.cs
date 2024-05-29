@@ -41,8 +41,7 @@ public class CharacterService : ICharacterService
         return new ImportCharacterResponse
         {
             CharacterId = character.Identity.Id,
-            SessionId = character.Identity.SessionId,
-            CharacterName = character.Details.Name
+            SessionId = character.Identity.SessionId
         };
     }
 
@@ -88,7 +87,7 @@ public class CharacterService : ICharacterService
 
         var character = _snapshot.Characters.FirstOrDefault(s => s.Identity.Id == id && s.Identity.SessionId == sessionId);
 
-        Validators.ValidateAgainstNull(character!, "No character found");
+        Validators.ValidateAgainstNull(character!, "No character found. Go to import first.");
 
         return character!;
     }
@@ -496,6 +495,7 @@ public class CharacterService : ICharacterService
             IsNpc = false,
             Levelup = 10,
             Name = character.Name,
+            Portrait = character.Portrait,
             Wealth = 10
         };
     }

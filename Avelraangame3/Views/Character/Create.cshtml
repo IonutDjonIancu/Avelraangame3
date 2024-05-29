@@ -1,6 +1,6 @@
 ﻿@* Character/Create *@
 <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-    <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Index">Upload</a>
+    <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Upload">Upload</a>
     <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Create">Create</a>
     <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Details">Details</a>
 </div>
@@ -14,7 +14,19 @@
         </div>
         <div class="row mt-2">
             <div class="col d-inline-flex justify-content-center align-items-center">
-                <input id="name" class="input-with-color w-25 mt-2 p-0 ps-2 rounded-2" title="name your character" placeholder="name..." value="Joe"/>
+                <input id="name" class="input-with-color w-25 mt-2 p-0 ps-2 rounded-2" title="name your character" placeholder="name..." value=""/>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col d-inline-flex justify-content-center align-items-center">
+                <input id="portrait" class="input-with-color w-25 mt-2 p-0 ps-2 rounded-2" title="add a portrait" placeholder="portrait url..." value="" />
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-6">
+                <button onclick="loadPortrait()" class="btn btn-outline-dark float-end">Show portrait</button>
+            </div>
+            <div id="portraitLocation" class="col-6">
             </div>
         </div>
         <div class="row mt-2">
@@ -73,6 +85,20 @@
 </div>
 
 <script>
+    const loadPortrait = () => {
+        var imageSrc = $("#portrait").val();
+        var imageHtml = '';
+        
+        if (imageSrc) {
+            imageHtml = '<img class="rounded-3" src="' + imageSrc + '" width="60" height="80" />';
+        } else {
+            imageHtml = 'Provide a URL first.'
+        }  
+
+        $("#portraitLocation").empty();
+        $("#portraitLocation").append(imageHtml);
+    }
+
     const copyCharacter = () => {
         $("#characterStringArea").select();
         document.execCommand('copy');
@@ -80,12 +106,14 @@
 
     const createCharacter = () => {
         var name = $("#name").val();
+        var portrait = $("#portrait").val();
         var race = $("#race").val();
         var culture = $("#culture").val();
         var spec = $("#spec").val();
 
         var data = {
             name: name,
+            portrait: portrait,
             race: race,
             culture: culture,
             spec: spec
