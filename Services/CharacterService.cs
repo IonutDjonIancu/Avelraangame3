@@ -5,8 +5,8 @@ namespace Services;
 
 public interface ICharacterService
 {
-    Character GetCharacter(Guid id, Guid sessionId);
-    Character GetCharacterActual(Guid id, Guid sessionId);
+    CharacterVm GetCharacter(Guid id, Guid sessionId);
+    CharacterVm GetCharacterActual(Guid id, Guid sessionId);
     string CreateCharacter(CreateCharacter createCharacter);
     ImportCharacterResponse ImportCharacter(ImportCharacter characterString);
 }
@@ -75,13 +75,13 @@ public class CharacterService : ICharacterService
         return characterEncr;
     }
 
-    public Character GetCharacterActual(Guid id, Guid sessionId)
+    public CharacterVm GetCharacterActual(Guid id, Guid sessionId)
     {
         // TODO: calculate ACTUALS based on items, trinkets and special skills
         throw new NotImplementedException();
     }
 
-    public Character GetCharacter(Guid id, Guid sessionId)
+    public CharacterVm GetCharacter(Guid id, Guid sessionId)
     {
         Validators.ValidateOnGetCharacter(id, sessionId);
 
@@ -89,7 +89,21 @@ public class CharacterService : ICharacterService
 
         Validators.ValidateAgainstNull(character!, "No character found. Go to import first.");
 
-        return character!;
+        return new CharacterVm
+        {
+            Identity = new CharacterIdentityVm
+            {
+                Id = id,
+            },
+            Traits = character!.Traits,
+            Details = character.Details,
+            Stats = character.Stats,
+            Assets = character.Assets,
+            Crafts = character.Crafts,
+            Inventory = character.Inventory,
+            Supplies = character.Supplies,
+            Trinkets = character.Trinkets,
+        };
     }
 
     #region private methods
@@ -259,6 +273,7 @@ public class CharacterService : ICharacterService
         var crafts = new CharacterCrafts();
 
         // races
+        // sets the initial values
         if (create.Race == Statics.Races.Human)
         {
             crafts.Combat       = Statics.Races.Humans.Combat;
@@ -271,6 +286,7 @@ public class CharacterService : ICharacterService
             crafts.Tactics      = Statics.Races.Humans.Tactics;
             crafts.Travelling   = Statics.Races.Humans.Travelling;
             crafts.Medicine     = Statics.Races.Humans.Medicine;
+            crafts.Sailing      = Statics.Races.Humans.Sail;
         }
         else if (create.Race == Statics.Races.Elf)
         {
@@ -284,6 +300,7 @@ public class CharacterService : ICharacterService
             crafts.Tactics      = Statics.Races.Elves.Tactics;
             crafts.Travelling   = Statics.Races.Elves.Travelling;
             crafts.Medicine     = Statics.Races.Elves.Medicine;
+            crafts.Sailing      = Statics.Races.Elves.Sail;
         }
         else if (create.Race == Statics.Races.Dwarf)
         {
@@ -297,6 +314,7 @@ public class CharacterService : ICharacterService
             crafts.Tactics      = Statics.Races.Dwarves.Tactics;
             crafts.Travelling   = Statics.Races.Dwarves.Travelling;
             crafts.Medicine     = Statics.Races.Dwarves.Medicine;
+            crafts.Sailing      = Statics.Races.Dwarves.Sail;
         }
         else
         {
@@ -304,6 +322,7 @@ public class CharacterService : ICharacterService
         }
 
         // cultures
+        // they add to the initial values with +
         if (create.Culture == Statics.Cultures.Danarian)
         {
             crafts.Combat       += Statics.Cultures.Danarians.Combat;
@@ -316,6 +335,7 @@ public class CharacterService : ICharacterService
             crafts.Tactics      += Statics.Cultures.Danarians.Tactics;
             crafts.Travelling   += Statics.Cultures.Danarians.Travelling;
             crafts.Medicine     += Statics.Cultures.Danarians.Medicine;
+            crafts.Sailing      += Statics.Cultures.Danarians.Sail;
         }
         else if (create.Culture == Statics.Cultures.Highborn)
         {
@@ -329,6 +349,7 @@ public class CharacterService : ICharacterService
             crafts.Tactics      += Statics.Cultures.Highborns.Tactics;
             crafts.Travelling   += Statics.Cultures.Highborns.Travelling;
             crafts.Medicine     += Statics.Cultures.Highborns.Medicine;
+            crafts.Sailing      += Statics.Cultures.Highborns.Sail;
         }
         else if (create.Culture == Statics.Cultures.Undermountain)
         {
@@ -342,6 +363,7 @@ public class CharacterService : ICharacterService
             crafts.Tactics      += Statics.Cultures.Undermountains.Tactics;
             crafts.Travelling   += Statics.Cultures.Undermountains.Travelling;
             crafts.Medicine     += Statics.Cultures.Undermountains.Medicine;
+            crafts.Sailing      += Statics.Cultures.Undermountains.Sail;
         }
         else
         {
@@ -349,6 +371,7 @@ public class CharacterService : ICharacterService
         }
 
         // spec
+        // also adds to the initial values with +
         if (create.Spec == Statics.Specs.Warring)
         {
             crafts.Combat       += Statics.Specs.Warrings.Combat;
@@ -361,6 +384,7 @@ public class CharacterService : ICharacterService
             crafts.Tactics      += Statics.Specs.Warrings.Tactics;
             crafts.Travelling   += Statics.Specs.Warrings.Travelling;
             crafts.Medicine     += Statics.Specs.Warrings.Medicine;
+            crafts.Sailing      += Statics.Specs.Warrings.Sail;
         }
         else if (create.Spec == Statics.Specs.Sorcery)
         {
@@ -374,6 +398,7 @@ public class CharacterService : ICharacterService
             crafts.Tactics      += Statics.Specs.Sorcerys.Tactics;
             crafts.Travelling   += Statics.Specs.Sorcerys.Travelling;
             crafts.Medicine     += Statics.Specs.Sorcerys.Medicine;
+            crafts.Sailing      += Statics.Specs.Sorcerys.Sail;
         }
         else if (create.Spec == Statics.Specs.Tracking)
         {
@@ -387,6 +412,7 @@ public class CharacterService : ICharacterService
             crafts.Tactics      += Statics.Specs.Trackings.Tactics;
             crafts.Travelling   += Statics.Specs.Trackings.Travelling;
             crafts.Medicine     += Statics.Specs.Trackings.Medicine;
+            crafts.Sailing      += Statics.Specs.Trackings.Sail;
         }
         else
         {

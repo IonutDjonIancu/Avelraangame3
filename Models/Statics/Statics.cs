@@ -91,6 +91,7 @@ public static class Statics
             public const int Tactics    = 1;
             public const int Travelling = 2;
             public const int Medicine   = 1;
+            public const int Sail       = 1;
             // assets
             public const int Hitpoints  = 10;
             public const int Mana       = 0;
@@ -119,6 +120,7 @@ public static class Statics
             public const int Tactics    = 1;
             public const int Travelling = 1;
             public const int Medicine   = 1;
+            public const int Sail       = 1;
             // assets
             public const int Hitpoints  = 8;
             public const int Mana       = 5;
@@ -147,6 +149,7 @@ public static class Statics
             public const int Tactics    = 1;
             public const int Travelling = 0;
             public const int Medicine   = 2;
+            public const int Sail       = 0;
             // assets
             public const int Hitpoints  = 15;
             public const int Mana       = 0;
@@ -185,6 +188,7 @@ public static class Statics
             public const int Tactics    = 1;
             public const int Travelling = 0;
             public const int Medicine   = 0;
+            public const int Sail       = 0;
             // assets
             public const int Hitpoints  = 2;
             public const int Mana       = 0;
@@ -213,6 +217,7 @@ public static class Statics
             public const int Tactics    = 1;
             public const int Travelling = 0;
             public const int Medicine   = 0;
+            public const int Sail       = 0;
             // assets
             public const int Hitpoints  = 1;
             public const int Mana       = 10;
@@ -241,6 +246,7 @@ public static class Statics
             public const int Tactics    = 1;
             public const int Travelling = 0;
             public const int Medicine   = 0;
+            public const int Sail       = 0;
             // assets
             public const int Hitpoints  = 5;
             public const int Mana       = 0;
@@ -279,6 +285,7 @@ public static class Statics
             public const int Tactics    = 1;
             public const int Travelling = 0;
             public const int Medicine   = 1;
+            public const int Sail       = 1;
             // assets
             public const int Hitpoints  = 15;
             public const int Mana       = 0;
@@ -308,6 +315,7 @@ public static class Statics
             public const int Tactics    = 0;
             public const int Travelling = 0;
             public const int Medicine   = 0;
+            public const int Sail       = 0;
             // assets
             public const int Hitpoints  = 2;
             public const int Mana       = 15;
@@ -336,6 +344,7 @@ public static class Statics
             public const int Tactics    = 0;
             public const int Travelling = 1;
             public const int Medicine   = 1;
+            public const int Sail       = 1;
             // assets
             public const int Hitpoints  = 5;
             public const int Mana       = 0;

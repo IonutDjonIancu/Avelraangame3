@@ -40,6 +40,9 @@ body {
 }
 
 .text-white {
-    color: #fff
+    color: #fff;
 }
 
+.pointer {
+    cursor: pointer;
+}

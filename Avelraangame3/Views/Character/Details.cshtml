@@ -11,6 +11,9 @@
         <span class="visually-hidden">Loading...</span>
     </div>
 </div>
+<div class="container mt-3 footer-border" id="showContent" style="display:none">
+    <img onclick="loadCharacter()" class="rounded-3 mt-3 pointer" src="https://i.pinimg.com/originals/f8/ba/07/f8ba0790e075afdf403d035113997cdd.gif" width="60" height="80" title="Show character" />
+</div>
 <div class="container mt-3 footer-border" id="content" style="display:none">
     <div class="row mt-3">
         <div class="col-3">
@@ -69,6 +72,22 @@
 </div>
 
 <script>
+    const loadCharacter = () => {
+        $("#showContent").hide();
+        $("#content").show();
+    }
+
+    const getStorageChar = () => {
+        var character = JSON.parse(localStorage.getItem("character"))
+        
+        if (!character) {
+            return;
+        }
+
+        console.log(character);
+        return character;
+    }
+
     const getCharacter = () => {
 
         var characterId = localStorage.getItem("characterId");
@@ -81,7 +100,10 @@
                 '&sessionId=' + encodeURIComponent(sessionId),
             dataType: 'json',
             success: function (response) {
+                localStorage.setItem("character", JSON.stringify(response));
                 console.log(response);
+                $("#spinner").hide();
+                $("#showContent").show();
             },
             error: function (xhr, status, error) {
                 window.location.href = "/character/error?info=" + xhr.responseText;

@@ -2,9 +2,8 @@
 
 namespace Models;
 
-public class Character
+public class CharacterBase
 {
-    public CharacterIdentity Identity { get; set; } = new();
     public CharacterTraits Traits { get; set; } = new();
     public CharacterDetails Details { get; set; } = new();
     public CharacterStats Stats { get; set; } = new();
@@ -16,15 +15,30 @@ public class Character
     public List<Item> Supplies { get; set; } = [];
 
     [MaxLength(10)]
-    public List<Trinket> Trinkets { get; set;} = [];
+    public List<Trinket> Trinkets { get; set; } = [];
 
     // TODO: add special skills
+}
+
+public class Character : CharacterBase
+{
+    public CharacterIdentity Identity { get; set; } = new();
+}
+
+public class CharacterVm : CharacterBase
+{
+    public CharacterIdentityVm Identity { get; set; } = new();
 }
 
 public class CharacterIdentity
 {
     public Guid Id { get; set; }
     public Guid SessionId { get; set; }
+}
+
+public class CharacterIdentityVm
+{
+    public Guid Id { get; set; }
 }
 
 public class CharacterTraits
