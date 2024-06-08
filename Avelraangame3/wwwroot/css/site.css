@@ -46,3 +46,11 @@ body {
 .pointer {
     cursor: pointer;
 }
+
+.secondary-darkred {
+    color: #8b00006e;
+}
+
+.secondary-darkgreen {
+    color: #008b386e;
+}

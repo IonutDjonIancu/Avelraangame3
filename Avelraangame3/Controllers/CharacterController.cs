@@ -27,6 +27,21 @@ public class CharacterController(ICharacterService characterService) : Controlle
         return View();
     }
 
+    // GET: Character/DetailsOf?characterId=string&sessionId=string
+    public IActionResult DetailsOf(string characterId, string sessionId)
+    {
+        try
+        {
+            var character = _characterService.GetCharacter(Guid.Parse(characterId), Guid.Parse(sessionId));
+
+            return View(character);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     // GET: Character/Error?info=infoToDisplay
     public IActionResult Error(string info)
     {
@@ -35,6 +50,7 @@ public class CharacterController(ICharacterService characterService) : Controlle
     #endregion
 
     #region requests
+    // GET: Character/GetCharacter
     [HttpGet]
     public IActionResult GetCharacter(string characterId, string sessionId)
     {

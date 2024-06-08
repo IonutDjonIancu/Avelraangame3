@@ -9,7 +9,7 @@ public static class Statics
             public const string Sword = "Arming sword";
             public const string LongSword = "Long sword";
             public const string ShortSword = "Short sword";
-            public const string Uchigatana = "Uchigatana";
+            public const string CurvedBlade = "Curved blade";
             public const string Falx = "Falx";
             public const string Axe = "Axe";
             public const string DaneAxe = "Dane axe";
@@ -23,7 +23,7 @@ public static class Statics
 
             public static readonly List<string> All =
             [
-                Sword, LongSword, ShortSword, Uchigatana, Falx, Axe, DaneAxe, Mace, Warhammer, Spear, Polearm, Staff, Dagger, Seax
+                Sword, LongSword, ShortSword, CurvedBlade, Falx, Axe, DaneAxe, Mace, Warhammer, Spear, Polearm, Staff, Dagger, Seax
             ];
         }
 
@@ -92,13 +92,19 @@ public static class Statics
             public const int Travelling = 2;
             public const int Medicine   = 1;
             public const int Sail       = 1;
+            // abilities
+            public const int Harm       = 1;
+            public const int Fortitude  = 2;
+            public const int Accretion  = 0;
+            public const int Guile      = 2;
+            public const int Awareness  = 1;
+            public const int Charm      = 2;
             // assets
             public const int Hitpoints  = 10;
             public const int Mana       = 0;
             public const int Actions    = 1;
             public const int Defense    = 0;
             public const int Resist     = 0;
-            public const int Reflex     = 1;
         }
 
         public const string Elf = "Elf";
@@ -121,13 +127,19 @@ public static class Statics
             public const int Travelling = 1;
             public const int Medicine   = 1;
             public const int Sail       = 1;
+            // abilities
+            public const int Harm       = 1;
+            public const int Fortitude  = 1;
+            public const int Accretion  = 3;
+            public const int Guile      = 1;
+            public const int Awareness  = 2;
+            public const int Charm      = 0;
             // assets
             public const int Hitpoints  = 8;
             public const int Mana       = 5;
             public const int Actions    = 1;
             public const int Defense    = 0;
             public const int Resist     = 0;
-            public const int Reflex     = 3;
         }
 
         public const string Dwarf = "Dwarf";
@@ -150,13 +162,19 @@ public static class Statics
             public const int Travelling = 0;
             public const int Medicine   = 2;
             public const int Sail       = 0;
+            // abilities
+            public const int Harm       = 3;
+            public const int Fortitude  = 3;
+            public const int Accretion  = 0;
+            public const int Guile      = 0;
+            public const int Awareness  = 0;
+            public const int Charm      = -1;
             // assets
             public const int Hitpoints  = 15;
             public const int Mana       = 0;
             public const int Actions    = 1;
             public const int Defense    = 0;
             public const int Resist     = 0;
-            public const int Reflex     = 1;
         }
 
         public static readonly List<string> All =
@@ -189,13 +207,19 @@ public static class Statics
             public const int Travelling = 0;
             public const int Medicine   = 0;
             public const int Sail       = 0;
+            // abilities
+            public const int Harm       = 0;
+            public const int Fortitude  = 0;
+            public const int Accretion  = 0;
+            public const int Guile      = 0;
+            public const int Awareness  = 0;
+            public const int Charm      = 1;
             // assets
             public const int Hitpoints  = 2;
             public const int Mana       = 0;
             public const int Actions    = 0;
             public const int Defense    = 2;
             public const int Resist     = 0;
-            public const int Reflex     = 0;
         }
 
         public const string Highborn = "Highborn";
@@ -218,13 +242,19 @@ public static class Statics
             public const int Travelling = 0;
             public const int Medicine   = 0;
             public const int Sail       = 0;
+            // abilities
+            public const int Harm       = 0;
+            public const int Fortitude  = 0;
+            public const int Accretion  = 2;
+            public const int Guile      = 0;
+            public const int Awareness  = 0;
+            public const int Charm      = 1;
             // assets
             public const int Hitpoints  = 1;
             public const int Mana       = 10;
             public const int Actions    = 0;
             public const int Defense    = 0;
             public const int Resist     = 0;
-            public const int Reflex     = 0;
         }
 
         public const string Undermountain = "Undermountain";
@@ -247,13 +277,19 @@ public static class Statics
             public const int Travelling = 0;
             public const int Medicine   = 0;
             public const int Sail       = 0;
+            // abilities
+            public const int Harm       = 1;
+            public const int Fortitude  = 1;
+            public const int Accretion  = 0;
+            public const int Guile      = 0;
+            public const int Awareness  = 0;
+            public const int Charm      = -1;
             // assets
             public const int Hitpoints  = 5;
             public const int Mana       = 0;
             public const int Actions    = 0;
             public const int Defense    = 5;
             public const int Resist     = 5;
-            public const int Reflex     = 0;
         }
 
         public static readonly List<string> All =
@@ -286,14 +322,19 @@ public static class Statics
             public const int Travelling = 0;
             public const int Medicine   = 1;
             public const int Sail       = 1;
+            // abilities
+            public const int Harm       = 3;
+            public const int Fortitude  = 3;
+            public const int Accretion  = 0;
+            public const int Guile      = 0;
+            public const int Awareness  = 1;
+            public const int Charm      = 0;
             // assets
             public const int Hitpoints  = 15;
             public const int Mana       = 0;
             public const int Actions    = 0;
             public const int Defense    = 5;
             public const int Resist     = 0;
-            public const int Reflex     = 0;
-
         }
 
         public const string Sorcery = "Sorcery";
@@ -316,13 +357,19 @@ public static class Statics
             public const int Travelling = 0;
             public const int Medicine   = 0;
             public const int Sail       = 0;
+            // abilities
+            public const int Harm       = 0;
+            public const int Fortitude  = 2;
+            public const int Accretion  = 4;
+            public const int Guile      = 0;
+            public const int Awareness  = 0;
+            public const int Charm      = 1;
             // assets
             public const int Hitpoints  = 2;
             public const int Mana       = 15;
             public const int Actions    = 0;
             public const int Defense    = 0;
             public const int Resist     = 5;
-            public const int Reflex     = 0;
         }
 
         public const string Tracking = "Tracking";
@@ -345,13 +392,19 @@ public static class Statics
             public const int Travelling = 1;
             public const int Medicine   = 1;
             public const int Sail       = 1;
+            // abilities
+            public const int Harm       = 1;
+            public const int Fortitude  = 2;
+            public const int Accretion  = 0;
+            public const int Guile      = 1;
+            public const int Awareness  = 3;
+            public const int Charm      = 0;
             // assets
             public const int Hitpoints  = 5;
             public const int Mana       = 0;
             public const int Actions    = 0;
             public const int Defense    = 1;
             public const int Resist     = 0;
-            public const int Reflex     = 1;
         }
 
         public static readonly List<string> All =

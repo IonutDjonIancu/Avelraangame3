@@ -4,18 +4,18 @@ namespace Models;
 
 public class CharacterBase
 {
-    public CharacterTraits Traits { get; set; } = new();
     public CharacterDetails Details { get; set; } = new();
     public CharacterStats Stats { get; set; } = new();
     public CharacterAssets Assets { get; set; } = new();
     public CharacterCrafts Crafts { get; set; } = new();
+    public CharacterAbilities Abilities { get; set; } = new();
 
     [MaxLength(4)]
     public List<Item> Inventory { get; set; } = [];
-    public List<Item> Supplies { get; set; } = [];
-
     [MaxLength(10)]
     public List<Trinket> Trinkets { get; set; } = [];
+
+    public CharacterSupplies Supplies { get; set; } = new();
 
     // TODO: add special skills
 }
@@ -41,16 +41,12 @@ public class CharacterIdentityVm
     public Guid Id { get; set; }
 }
 
-public class CharacterTraits
-{
-    public string Race { get; set; }
-    public string Culture { get; set; }
-    public string Spec { get; set; }
-}
-
 public class CharacterDetails
 {
     public string Name { get; set; }
+    public string Race { get; set; }
+    public string Culture { get; set; }
+    public string Spec { get; set; }
     public string Portrait { get; set; }
     public int Entitylevel { get; set; }
     public int Levelup { get; set; }
@@ -70,26 +66,32 @@ public class CharacterStats
     public int Abstract { get; set; }
 }
 
+public class CharacterAbilities
+{
+    public int Harm { get; set; }
+    public int Fortitude { get; set; }
+    public int Accretion { get; set; }
+    public int Guile { get; set; }
+    public int Awareness { get; set; }
+    public int Charm { get; set; }
+}
 
 public class CharacterAssets
 {
-    public int HitpointsBase { get; set; }
+    public int Hitpoints { get; set; }
     public int HitpointsActual { get; set; }
 
-    public int ManaBase { get; set; }
+    public int Mana { get; set; }
     public int ManaActual { get; set; }
 
-    public int ActionsBase { get; set; }
-    public int ActionsActual { get; set; }
+    public int Apcom { get; set; }
+    public int ApcomActual { get; set; }
 
-    public int DefenseBase { get; set; }
+    public int Defense { get; set; }
     public int DefenseActual { get; set; }
 
-    public int ResistBase { get; set; }
+    public int Resist { get; set; }
     public int ResistActual { get; set; }
-
-    public int ReflexBase { get; set; }
-    public int ReflexActual { get; set; }
 }
 
 public class CharacterCrafts
@@ -103,6 +105,13 @@ public class CharacterCrafts
     public int Mercantile { get; set; }
     public int Tactics { get; set; }
     public int Travelling { get; set; }
-    public int Sailing { get; set; }
     public int Medicine { get; set; }
+    public int Sailing { get; set; }
 }
+
+public class CharacterSupplies
+{
+    public List<Item> Items { get; set; } = [];
+    public List<Trinket> Trinkets { get; set; } = [];
+}
+

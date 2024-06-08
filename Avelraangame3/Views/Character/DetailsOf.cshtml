@@ -1,0 +1,294 @@
+﻿@model CharacterVm
+
+@* Character/DetailsOf *@
+<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+    <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Upload">Upload</a>
+    <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Create">Create</a>
+    <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Details">Details</a>
+</div>
+
+@* Stats and assets *@
+<div class="container mt-3 footer-border">
+    <div class="row mt-3">
+        <div class="col-3">
+            <p class="mb-0">Character</p>
+            <ul>
+                <li>
+                    name: <span class="text-muted">@Model.Details.Name</span>
+                </li>
+                <li>
+                    race: <span class="text-muted">@Model.Details.Race</span>
+                </li>
+                 <li>
+                    culture: <span class="text-muted">@Model.Details.Culture</span>
+                </li>
+                <li>
+                    specialization: <span class="text-muted">@Model.Details.Spec</span>
+                </li>
+                <li>
+                    entity level: <span class="text-muted">@Model.Details.Entitylevel</span>
+                </li>
+                <li>
+                    level up pts.: <span class="text-muted">@Model.Details.Levelup</span>
+                </li>
+                <li>
+                    wealth: <span class="text-muted">@Model.Details.Wealth</span>
+                </li>
+            </ul>
+        </div>
+        <div class="col-3">
+            <p class="mb-0">Stats</p>
+            <ul>
+                <li>
+                    strength: <span class="text-muted">@Model.Stats.Strength</span>
+                </li>
+                <li>
+                    athletics: <span class="text-muted">@Model.Stats.Athletics</span>
+                </li>
+                <li>
+                    willpower: <span class="text-muted">@Model.Stats.Willpower</span>
+                </li>
+                <li>
+                    abstract: <span class="text-muted">@Model.Stats.Abstract</span>
+                </li>
+            </ul>
+        </div>
+        <div class="col-3">
+            <p class="mb-0">Crafts</p>
+            <ul>
+                <li>
+                    combat: <span class="text-muted">@Model.Crafts.Combat</span>
+                </li>
+                <li>
+                    arcane: <span class="text-muted">@Model.Crafts.Arcane</span>
+                </li>
+                <li>
+                    alchemy: <span class="text-muted">@Model.Crafts.Alchemy</span>
+                </li>
+                <li>
+                    psionics: <span class="text-muted">@Model.Crafts.Psionics</span>
+                </li>
+                <li>
+                    hunting: <span class="text-muted">@Model.Crafts.Hunting</span>
+                </li>
+                <li>
+                    advocacy: <span class="text-muted">@Model.Crafts.Advocacy</span>
+                </li>
+                <li>
+                    mercantile: <span class="text-muted">@Model.Crafts.Mercantile</span>
+                </li>
+                <li>
+                    tactics: <span class="text-muted">@Model.Crafts.Tactics</span>
+                </li>
+                <li>
+                    travelling: <span class="text-muted">@Model.Crafts.Travelling</span>
+                </li>
+                <li>
+                    sailing: <span class="text-muted">@Model.Crafts.Sailing</span>
+                </li>
+                <li>
+                    medicine: <span class="text-muted">@Model.Crafts.Medicine</span>
+                </li>
+            </ul>
+        </div>
+        <div class="col-3">
+            <p class="mb-0">Assets</p>
+            <ul>
+                <li>
+                    hitpoints: <span class="text-muted">@Model.Assets.Hitpoints</span>
+                </li>
+                <li>
+                    mana: <span class="text-muted">@Model.Assets.Mana</span>
+                </li>
+                <li>
+                    apcom: <span class="text-muted">@Model.Assets.Apcom</span>
+                </li>
+                <li>
+                    defense: <span class="text-muted">@Model.Assets.Defense</span> %
+                </li>
+                <li>
+                    resist: <span class="text-muted">@Model.Assets.Resist</span> %
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@* Items *@
+<div class="container mt-3 footer-border">
+    <div class="row mt-3">
+        <div class="col-4">
+            <p class="mb-0">Inventory</p>
+            <ul>
+                @foreach(var item in Model.Inventory)
+                {
+                    <li>
+                        @item.Type.ToLower() 
+                        <span 
+                            class="text-muted pointer"
+                            title="*** stats
+STR @item.Stats.Strength 
+ATH @item.Stats.Athletics 
+WIL @item.Stats.Willpower 
+ABS @item.Stats.Abstract
+*** assets
+HPS @item.Assets.Hitpoints
+MAN @item.Assets.Mana
+ACT @item.Assets.Apcom
+DEF @item.Assets.Defense
+RES @item.Assets.Resist
+*** crafts
+COM @item.Crafts.Combat
+ARC @item.Crafts.Arcane
+ALC @item.Crafts.Alchemy
+PSI @item.Crafts.Psionics
+HUN @item.Crafts.Hunting
+ADV @item.Crafts.Advocacy
+MER @item.Crafts.Mercantile
+TAC @item.Crafts.Tactics
+TRA @item.Crafts.Travelling
+SAI @item.Crafts.Sailing
+MED @item.Crafts.Medicine"
+                        >@item.Name</span>
+                        <span class="btn-group btn-group-sm" role="group">
+                            <button title="defense" class="btn btn-sm btn-outline-dark">
+                                @item.Assets.Defense
+                            </button>
+                            @if (item.HasTaint)
+                            {
+                                <button title="is tainted" class="btn btn-sm btn-outline-dark">
+                                    &#9765;
+                                </button>
+                            }
+                            else
+                            {
+                                <button title="no taint" class="btn btn-sm btn-outline-dark">
+                                    &#9769;
+                                </button>
+                            }
+                            <button title="unequip" class="btn btn-sm btn-outline-dark secondary-darkgreen">
+                                &#8614;
+                            </button>
+                        </span>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="col-4">
+            <p class="mb-0">Regalia</p>
+            <ul>
+                @foreach(var trinket in Model.Trinkets)
+                {
+                    <li>
+                        trinket of 
+                        <span 
+                            class="text-muted pointer"
+                            title="*** assets
+HPS @trinket.Assets.Hitpoints
+MAN @trinket.Assets.Mana
+ACT @trinket.Assets.Apcom
+DEF @trinket.Assets.Defense
+RES @trinket.Assets.Resist"
+                        >@trinket.Name.Split(" ")[2]</span>
+                        <span class="btn-group btn-group-sm" role="group">
+                            <button title="item level" class="btn btn-sm btn-outline-dark">
+                                @trinket.Level
+                            </button>
+                            @if (trinket.IsPermanent)
+                            {
+                                <button title="can be used" class="btn btn-sm btn-outline-dark">
+                                    &#9764;
+                                </button>
+                            }
+                            else
+                            {
+                                <button title="can only be worn" class="btn btn-sm btn-outline-dark">
+                                    &#9827;
+                                </button>
+                            }
+                            <button title="unequip" class="btn btn-sm btn-outline-dark secondary-darkgreen">
+                                &#8614;
+                            </button>
+                        </span>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="col-4">
+            <p class="mb-1">Supplies</p>
+            @foreach (var item in Model.Supplies.Items)
+            {
+                <div class="btn-group btn-group-sm m-1" role="group">
+                    <button title="equip" class="btn btn-sm btn-outline-dark secondary-darkgreen">
+                        &#8612;
+                    </button>
+                    @if (item.Type == Statics.Items.Types.Weapon)
+                    {
+                        <button title="weapon @item.Name" class="btn btn-sm btn-outline-dark">
+                            W
+                        </button>
+                    }
+                    else if (item.Type == Statics.Items.Types.Armour)
+                    {
+                        <button title="armour @item.Name" class="btn btn-sm btn-outline-dark">
+                            A
+                        </button>
+                    } else
+                    {
+                        <button title="shield @item.Name" class="btn btn-sm btn-outline-dark">
+                            S
+                        </button>
+                    }
+                    <button title="*** stats
+STR @item.Stats.Strength
+ATH @item.Stats.Athletics
+WIL @item.Stats.Willpower
+ABS @item.Stats.Abstract
+*** assets
+HPS @item.Assets.Hitpoints
+MAN @item.Assets.Mana
+ACT @item.Assets.Apcom
+DEF @item.Assets.Defense
+RES @item.Assets.Resist
+*** crafts
+COM @item.Crafts.Combat
+ARC @item.Crafts.Arcane
+ALC @item.Crafts.Alchemy
+PSI @item.Crafts.Psionics
+HUN @item.Crafts.Hunting
+ADV @item.Crafts.Advocacy
+MER @item.Crafts.Mercantile
+TAC @item.Crafts.Tactics
+TRA @item.Crafts.Travelling
+SAI @item.Crafts.Sailing
+MED @item.Crafts.Medicine" 
+                    class="btn btn-sm btn-outline-dark">
+                        &#9779;
+                    </button>
+                    <button title="defense" class="btn btn-sm btn-outline-dark">
+                        @item.Assets.Defense
+                    </button>
+                    @if (item.HasTaint)
+                    {
+                        <button title="is tainted" class="btn btn-sm btn-outline-dark">
+                            &#9765;
+                        </button>
+                    }
+                    else
+                    {
+                        <button title="no taint" class="btn btn-sm btn-outline-dark">
+                            &#9769;
+                        </button>
+                    }
+                    <button title="sell value" class="btn btn-sm btn-outline-dark">
+                        @item.Value
+                    </button>
+                    <button title="sell item" class="btn btn-sm btn-outline-dark secondary-darkred">
+                        &#10007;
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+    <p class="valid-tooltip">some text</p>
+</div>
