@@ -17,9 +17,9 @@ public class CharacterServiceTests : TestBase
         {
             Name = name,
             Portrait = portrait,
-            Race = Statics.Races.Human,
-            Culture = Statics.Cultures.Danarian,
-            Spec = Statics.Specs.Warring
+            Race = Statics.Races.Elf,
+            Culture = Statics.Cultures.Highborn,
+            Spec = Statics.Specs.Sorcery
         };
 
         // act

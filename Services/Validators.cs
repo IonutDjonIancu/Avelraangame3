@@ -60,9 +60,59 @@ internal class Validators
         if (!Statics.Specs.All.Contains(character.Spec)) 
             throw new Exception("Specialization not found.");
     }
+
+    internal static void ValidateCharacterExists(Guid characterId, Guid sessionId, ISnapshot ss)
+    {
+        var character = ss.Characters.FirstOrDefault(s => s.Identity.Id == characterId);
+
+        if (character is null)
+            throw new Exception("Character not found.");
+
+        if (character.Identity.SessionId != sessionId)
+            throw new Exception("Wrong session id.");
+    }
     #endregion
 
     #region items
+    internal static (Item, Character) ValidateEquipItemAndReturn(EquipItem equipItem, ISnapshot ss)
+    {
+        ValidateAgainstNull(equipItem, "Equip item cannot be null.");
+        ValidateAgainstNull(ss, "Snapshot cannot be null.");
+        ValidateCharacterExists(equipItem.CharacterId, equipItem.SessionId, ss);
+
+        var character = ss.Characters.Find(s => s.Identity.Id == equipItem.CharacterId)!;
+
+        if (!character.Supplies.Items.Exists(s => s.Id == equipItem.ItemId)
+            && !character.Supplies.Trinkets.Exists(s => s.Id == equipItem.ItemId))
+            throw new Exception("No such item found in supplies.");
+
+        var item = character.Supplies.Items.Union(character.Supplies.Trinkets).First(s => s.Id == equipItem.ItemId)!;
+
+        if (item.Type == Statics.Items.Types.Trinket
+            && character.Regalia.Count == 10)
+        {
+            throw new Exception("Regalia is full.");
+        } 
+        else if (character.Inventory.Count >= 4)
+        {
+            throw new Exception("Inventory is full.");
+        }
+
+        if (item.Type == Statics.Items.Types.Armour
+            && character.Inventory.Count(s => s.Type == Statics.Items.Types.Armour) >= 1)
+            throw new Exception("Cannot wear more than one armour.");
+
+        if (item.Type == Statics.Items.Types.Shield
+            && character.Inventory.Count(s => s.Type == Statics.Items.Types.Shield) >= 2)
+            throw new Exception("Cannot use more than two shields at once.");
+
+        if (item.Type == Statics.Items.Types.Weapon
+           && character.Inventory.Count(s => s.Type == Statics.Items.Types.Weapon) >= 3)
+            throw new Exception("Cannot use more than three weapons at once.");
+
+        return (item, character);
+    }
+
     internal static void ValidateTrinketOrItemNotNull(Item? item, Trinket? trinket)
     {
         if (item is null && trinket is null)

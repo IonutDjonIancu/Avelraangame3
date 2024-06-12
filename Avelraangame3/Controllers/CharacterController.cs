@@ -82,13 +82,29 @@ public class CharacterController(ICharacterService characterService) : Controlle
         }
     }
 
-    // POST: Character/CreateCharacter
+    // POST: Character/ImportCharacter
     [HttpPost]
     public IActionResult ImportCharacter([FromBody] ImportCharacter characterString)
     {
         try
         {
             var characterResponse = _characterService.ImportCharacter(characterString);
+
+            return Ok(characterResponse);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    // PUT: Item/EquipItem
+    [HttpPut]
+    public IActionResult EquipItem([FromBody] EquipItem equipItem)
+    {
+        try
+        {
+            var characterResponse = _characterService.EquipItem(equipItem);
 
             return Ok(characterResponse);
         }

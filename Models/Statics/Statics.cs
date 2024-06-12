@@ -80,6 +80,17 @@ public static class Statics
             public const int Athletics  = 1;
             public const int Willpower  = 2;
             public const int Abstract   = 1;
+            public const int Harm       = 1;
+            public const int Fortitude  = 2;
+            public const int Accretion  = 0;
+            public const int Guile      = 2;
+            public const int Awareness  = 1;
+            public const int Charm      = 2;
+            public const int Hitpoints  = 10;
+            public const int Mana       = 0;
+            public const int Actions    = 1;
+            public const int Defense    = 0;
+            public const int Resist     = 0;
             // crafts
             public const int Combat     = 1;
             public const int Arcane     = 1;
@@ -92,19 +103,6 @@ public static class Statics
             public const int Travelling = 2;
             public const int Medicine   = 1;
             public const int Sail       = 1;
-            // abilities
-            public const int Harm       = 1;
-            public const int Fortitude  = 2;
-            public const int Accretion  = 0;
-            public const int Guile      = 2;
-            public const int Awareness  = 1;
-            public const int Charm      = 2;
-            // assets
-            public const int Hitpoints  = 10;
-            public const int Mana       = 0;
-            public const int Actions    = 1;
-            public const int Defense    = 0;
-            public const int Resist     = 0;
         }
 
         public const string Elf = "Elf";
@@ -115,6 +113,17 @@ public static class Statics
             public const int Athletics  = 2;
             public const int Willpower  = 1;
             public const int Abstract   = 2;
+            public const int Harm       = 1;
+            public const int Fortitude  = 1;
+            public const int Accretion  = 3;
+            public const int Guile      = 1;
+            public const int Awareness  = 2;
+            public const int Charm      = 0;
+            public const int Hitpoints  = 8;
+            public const int Mana       = 5;
+            public const int Actions    = 1;
+            public const int Defense    = 0;
+            public const int Resist     = 0;
             // crafts
             public const int Combat     = 2;
             public const int Arcane     = 2;
@@ -127,19 +136,6 @@ public static class Statics
             public const int Travelling = 1;
             public const int Medicine   = 1;
             public const int Sail       = 1;
-            // abilities
-            public const int Harm       = 1;
-            public const int Fortitude  = 1;
-            public const int Accretion  = 3;
-            public const int Guile      = 1;
-            public const int Awareness  = 2;
-            public const int Charm      = 0;
-            // assets
-            public const int Hitpoints  = 8;
-            public const int Mana       = 5;
-            public const int Actions    = 1;
-            public const int Defense    = 0;
-            public const int Resist     = 0;
         }
 
         public const string Dwarf = "Dwarf";
@@ -150,6 +146,17 @@ public static class Statics
             public const int Athletics  = 1;
             public const int Willpower  = 2;
             public const int Abstract   = 1;
+            public const int Harm       = 3;
+            public const int Fortitude  = 3;
+            public const int Accretion  = 0;
+            public const int Guile      = 0;
+            public const int Awareness  = 0;
+            public const int Charm      = -1;
+            public const int Hitpoints  = 15;
+            public const int Mana       = 0;
+            public const int Actions    = 1;
+            public const int Defense    = 0;
+            public const int Resist     = 0;
             // crafts
             public const int Combat     = 2;
             public const int Arcane     = 0;
@@ -162,19 +169,6 @@ public static class Statics
             public const int Travelling = 0;
             public const int Medicine   = 2;
             public const int Sail       = 0;
-            // abilities
-            public const int Harm       = 3;
-            public const int Fortitude  = 3;
-            public const int Accretion  = 0;
-            public const int Guile      = 0;
-            public const int Awareness  = 0;
-            public const int Charm      = -1;
-            // assets
-            public const int Hitpoints  = 15;
-            public const int Mana       = 0;
-            public const int Actions    = 1;
-            public const int Defense    = 0;
-            public const int Resist     = 0;
         }
 
         public static readonly List<string> All =
@@ -195,6 +189,17 @@ public static class Statics
             public const int Athletics  = 0;
             public const int Willpower  = 1;
             public const int Abstract   = 0;
+            public const int Harm       = 0;
+            public const int Fortitude  = 0;
+            public const int Accretion  = 0;
+            public const int Guile      = 0;
+            public const int Awareness  = 0;
+            public const int Charm      = 1;
+            public const int Hitpoints  = 2;
+            public const int Mana       = 0;
+            public const int Actions    = 0;
+            public const int Defense    = 2;
+            public const int Resist     = 0;
             // crafts
             public const int Combat     = 1;
             public const int Arcane     = 0;
@@ -207,19 +212,6 @@ public static class Statics
             public const int Travelling = 0;
             public const int Medicine   = 0;
             public const int Sail       = 0;
-            // abilities
-            public const int Harm       = 0;
-            public const int Fortitude  = 0;
-            public const int Accretion  = 0;
-            public const int Guile      = 0;
-            public const int Awareness  = 0;
-            public const int Charm      = 1;
-            // assets
-            public const int Hitpoints  = 2;
-            public const int Mana       = 0;
-            public const int Actions    = 0;
-            public const int Defense    = 2;
-            public const int Resist     = 0;
         }
 
         public const string Highborn = "Highborn";
@@ -230,6 +222,17 @@ public static class Statics
             public const int Athletics  = 0;
             public const int Willpower  = 0;
             public const int Abstract   = 1;
+            public const int Harm       = 0;
+            public const int Fortitude  = 0;
+            public const int Accretion  = 2;
+            public const int Guile      = 0;
+            public const int Awareness  = 0;
+            public const int Charm      = 1;
+            public const int Hitpoints  = 1;
+            public const int Mana       = 10;
+            public const int Actions    = 0;
+            public const int Defense    = 0;
+            public const int Resist     = 0;
             // crafts
             public const int Combat     = 1;
             public const int Arcane     = 1;
@@ -242,19 +245,6 @@ public static class Statics
             public const int Travelling = 0;
             public const int Medicine   = 0;
             public const int Sail       = 0;
-            // abilities
-            public const int Harm       = 0;
-            public const int Fortitude  = 0;
-            public const int Accretion  = 2;
-            public const int Guile      = 0;
-            public const int Awareness  = 0;
-            public const int Charm      = 1;
-            // assets
-            public const int Hitpoints  = 1;
-            public const int Mana       = 10;
-            public const int Actions    = 0;
-            public const int Defense    = 0;
-            public const int Resist     = 0;
         }
 
         public const string Undermountain = "Undermountain";
@@ -265,6 +255,17 @@ public static class Statics
             public const int Athletics  = 0;
             public const int Willpower  = 1;
             public const int Abstract   = 0;
+            public const int Harm       = 1;
+            public const int Fortitude  = 1;
+            public const int Accretion  = 0;
+            public const int Guile      = 0;
+            public const int Awareness  = 0;
+            public const int Charm      = -1;
+            public const int Hitpoints  = 5;
+            public const int Mana       = 0;
+            public const int Actions    = 0;
+            public const int Defense    = 5;
+            public const int Resist     = 5;
             // crafts
             public const int Combat     = 1;
             public const int Arcane     = 0;
@@ -277,19 +278,6 @@ public static class Statics
             public const int Travelling = 0;
             public const int Medicine   = 0;
             public const int Sail       = 0;
-            // abilities
-            public const int Harm       = 1;
-            public const int Fortitude  = 1;
-            public const int Accretion  = 0;
-            public const int Guile      = 0;
-            public const int Awareness  = 0;
-            public const int Charm      = -1;
-            // assets
-            public const int Hitpoints  = 5;
-            public const int Mana       = 0;
-            public const int Actions    = 0;
-            public const int Defense    = 5;
-            public const int Resist     = 5;
         }
 
         public static readonly List<string> All =
@@ -310,6 +298,17 @@ public static class Statics
             public const int Athletics  = 0;
             public const int Willpower  = 0;
             public const int Abstract   = 0;
+            public const int Harm       = 3;
+            public const int Fortitude  = 3;
+            public const int Accretion  = 0;
+            public const int Guile      = 0;
+            public const int Awareness  = 1;
+            public const int Charm      = 0;
+            public const int Hitpoints  = 15;
+            public const int Mana       = 0;
+            public const int Actions    = 0;
+            public const int Defense    = 5;
+            public const int Resist     = 0;
             // crafts
             public const int Combat     = 1;
             public const int Arcane     = 0;
@@ -322,19 +321,6 @@ public static class Statics
             public const int Travelling = 0;
             public const int Medicine   = 1;
             public const int Sail       = 1;
-            // abilities
-            public const int Harm       = 3;
-            public const int Fortitude  = 3;
-            public const int Accretion  = 0;
-            public const int Guile      = 0;
-            public const int Awareness  = 1;
-            public const int Charm      = 0;
-            // assets
-            public const int Hitpoints  = 15;
-            public const int Mana       = 0;
-            public const int Actions    = 0;
-            public const int Defense    = 5;
-            public const int Resist     = 0;
         }
 
         public const string Sorcery = "Sorcery";
@@ -345,6 +331,17 @@ public static class Statics
             public const int Athletics  = 0;
             public const int Willpower  = 0;
             public const int Abstract   = 2;
+            public const int Harm       = 0;
+            public const int Fortitude  = 2;
+            public const int Accretion  = 4;
+            public const int Guile      = 0;
+            public const int Awareness  = 0;
+            public const int Charm      = 1;
+            public const int Hitpoints  = 2;
+            public const int Mana       = 15;
+            public const int Actions    = 0;
+            public const int Defense    = 0;
+            public const int Resist     = 5;
             // crafts
             public const int Combat     = 0;
             public const int Arcane     = 2;
@@ -357,19 +354,6 @@ public static class Statics
             public const int Travelling = 0;
             public const int Medicine   = 0;
             public const int Sail       = 0;
-            // abilities
-            public const int Harm       = 0;
-            public const int Fortitude  = 2;
-            public const int Accretion  = 4;
-            public const int Guile      = 0;
-            public const int Awareness  = 0;
-            public const int Charm      = 1;
-            // assets
-            public const int Hitpoints  = 2;
-            public const int Mana       = 15;
-            public const int Actions    = 0;
-            public const int Defense    = 0;
-            public const int Resist     = 5;
         }
 
         public const string Tracking = "Tracking";
@@ -380,6 +364,17 @@ public static class Statics
             public const int Athletics  = 1;
             public const int Willpower  = 0;
             public const int Abstract   = 0;
+            public const int Harm       = 1;
+            public const int Fortitude  = 2;
+            public const int Accretion  = 0;
+            public const int Guile      = 1;
+            public const int Awareness  = 3;
+            public const int Charm      = 0;
+            public const int Hitpoints  = 5;
+            public const int Mana       = 0;
+            public const int Actions    = 0;
+            public const int Defense    = 1;
+            public const int Resist     = 0;
             // crafts
             public const int Combat     = 0;
             public const int Arcane     = 0;
@@ -392,19 +387,6 @@ public static class Statics
             public const int Travelling = 1;
             public const int Medicine   = 1;
             public const int Sail       = 1;
-            // abilities
-            public const int Harm       = 1;
-            public const int Fortitude  = 2;
-            public const int Accretion  = 0;
-            public const int Guile      = 1;
-            public const int Awareness  = 3;
-            public const int Charm      = 0;
-            // assets
-            public const int Hitpoints  = 5;
-            public const int Mana       = 0;
-            public const int Actions    = 0;
-            public const int Defense    = 1;
-            public const int Resist     = 0;
         }
 
         public static readonly List<string> All =
