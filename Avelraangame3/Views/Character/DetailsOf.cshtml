@@ -22,6 +22,12 @@
         <div class="col-2">
             <p class="mb-0">Character</p>
             <ul>
+                @if(Model.Details.IsLocked)
+                {
+                    <li>
+                        <span style="color: red">character locked</span>
+                    </li>
+                }
                 <li>
                     name: <span class="text-muted">@Model.Details.Name</span>
                 </li>
@@ -259,14 +265,6 @@ ADV @item.Crafts.Advocacy" />
             }
         </div>
     </div>
-    @* <img src="https://wow.zamimg.com/images/wow/icons/large/inv_sword_04.jpg" class="rounded-2" width="30" height="30" />
-    <img src="https://wow.zamimg.com/images/wow/icons/large/inv_shield_04.jpg" class="rounded-2" width="30" height="30" />
-    <img src="https://wow.zamimg.com/images/wow/icons/large/inv_chest_plate04.jpg" class="rounded-2" width="30" height="30" />
-    *@
-      
-   
-
-
 </div>
 
 <script>
