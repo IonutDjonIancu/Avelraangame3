@@ -2,6 +2,43 @@
 
 public static class Statics
 {
+    public static class EffortLevels
+    {
+        public const int Easy = 20;
+        public const int Medium = 40;
+        public const int Hard = 80;
+    }
+
+    public static class Crafts
+    {
+        public const string Combat = "Combat";
+        public const string Arcane = "Arcane";
+        public const string Alchemy = "Alchemy";
+        public const string Psionics = "Psionics";
+        public const string Hunting = "Hunting";
+        public const string Advocacy = "Advocacy";
+        public const string Mercantile = "Mercantile";
+        public const string Tactics = "Tactics";
+        public const string Travelling = "Travelling";
+        public const string Sailing = "Sailing";
+        public const string Medicine = "Medicine";
+
+        public static readonly List<string> All =
+        [
+            Combat, 
+            Arcane, 
+            Alchemy, 
+            Psionics, 
+            Hunting, 
+            Advocacy, 
+            Mercantile, 
+            Tactics, 
+            Travelling, 
+            Sailing, 
+            Medicine
+        ];
+    }
+
     public static class Items
     {
         public static class Weapons 

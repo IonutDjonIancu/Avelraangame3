@@ -99,6 +99,6 @@ public class CharacterCrafts
 public class CharacterSupplies
 {
     public List<Item> Items { get; set; } = [];
-    public List<Trinket> Trinkets { get; set; } = [];
+    public List<Trinket> Regalia { get; set; } = [];
 }
 

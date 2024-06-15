@@ -8,7 +8,7 @@ internal class Validators
     #region general
     internal static void ValidateAgainstNull(object obj, string message)
     {
-        if (obj == null)
+        if (obj is null)
             throw new Exception(message);
     }
 
@@ -74,6 +74,46 @@ internal class Validators
     #endregion
 
     #region items
+    internal static (Item, Character) ValidateSellItemAndReturn(EquipItem equipItem, ISnapshot ss)
+    {
+        ValidateAgainstNull(equipItem, "Equip item cannot be null.");
+        ValidateAgainstNull(ss, "Snapshot cannot be null.");
+        ValidateCharacterExists(equipItem.CharacterId, equipItem.SessionId, ss);
+
+        var character = ss.Characters.Find(s => s.Identity.Id == equipItem.CharacterId)!;
+
+        if (character.Details.IsLocked)
+            throw new Exception("Character is locked.");
+
+        if (!character.Supplies.Items.Exists(s => s.Id == equipItem.ItemId)
+            && !character.Supplies.Regalia.Exists(s => s.Id == equipItem.ItemId))
+            throw new Exception("No such item found in supplies.");
+
+        var item = character.Supplies.Items.Union(character.Supplies.Regalia).First(s => s.Id == equipItem.ItemId)!;
+
+        return (item, character);
+    }
+
+    internal static (Item, Character) ValidateUnequipItemAndReturn(EquipItem equipItem, ISnapshot ss)
+    {
+        ValidateAgainstNull(equipItem, "Equip item cannot be null.");
+        ValidateAgainstNull(ss, "Snapshot cannot be null.");
+        ValidateCharacterExists(equipItem.CharacterId, equipItem.SessionId, ss);
+
+        var character = ss.Characters.Find(s => s.Identity.Id == equipItem.CharacterId)!;
+        
+        if (character.Details.IsLocked)
+            throw new Exception("Character is locked.");
+
+        if (!character.Inventory.Exists(s => s.Id == equipItem.ItemId)
+            && !character.Regalia.Exists(s => s.Id == equipItem.ItemId))
+            throw new Exception("No such item found in inventory or regalia.");
+
+        var item = character.Inventory.Union(character.Regalia).First(s => s.Id == equipItem.ItemId)!;
+
+        return (item, character);   
+    }
+
     internal static (Item, Character) ValidateEquipItemAndReturn(EquipItem equipItem, ISnapshot ss)
     {
         ValidateAgainstNull(equipItem, "Equip item cannot be null.");
@@ -82,11 +122,14 @@ internal class Validators
 
         var character = ss.Characters.Find(s => s.Identity.Id == equipItem.CharacterId)!;
 
+        if (character.Details.IsLocked)
+            throw new Exception("Character is locked.");
+
         if (!character.Supplies.Items.Exists(s => s.Id == equipItem.ItemId)
-            && !character.Supplies.Trinkets.Exists(s => s.Id == equipItem.ItemId))
+            && !character.Supplies.Regalia.Exists(s => s.Id == equipItem.ItemId))
             throw new Exception("No such item found in supplies.");
 
-        var item = character.Supplies.Items.Union(character.Supplies.Trinkets).First(s => s.Id == equipItem.ItemId)!;
+        var item = character.Supplies.Items.Union(character.Supplies.Regalia).First(s => s.Id == equipItem.ItemId)!;
 
         if (item.Type == Statics.Items.Types.Trinket
             && character.Regalia.Count == 10)

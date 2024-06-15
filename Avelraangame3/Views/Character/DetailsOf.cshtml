@@ -17,7 +17,7 @@
 </div>
 
 @* Stats and assets *@
-<div class="container mt-3 footer-border" onclick="hideActions()">
+<div class="container mt-3 footer-border">
     <div class="row mt-3">
         <div class="col-2">
             <p class="mb-0">Character</p>
@@ -158,13 +158,15 @@
 
 @* Items *@
 <div class="container mt-3 footer-border">
+    @* Item actions *@
     <div id="inventoryActions" class="btn-group btn-group-sm pt-3" role="group" style="display:none">
         <button onclick="equipItem()" id="equipAction" type="button" class="btn btn-outline-dark actions secondary-darkgreen" style="display:none">&#8592; equip</button>
-        <button id="unequipAction" type="button" class="btn btn-outline-dark actions secondary-darkyellow" style="display:none">unequip &#8594;</button>
-        <button id="sellAction" type="button" class="btn btn-outline-dark actions" style="display:none">sell &#8605;</button>
+        <button onclick="unequipItem()" id="unequipAction" type="button" class="btn btn-outline-dark actions secondary-darkyellow" style="display:none">unequip &#8594;</button>
+        <button onclick="sellItem()" id="sellAction" type="button" class="btn btn-outline-dark actions" style="display:none">sell &#8605;</button>
         <button onclick="hideInventoryActions()" title="hide actions" type="button" class="btn btn-outline-dark actions secondary-darkred">&#10008;</button>
     </div>
     <div class="row mt-3">
+        @* Inventory *@
         <div class="col-4">
             <p class="mb-2">Inventory</p>
             @foreach(var item in Model.Inventory)
@@ -198,6 +200,7 @@ HUN @item.Crafts.Hunting MED @item.Crafts.Medicine
 ADV @item.Crafts.Advocacy" />
             }
         </div>
+        @* Regalia *@
         <div class="col-4">
             <p class="mb-2">Regalia</p>
             @foreach(var trinket in Model.Regalia)
@@ -231,6 +234,7 @@ HUN @trinket.Crafts.Hunting MED @trinket.Crafts.Medicine
 ADV @trinket.Crafts.Advocacy" />
             }
         </div>
+        @* Supplies *@
         <div class="col-4">
             <p class="mb-2">Supplies</p>
             @foreach (var item in Model.Supplies.Items)
@@ -262,6 +266,36 @@ ALC @item.Crafts.Alchemy TRA @item.Crafts.Travelling
 PSI @item.Crafts.Psionics SAI @item.Crafts.Sailing
 HUN @item.Crafts.Hunting MED @item.Crafts.Medicine
 ADV @item.Crafts.Advocacy" />
+            }
+            @foreach (var trinket in Model.Supplies.Regalia)
+            {
+                <img src="@trinket.Icon"
+                     class="rounded-2 item item-@trinket.Level"
+                     id="@trinket.Id"
+                     onclick="equipUnequipItem('@trinket.Id', 'equip', 'regalia')"
+                     title="@trinket.Name
+*** details ***
+@(trinket.HasTaint ? "tainted" : "untainted")
+@(trinket.IsPermanent ? "can be consumed" : "can only be worn")
+@trinket.Type.ToLower()
+level @trinket.Level
+value @trinket.Value
+*** stats
+STR @trinket.Stats.Strength AWA @trinket.Stats.Awareness
+ATH @trinket.Stats.Athletics CHA @trinket.Stats.Charm
+WIL @trinket.Stats.Willpower APC @trinket.Stats.Apcom
+ABS @trinket.Stats.Abstract DEF @trinket.Stats.Defense
+HAR @trinket.Stats.Harm RES @trinket.Stats.Resist
+FOR @trinket.Stats.Fortitude HPS @trinket.Stats.Hitpoints
+ACC @trinket.Stats.Accretion MAN @trinket.Stats.Mana
+GUI @trinket.Stats.Guile
+*** crafts
+COM @trinket.Crafts.Combat MER @trinket.Crafts.Mercantile
+ARC @trinket.Crafts.Arcane TAC @trinket.Crafts.Tactics
+ALC @trinket.Crafts.Alchemy TRA @trinket.Crafts.Travelling
+PSI @trinket.Crafts.Psionics SAI @trinket.Crafts.Sailing
+HUN @trinket.Crafts.Hunting MED @trinket.Crafts.Medicine
+ADV @trinket.Crafts.Advocacy" />
             }
         </div>
     </div>
@@ -314,8 +348,62 @@ ADV @item.Crafts.Advocacy" />
             }),
             success: function (response) {
                 localStorage.setItem("character", JSON.stringify(response));
-                console.log(response);
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                window.location.href = "/character/error?info=" + xhr.responseText;
+            }
+        });
+    }
 
+    const unequipItem = () => {
+
+        const characterId = localStorage.getItem("characterId");
+        const sessionId = localStorage.getItem("sessionId");
+        const itemId = localStorage.getItem("selectedItem");
+
+        if (!characterId) return;
+        $("#spinner").show();
+
+        $.ajax({
+            type: 'PUT',
+            url: '@Url.Action("UnequipItem", "Character")',
+            contentType: "application/json",
+            data: JSON.stringify({
+                itemId: itemId,
+                characterId: characterId,
+                sessionId: sessionId
+            }),
+            success: function (response) {
+                localStorage.setItem("character", JSON.stringify(response));
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                window.location.href = "/character/error?info=" + xhr.responseText;
+            }
+        });
+    }
+
+    const sellItem = () => {
+
+        const characterId = localStorage.getItem("characterId");
+        const sessionId = localStorage.getItem("sessionId");
+        const itemId = localStorage.getItem("selectedItem");
+
+        if (!characterId) return;
+        $("#spinner").show();
+
+        $.ajax({
+            type: 'PUT',
+            url: '@Url.Action("SellItem", "Character")',
+            contentType: "application/json",
+            data: JSON.stringify({
+                itemId: itemId,
+                characterId: characterId,
+                sessionId: sessionId
+            }),
+            success: function (response) {
+                localStorage.setItem("character", JSON.stringify(response));
                 location.reload();
             },
             error: function (xhr, status, error) {

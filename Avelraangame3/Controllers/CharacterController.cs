@@ -113,5 +113,37 @@ public class CharacterController(ICharacterService characterService) : Controlle
             return BadRequest(ex.Message);
         }
     }
+
+    // PUT: Item/UnequipItem
+    [HttpPut]
+    public IActionResult UnequipItem([FromBody] EquipItem equipItem)
+    {
+        try
+        {
+            var characterResponse = _characterService.UnequipItem(equipItem);
+
+            return Ok(characterResponse);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    // PUT: Item/UnequipItem
+    [HttpPut]
+    public IActionResult SellItem([FromBody] EquipItem equipItem)
+    {
+        try
+        {
+            var characterResponse = _characterService.SellItem(equipItem);
+
+            return Ok(characterResponse);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
     #endregion
 }

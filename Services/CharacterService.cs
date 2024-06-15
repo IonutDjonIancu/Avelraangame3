@@ -10,36 +10,82 @@ public interface ICharacterService
     ImportCharacterResponse ImportCharacter(ImportCharacter characterString);
 
     CharacterVm EquipItem(EquipItem equipItem);
+    CharacterVm UnequipItem(EquipItem equipItem);
+    CharacterVm SellItem(EquipItem equipItem);
 }
 
 public class CharacterService : ICharacterService
 {
     private readonly ISnapshot ss;
     private readonly IItemService _items;
+    private readonly IDiceService _dice;
 
     public CharacterService(
         ISnapshot snapshot,
-        IItemService itemService)
+        IItemService itemService,
+        IDiceService dice)
     {
         ss = snapshot;
         _items = itemService;
+        _dice = dice;
+    }
+
+    public CharacterVm SellItem(EquipItem equipItem)
+    {
+        var (item, character) = Validators.ValidateSellItemAndReturn(equipItem, ss)!;
+
+        var charVm = GetCharacter(character.Identity);
+
+        var roll = _dice.Roll_vs_effort(charVm, Statics.Crafts.Mercantile, Statics.EffortLevels.Easy);
+
+        if (item.Type == Statics.Items.Types.Trinket)
+        {
+            character.Supplies.Regalia.Remove(item as Trinket);
+        }
+        else
+        {
+            character.Supplies.Items.Remove(item);
+        }
+
+        character.Details.Wealth += (int)(item.Value * roll);
+
+        return GetCharacter(character.Identity);
+    }
+
+    public CharacterVm UnequipItem(EquipItem equipItem)
+    {
+        var (item, character) = Validators.ValidateUnequipItemAndReturn(equipItem, ss)!;
+
+        if (item.Type == Statics.Items.Types.Trinket)
+        {
+            character.Supplies.Regalia.Add(item as Trinket);
+            character.Regalia.Remove(item as Trinket);
+        } 
+        else
+        {
+            character.Supplies.Items.Add(item);
+            character.Inventory.Remove(item);
+        }
+
+        return GetCharacter(character.Identity);
     }
 
     public CharacterVm EquipItem(EquipItem equipItem)
     {
         var (item, character) = Validators.ValidateEquipItemAndReturn(equipItem, ss)!;
 
-        character.Inventory.Add(item);
-
         if (item.Type == Statics.Items.Types.Trinket)
         {
-            character.Supplies.Trinkets.Remove(item as Trinket);
-        } else
+            character.Regalia.Add(item as Trinket);
+            character.Supplies.Regalia.Remove(item as Trinket);
+        }
+        else
         {
+            character.Inventory.Add(item);
             character.Supplies.Items.Remove(item);
         }
 
-        return GetCharacter(character.Identity.Id, character.Identity.SessionId);
+        return GetCharacter(character.Identity);
     }
 
     public ImportCharacterResponse ImportCharacter(ImportCharacter import)
@@ -89,6 +135,11 @@ public class CharacterService : ICharacterService
         var characterEncr = EncryptionService.EncryptString(JsonConvert.SerializeObject(character));
 
         return characterEncr;
+    }
+
+    public CharacterVm GetCharacter(CharacterIdentity identity)
+    {
+        return GetCharacter(identity.Id, identity.SessionId);
     }
 
     public CharacterVm GetCharacter(Guid id, Guid sessionId)
