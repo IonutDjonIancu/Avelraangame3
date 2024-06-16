@@ -61,19 +61,52 @@ internal class Validators
             throw new Exception("Specialization not found.");
     }
 
-    internal static void ValidateCharacterExists(Guid characterId, Guid sessionId, ISnapshot ss)
+    internal static Character ValidateCharacterExists(Guid characterId, Guid sessionId, ISnapshot ss)
     {
-        var character = ss.Characters.FirstOrDefault(s => s.Identity.Id == characterId);
-
-        if (character is null)
-            throw new Exception("Character not found.");
+        var character = ss.Characters.FirstOrDefault(s => s.Identity.Id == characterId) ?? throw new Exception("Character not found.");
 
         if (character.Identity.SessionId != sessionId)
             throw new Exception("Wrong session id.");
+
+        return character;
     }
     #endregion
 
     #region items
+    internal static Character ValidateLevelupAndReturn(CharacterLevelup levelup, ISnapshot ss)
+    {
+        ValidateAgainstNull(levelup, "Level up cannot be null.");
+        ValidateString(levelup.Attribute, "Attribute missing or invalid for levelup.");
+        var character = ValidateCharacterExists(levelup.CharacterId, levelup.SessionId, ss);
+
+        if (!Statics.Stats.All.Union(Statics.Crafts.All).Contains(levelup.Attribute))
+            throw new Exception("Unable to find attribute in list of stats and crafts.");
+
+        if (character.Details.Levelup == 0)
+            throw new Exception("No lvl up points to distribute.");
+
+        int value;
+
+        if (Statics.Stats.All.Contains(levelup.Attribute))
+        {
+            var stat = typeof(CharacterStats).GetProperty(levelup.Attribute)!;
+            value = (int)stat.GetValue(character.Stats)!;
+        }
+        else
+        {
+            var craft = typeof(CharacterCrafts).GetProperty(levelup.Attribute)!;
+            value = (int)craft.GetValue(character.Crafts)!;
+        }
+
+        if (value <= 0 && character.Details.Levelup < 1)
+            throw new Exception("Not enough points to distribute.");
+
+        if (value >= 1 && character.Details.Levelup < value * 2)
+            throw new Exception("Not enough points to distribute.");
+
+        return character;
+    }
+
     internal static (Item, Character) ValidateSellItemAndReturn(EquipItem equipItem, ISnapshot ss)
     {
         ValidateAgainstNull(equipItem, "Equip item cannot be null.");

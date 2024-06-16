@@ -145,5 +145,21 @@ public class CharacterController(ICharacterService characterService) : Controlle
             return BadRequest(ex.Message);
         }
     }
+
+    // PUT: Item/Levelup
+    [HttpPut]
+    public IActionResult Levelup([FromBody] CharacterLevelup levelup)
+    {
+        try
+        {
+            var characterResponse = _characterService.Levelup(levelup);
+
+            return Ok(characterResponse);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
     #endregion
 }

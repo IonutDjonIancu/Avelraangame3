@@ -284,7 +284,7 @@ public class ItemService : IItemService
                         item.Crafts.Medicine += bonus;
                         break;
                     case 11:
-                        item.Crafts.Travelling += bonus;
+                        item.Crafts.Traveling += bonus;
                         break;
                     default:
                         throw new NotImplementedException();

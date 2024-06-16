@@ -1,5 +1,6 @@
 ﻿using Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Services;
 
@@ -12,6 +13,7 @@ public interface ICharacterService
     CharacterVm EquipItem(EquipItem equipItem);
     CharacterVm UnequipItem(EquipItem equipItem);
     CharacterVm SellItem(EquipItem equipItem);
+    CharacterVm Levelup(CharacterLevelup levelup);
 }
 
 public class CharacterService : ICharacterService
@@ -28,6 +30,37 @@ public class CharacterService : ICharacterService
         ss = snapshot;
         _items = itemService;
         _dice = dice;
+    }
+
+    public CharacterVm Levelup(CharacterLevelup levelup)
+    {
+        var character = Validators.ValidateLevelupAndReturn(levelup, ss);
+
+        int value;
+
+        if (Statics.Stats.All.Contains(levelup.Attribute))
+        {
+            var stat = typeof(CharacterStats).GetProperty(levelup.Attribute)!;
+            value = (int)stat.GetValue(character.Stats)!;
+            stat.SetValue(character.Stats, value + 1);
+        }
+        else
+        {
+            var craft = typeof(CharacterCrafts).GetProperty(levelup.Attribute)!;
+            value = (int)craft.GetValue(character.Crafts)!;
+            craft.SetValue(character.Crafts, value + 1);
+        }
+
+        if (value <= 0)
+        {
+            character.Details.Levelup -= 1;
+        }
+        else
+        {
+            character.Details.Levelup -= value * 2;
+        }
+
+        return GetCharacter(character.Identity);
     }
 
     public CharacterVm SellItem(EquipItem equipItem)
@@ -128,7 +161,11 @@ public class CharacterService : ICharacterService
         SetInventory(character);
         SetTrinkets(character);
 
-        character.Supplies.Items.AddRange(_items.GenerateRandomItems(5)); // TODO: remove
+
+        // *********************************************************************** TODO: remove this part ***********************************************************************
+        character.Supplies.Items.AddRange(_items.GenerateRandomItems(5));
+        character.Details.Levelup = 10000;
+        // *********************************************************************** TODO: remove this part ***********************************************************************
 
         ss.Characters.Add(character);
 
@@ -206,7 +243,7 @@ public class CharacterService : ICharacterService
         character.Actuals.Crafts.Advocacy += character.Crafts.Advocacy + character.Inventory.Select(s => s.Crafts.Advocacy).Sum() + character.Regalia.Select(s => s.Crafts.Advocacy).Sum();
         character.Actuals.Crafts.Mercantile += character.Crafts.Mercantile + character.Inventory.Select(s => s.Crafts.Mercantile).Sum() + character.Regalia.Select(s => s.Crafts.Mercantile).Sum();
         character.Actuals.Crafts.Tactics += character.Crafts.Tactics + character.Inventory.Select(s => s.Crafts.Tactics).Sum() + character.Regalia.Select(s => s.Crafts.Tactics).Sum();
-        character.Actuals.Crafts.Travelling += character.Crafts.Travelling + character.Inventory.Select(s => s.Crafts.Travelling).Sum() + character.Regalia.Select(s => s.Crafts.Travelling).Sum();
+        character.Actuals.Crafts.Traveling += character.Crafts.Traveling + character.Inventory.Select(s => s.Crafts.Traveling).Sum() + character.Regalia.Select(s => s.Crafts.Traveling).Sum();
         character.Actuals.Crafts.Medicine += character.Crafts.Medicine + character.Inventory.Select(s => s.Crafts.Medicine).Sum() + character.Regalia.Select(s => s.Crafts.Medicine).Sum();
         character.Actuals.Crafts.Sailing += character.Crafts.Sailing + character.Inventory.Select(s => s.Crafts.Sailing).Sum() + character.Regalia.Select(s => s.Crafts.Sailing).Sum();
     }
@@ -225,7 +262,7 @@ public class CharacterService : ICharacterService
             character.Crafts.Advocacy     = Statics.Races.Humans.Advocacy;
             character.Crafts.Mercantile   = Statics.Races.Humans.Mercantile;
             character.Crafts.Tactics      = Statics.Races.Humans.Tactics;
-            character.Crafts.Travelling   = Statics.Races.Humans.Travelling;
+            character.Crafts.Traveling   = Statics.Races.Humans.Traveling;
             character.Crafts.Medicine     = Statics.Races.Humans.Medicine;
             character.Crafts.Sailing      = Statics.Races.Humans.Sail;
         }
@@ -239,7 +276,7 @@ public class CharacterService : ICharacterService
             character.Crafts.Advocacy     = Statics.Races.Elves.Advocacy;
             character.Crafts.Mercantile   = Statics.Races.Elves.Mercantile;
             character.Crafts.Tactics      = Statics.Races.Elves.Tactics;
-            character.Crafts.Travelling   = Statics.Races.Elves.Travelling;
+            character.Crafts.Traveling   = Statics.Races.Elves.Traveling;
             character.Crafts.Medicine     = Statics.Races.Elves.Medicine;
             character.Crafts.Sailing      = Statics.Races.Elves.Sail;
         }
@@ -253,7 +290,7 @@ public class CharacterService : ICharacterService
             character.Crafts.Advocacy     = Statics.Races.Dwarves.Advocacy;
             character.Crafts.Mercantile   = Statics.Races.Dwarves.Mercantile;
             character.Crafts.Tactics      = Statics.Races.Dwarves.Tactics;
-            character.Crafts.Travelling   = Statics.Races.Dwarves.Travelling;
+            character.Crafts.Traveling   = Statics.Races.Dwarves.Traveling;
             character.Crafts.Medicine     = Statics.Races.Dwarves.Medicine;
             character.Crafts.Sailing      = Statics.Races.Dwarves.Sail;
         }
@@ -274,7 +311,7 @@ public class CharacterService : ICharacterService
             character.Crafts.Advocacy     += Statics.Cultures.Danarians.Advocacy;
             character.Crafts.Mercantile   += Statics.Cultures.Danarians.Mercantile;
             character.Crafts.Tactics      += Statics.Cultures.Danarians.Tactics;
-            character.Crafts.Travelling   += Statics.Cultures.Danarians.Travelling;
+            character.Crafts.Traveling   += Statics.Cultures.Danarians.Traveling;
             character.Crafts.Medicine     += Statics.Cultures.Danarians.Medicine;
             character.Crafts.Sailing      += Statics.Cultures.Danarians.Sail;
         }
@@ -288,7 +325,7 @@ public class CharacterService : ICharacterService
             character.Crafts.Advocacy     += Statics.Cultures.Highborns.Advocacy;
             character.Crafts.Mercantile   += Statics.Cultures.Highborns.Mercantile;
             character.Crafts.Tactics      += Statics.Cultures.Highborns.Tactics;
-            character.Crafts.Travelling   += Statics.Cultures.Highborns.Travelling;
+            character.Crafts.Traveling   += Statics.Cultures.Highborns.Traveling;
             character.Crafts.Medicine     += Statics.Cultures.Highborns.Medicine;
             character.Crafts.Sailing      += Statics.Cultures.Highborns.Sail;
         }
@@ -302,7 +339,7 @@ public class CharacterService : ICharacterService
             character.Crafts.Advocacy     += Statics.Cultures.Undermountains.Advocacy;
             character.Crafts.Mercantile   += Statics.Cultures.Undermountains.Mercantile;
             character.Crafts.Tactics      += Statics.Cultures.Undermountains.Tactics;
-            character.Crafts.Travelling   += Statics.Cultures.Undermountains.Travelling;
+            character.Crafts.Traveling   += Statics.Cultures.Undermountains.Traveling;
             character.Crafts.Medicine     += Statics.Cultures.Undermountains.Medicine;
             character.Crafts.Sailing      += Statics.Cultures.Undermountains.Sail;
         }
@@ -323,7 +360,7 @@ public class CharacterService : ICharacterService
             character.Crafts.Advocacy     += Statics.Specs.Warrings.Advocacy;
             character.Crafts.Mercantile   += Statics.Specs.Warrings.Mercantile;
             character.Crafts.Tactics      += Statics.Specs.Warrings.Tactics;
-            character.Crafts.Travelling   += Statics.Specs.Warrings.Travelling;
+            character.Crafts.Traveling   += Statics.Specs.Warrings.Traveling;
             character.Crafts.Medicine     += Statics.Specs.Warrings.Medicine;
             character.Crafts.Sailing      += Statics.Specs.Warrings.Sail;
         }
@@ -337,7 +374,7 @@ public class CharacterService : ICharacterService
             character.Crafts.Advocacy     += Statics.Specs.Sorcerys.Advocacy;
             character.Crafts.Mercantile   += Statics.Specs.Sorcerys.Mercantile;
             character.Crafts.Tactics      += Statics.Specs.Sorcerys.Tactics;
-            character.Crafts.Travelling   += Statics.Specs.Sorcerys.Travelling;
+            character.Crafts.Traveling   += Statics.Specs.Sorcerys.Traveling;
             character.Crafts.Medicine     += Statics.Specs.Sorcerys.Medicine;
             character.Crafts.Sailing      += Statics.Specs.Sorcerys.Sail;
         }
@@ -351,7 +388,7 @@ public class CharacterService : ICharacterService
             character.Crafts.Advocacy     += Statics.Specs.Trackings.Advocacy;
             character.Crafts.Mercantile   += Statics.Specs.Trackings.Mercantile;
             character.Crafts.Tactics      += Statics.Specs.Trackings.Tactics;
-            character.Crafts.Travelling   += Statics.Specs.Trackings.Travelling;
+            character.Crafts.Traveling   += Statics.Specs.Trackings.Traveling;
             character.Crafts.Medicine     += Statics.Specs.Trackings.Medicine;
             character.Crafts.Sailing      += Statics.Specs.Trackings.Sail;
         }

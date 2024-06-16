@@ -9,6 +9,44 @@ public static class Statics
         public const int Hard = 80;
     }
 
+    public static class Stats
+    {
+        public const string Strength = "Strength";
+        public const string Athletics = "Athletics";
+        public const string Willpower = "Willpower";
+        public const string Abstract = "Abstract";
+        public const string Harm = "Harm";
+        public const string Fortitude = "Fortitude";
+        public const string Accretion = "Accretion";
+        public const string Guile = "Guile";
+        public const string Awareness = "Awareness";
+        public const string Charm = "Charm";
+        public const string Defense = "Defense";
+        public const string Resist = "Resist";
+        public const string Apcom = "Apcom";
+        public const string Hitpoints = "Hitpoints";
+        public const string Mana = "Mana";
+
+        public static readonly List<string> All =
+        [
+            Strength,
+            Athletics,
+            Willpower,
+            Abstract,
+            Harm,
+            Fortitude,
+            Accretion,
+            Guile,
+            Awareness,
+            Charm,
+            Defense,
+            Resist,
+            Apcom,
+            Hitpoints,
+            Mana
+        ];
+    }
+
     public static class Crafts
     {
         public const string Combat = "Combat";
@@ -19,7 +57,7 @@ public static class Statics
         public const string Advocacy = "Advocacy";
         public const string Mercantile = "Mercantile";
         public const string Tactics = "Tactics";
-        public const string Travelling = "Travelling";
+        public const string Traveling = "Traveling";
         public const string Sailing = "Sailing";
         public const string Medicine = "Medicine";
 
@@ -33,7 +71,7 @@ public static class Statics
             Advocacy, 
             Mercantile, 
             Tactics, 
-            Travelling, 
+            Traveling, 
             Sailing, 
             Medicine
         ];
@@ -137,7 +175,7 @@ public static class Statics
             public const int Advocacy   = 2;
             public const int Mercantile = 2;
             public const int Tactics    = 1;
-            public const int Travelling = 2;
+            public const int Traveling  = 2;
             public const int Medicine   = 1;
             public const int Sail       = 1;
         }
@@ -170,7 +208,7 @@ public static class Statics
             public const int Advocacy   = 1;
             public const int Mercantile = 1;
             public const int Tactics    = 1;
-            public const int Travelling = 1;
+            public const int Traveling  = 1;
             public const int Medicine   = 1;
             public const int Sail       = 1;
         }
@@ -203,7 +241,7 @@ public static class Statics
             public const int Advocacy   = 1;
             public const int Mercantile = 2;
             public const int Tactics    = 1;
-            public const int Travelling = 0;
+            public const int Traveling  = 0;
             public const int Medicine   = 2;
             public const int Sail       = 0;
         }
@@ -246,7 +284,7 @@ public static class Statics
             public const int Advocacy   = 1;
             public const int Mercantile = 1;
             public const int Tactics    = 1;
-            public const int Travelling = 0;
+            public const int Traveling  = 0;
             public const int Medicine   = 0;
             public const int Sail       = 0;
         }
@@ -279,7 +317,7 @@ public static class Statics
             public const int Advocacy   = 1;
             public const int Mercantile = 0;
             public const int Tactics    = 1;
-            public const int Travelling = 0;
+            public const int Traveling  = 0;
             public const int Medicine   = 0;
             public const int Sail       = 0;
         }
@@ -312,7 +350,7 @@ public static class Statics
             public const int Advocacy   = 0;
             public const int Mercantile = 0;
             public const int Tactics    = 1;
-            public const int Travelling = 0;
+            public const int Traveling  = 0;
             public const int Medicine   = 0;
             public const int Sail       = 0;
         }
@@ -355,7 +393,7 @@ public static class Statics
             public const int Advocacy   = 0;
             public const int Mercantile = 0;
             public const int Tactics    = 1;
-            public const int Travelling = 0;
+            public const int Traveling  = 0;
             public const int Medicine   = 1;
             public const int Sail       = 1;
         }
@@ -388,7 +426,7 @@ public static class Statics
             public const int Advocacy   = 0;
             public const int Mercantile = 0;
             public const int Tactics    = 0;
-            public const int Travelling = 0;
+            public const int Traveling  = 0;
             public const int Medicine   = 0;
             public const int Sail       = 0;
         }
@@ -421,7 +459,7 @@ public static class Statics
             public const int Advocacy   = 0;
             public const int Mercantile = 0;
             public const int Tactics    = 0;
-            public const int Travelling = 1;
+            public const int Traveling  = 1;
             public const int Medicine   = 1;
             public const int Sail       = 1;
         }

@@ -25,7 +25,7 @@
                 @if(Model.Details.IsLocked)
                 {
                     <li>
-                        <span style="color: red">character locked</span>
+                        <span class="text-red">character locked</span>
                     </li>
                 }
                 <li>
@@ -43,11 +43,23 @@
                 <li>
                     entity level: <span class="text-muted">@Model.Details.Entitylevel</span>
                 </li>
-                <li>
-                    level up pts.: <span class="text-muted">@Model.Details.Levelup</span>
-                </li>
+                @if (Model.Details.Levelup > 0)
+                {
+                    <li>
+                        level up pts.: <span class="text-green">@Model.Details.Levelup</span>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        level up pts.: <span class="text-muted">@Model.Details.Levelup</span>
+                    </li>
+                }
                 <li>
                     wealth: <span class="text-muted">@Model.Details.Wealth</span>
+                </li>
+                <li>
+                    worth: <span class="text-muted">@Model.Details.Worth</span>
                 </li>
             </ul>
         </div>
@@ -55,32 +67,49 @@
             <p class="mb-0">Portrait</p>
             <img class="rounded-3 mt-3 ms-4 pointer" src="@Model.Details.Portrait" width="60" height="80" title="this is how your character will look on the battleboard"/>
         </div>
+        @* Stats *@
         <div class="col-2">
             <p class="mb-0">Stats</p>
             <ul>
                 <li>
-                    strength: <span class="text-muted">@Model.Actuals.Stats.Strength</span>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Strength')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    strength: 
+                    <span class="text-muted">@Model.Actuals.Stats.Strength</span>
                 </li>
                 <li>
-                    athletics: <span class="text-muted">@Model.Actuals.Stats.Athletics</span>
+                    <button onclick="levelup('Athletics')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    athletics: 
+                    <span class="text-muted">@Model.Actuals.Stats.Athletics</span>
                 </li>
                 <li>
-                    willpower: <span class="text-muted">@Model.Actuals.Stats.Willpower</span>
+                    <button onclick="levelup('Willpower')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    willpower: 
+                    <span class="text-muted">@Model.Actuals.Stats.Willpower</span>
                 </li>
                 <li>
-                    abstract: <span class="text-muted">@Model.Actuals.Stats.Abstract</span>
+                    <button onclick="levelup('Abstract')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    abstract: 
+                    <span class="text-muted">@Model.Actuals.Stats.Abstract</span>
                 </li>
                 <li>
-                    harm: <span class="text-muted">@Model.Actuals.Stats.Harm</span>
+                    <button onclick="levelup('Harm')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    harm: 
+                    <span class="text-muted">@Model.Actuals.Stats.Harm</span>
                 </li>
                  <li>
-                    fortitude: <span class="text-muted">@Model.Actuals.Stats.Fortitude</span>
+                    <button onclick="levelup('Fortitude')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    fortitude: 
+                    <span class="text-muted">@Model.Actuals.Stats.Fortitude</span>
                 </li>
                  <li>
-                    accretion: <span class="text-muted">@Model.Actuals.Stats.Accretion</span>
+                    <button onclick="levelup('Accretion')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    accretion: 
+                    <span class="text-muted">@Model.Actuals.Stats.Accretion</span>
                 </li>
                 <li>
-                    guile: <span class="text-muted">@Model.Actuals.Stats.Guile</span>
+                    <button onclick="levelup('Guile')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    guile: 
+                    <span class="text-muted">@Model.Actuals.Stats.Guile</span>
                 </li>
             </ul>
         </div>
@@ -88,54 +117,85 @@
             <p class="mb-0">Stats (continued)</p>
             <ul>
                 <li>
-                    awareness: <span class="text-muted">@Model.Actuals.Stats.Awareness</span>
+                    <button onclick="levelup('Awareness')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    awareness: 
+                    <span class="text-muted">@Model.Actuals.Stats.Awareness</span>
                 </li>
                 <li>
-                    charm: <span class="text-muted">@Model.Actuals.Stats.Charm</span>
+                    <button onclick="levelup('Charm')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    charm: 
+                    <span class="text-muted">@Model.Actuals.Stats.Charm</span>
                 </li>
                 <li>
-                    apcom: <span class="text-muted">@Model.Actuals.Stats.Apcom</span>
+                    <button onclick="levelup('Apcom')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    apcom: 
+                    <span class="text-muted">@Model.Actuals.Stats.Apcom</span>
                 </li>
                 <li>
-                    defense: <span class="text-muted">@Model.Actuals.Stats.Defense</span> %
+                    <button onclick="levelup('Defense')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    defense: 
+                    <span class="text-muted">@Model.Actuals.Stats.Defense</span> %
                 </li>
                 <li>
-                    resist: <span class="text-muted">@Model.Actuals.Stats.Resist</span> %
+                    <button onclick="levelup('Resist')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    resist: 
+                    <span class="text-muted">@Model.Actuals.Stats.Resist</span> %
                 </li>
                 <li>
-                    hitpoints: <span class="text-muted">@Model.Actuals.Stats.Hitpoints</span>
+                    <button onclick="levelup('Hitpoints')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    hitpoints: 
+                    <span class="text-muted">@Model.Actuals.Stats.Hitpoints</span>
                 </li>
                 <li>
-                    mana: <span class="text-muted">@Model.Actuals.Stats.Mana</span>
+                    <button onclick="levelup('Mana')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    mana: 
+                    <span class="text-muted">@Model.Actuals.Stats.Mana</span>
                 </li>
             </ul>
         </div>
+        @* Crafts *@
         <div class="col-2">
             <p class="mb-0">Crafts</p>
             <ul>
                 <li>
-                    combat: <span class="text-muted">@Model.Actuals.Crafts.Combat</span>
+                    <button onclick="levelup('Combat')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    combat: 
+                    <span class="text-muted">@Model.Actuals.Crafts.Combat</span>
                 </li>
                 <li>
-                    arcane: <span class="text-muted">@Model.Actuals.Crafts.Arcane</span>
+                    <button onclick="levelup('Arcane')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    arcane: 
+                    <span class="text-muted">@Model.Actuals.Crafts.Arcane</span>
                 </li>
                 <li>
-                    alchemy: <span class="text-muted">@Model.Actuals.Crafts.Alchemy</span>
+                    <button onclick="levelup('Alchemy')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    alchemy: 
+                    <span class="text-muted">@Model.Actuals.Crafts.Alchemy</span>
                 </li>
                 <li>
-                    psionics: <span class="text-muted">@Model.Actuals.Crafts.Psionics</span>
+                    <button onclick="levelup('Psionics')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    psionics: 
+                    <span class="text-muted">@Model.Actuals.Crafts.Psionics</span>
                 </li>
                 <li>
-                    hunting: <span class="text-muted">@Model.Actuals.Crafts.Hunting</span>
+                    <button onclick="levelup('Hunting')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    hunting: 
+                    <span class="text-muted">@Model.Actuals.Crafts.Hunting</span>
                 </li>
                 <li>
-                    advocacy: <span class="text-muted">@Model.Actuals.Crafts.Advocacy</span>
+                    <button onclick="levelup('Advocacy')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    advocacy: 
+                    <span class="text-muted">@Model.Actuals.Crafts.Advocacy</span>
                 </li>
                 <li>
-                    mercantile: <span class="text-muted">@Model.Actuals.Crafts.Mercantile</span>
+                    <button onclick="levelup('Mercantile')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    mercantile: 
+                    <span class="text-muted">@Model.Actuals.Crafts.Mercantile</span>
                 </li>
                 <li>
-                    tactics: <span class="text-muted">@Model.Actuals.Crafts.Tactics</span>
+                    <button onclick="levelup('Tactics')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    tactics: 
+                    <span class="text-muted">@Model.Actuals.Crafts.Tactics</span>
                 </li>
             </ul>
         </div>
@@ -143,13 +203,19 @@
             <p class="mb-0">Crafts (continued)</p>
             <ul>
                 <li>
-                    travelling: <span class="text-muted">@Model.Actuals.Crafts.Travelling</span>
+                    <button onclick="levelup('Traveling')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    traveling: 
+                    <span class="text-muted">@Model.Actuals.Crafts.Traveling</span>
                 </li>
                 <li>
-                    sailing: <span class="text-muted">@Model.Actuals.Crafts.Sailing</span>
+                    <button onclick="levelup('Sailing')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    sailing: 
+                    <span class="text-muted">@Model.Actuals.Crafts.Sailing</span>
                 </li>
                 <li>
-                    medicine: <span class="text-muted">@Model.Actuals.Crafts.Medicine</span>
+                    <button onclick="levelup('Medicine')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button>
+                    medicine: 
+                    <span class="text-muted">@Model.Actuals.Crafts.Medicine</span>
                 </li>
             </ul>
         </div>
@@ -167,7 +233,7 @@
     </div>
     <div class="row mt-3">
         @* Inventory *@
-        <div class="col-4">
+        <div class="col-3">
             <p class="mb-2">Inventory</p>
             @foreach(var item in Model.Inventory)
             {
@@ -194,14 +260,14 @@ GUI @item.Stats.Guile
 *** crafts ***
 COM @item.Crafts.Combat MER @item.Crafts.Mercantile
 ARC @item.Crafts.Arcane TAC @item.Crafts.Tactics
-ALC @item.Crafts.Alchemy TRA @item.Crafts.Travelling
+ALC @item.Crafts.Alchemy TRA @item.Crafts.Traveling
 PSI @item.Crafts.Psionics SAI @item.Crafts.Sailing
 HUN @item.Crafts.Hunting MED @item.Crafts.Medicine
 ADV @item.Crafts.Advocacy" />
             }
         </div>
         @* Regalia *@
-        <div class="col-4">
+        <div class="col-3">
             <p class="mb-2">Regalia</p>
             @foreach(var trinket in Model.Regalia)
             {
@@ -228,14 +294,14 @@ GUI @trinket.Stats.Guile
 *** crafts
 COM @trinket.Crafts.Combat MER @trinket.Crafts.Mercantile
 ARC @trinket.Crafts.Arcane TAC @trinket.Crafts.Tactics
-ALC @trinket.Crafts.Alchemy TRA @trinket.Crafts.Travelling
+ALC @trinket.Crafts.Alchemy TRA @trinket.Crafts.Traveling
 PSI @trinket.Crafts.Psionics SAI @trinket.Crafts.Sailing
 HUN @trinket.Crafts.Hunting MED @trinket.Crafts.Medicine
 ADV @trinket.Crafts.Advocacy" />
             }
         </div>
         @* Supplies *@
-        <div class="col-4">
+        <div class="col-6">
             <p class="mb-2">Supplies</p>
             @foreach (var item in Model.Supplies.Items)
             {
@@ -262,7 +328,7 @@ GUI @item.Stats.Guile
 *** crafts ***
 COM @item.Crafts.Combat MER @item.Crafts.Mercantile
 ARC @item.Crafts.Arcane TAC @item.Crafts.Tactics
-ALC @item.Crafts.Alchemy TRA @item.Crafts.Travelling
+ALC @item.Crafts.Alchemy TRA @item.Crafts.Traveling
 PSI @item.Crafts.Psionics SAI @item.Crafts.Sailing
 HUN @item.Crafts.Hunting MED @item.Crafts.Medicine
 ADV @item.Crafts.Advocacy" />
@@ -292,7 +358,7 @@ GUI @trinket.Stats.Guile
 *** crafts
 COM @trinket.Crafts.Combat MER @trinket.Crafts.Mercantile
 ARC @trinket.Crafts.Arcane TAC @trinket.Crafts.Tactics
-ALC @trinket.Crafts.Alchemy TRA @trinket.Crafts.Travelling
+ALC @trinket.Crafts.Alchemy TRA @trinket.Crafts.Traveling
 PSI @trinket.Crafts.Psionics SAI @trinket.Crafts.Sailing
 HUN @trinket.Crafts.Hunting MED @trinket.Crafts.Medicine
 ADV @trinket.Crafts.Advocacy" />
@@ -401,6 +467,33 @@ ADV @trinket.Crafts.Advocacy" />
                 itemId: itemId,
                 characterId: characterId,
                 sessionId: sessionId
+            }),
+            success: function (response) {
+                localStorage.setItem("character", JSON.stringify(response));
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                window.location.href = "/character/error?info=" + xhr.responseText;
+            }
+        });
+    }
+
+    const levelup = (attr) => {
+
+        const characterId = localStorage.getItem("characterId");
+        const sessionId = localStorage.getItem("sessionId");
+
+        if (!characterId) return;
+        $("#spinner").show();
+
+        $.ajax({
+            type: 'PUT',
+            url: '@Url.Action("Levelup", "Character")',
+            contentType: "application/json",
+            data: JSON.stringify({
+                characterId: characterId,
+                sessionId: sessionId,
+                attribute: attr
             }),
             success: function (response) {
                 localStorage.setItem("character", JSON.stringify(response));

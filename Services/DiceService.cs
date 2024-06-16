@@ -118,7 +118,7 @@ public class DiceService : IDiceService
             Statics.Crafts.Advocacy => Roll_d20() + charVm.Actuals.Crafts.Advocacy,
             Statics.Crafts.Mercantile => Roll_d20() + charVm.Actuals.Crafts.Mercantile,
             Statics.Crafts.Tactics => Roll_d20() + charVm.Actuals.Crafts.Tactics,
-            Statics.Crafts.Travelling => Roll_d20() + charVm.Actuals.Crafts.Travelling,
+            Statics.Crafts.Traveling => Roll_d20() + charVm.Actuals.Crafts.Traveling,
             Statics.Crafts.Sailing => Roll_d20() + charVm.Actuals.Crafts.Sailing,
             Statics.Crafts.Medicine => Roll_d20() + charVm.Actuals.Crafts.Medicine,
             _ => throw new Exception("Wrong craft provided.")

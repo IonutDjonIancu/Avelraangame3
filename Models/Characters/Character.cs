@@ -56,6 +56,7 @@ public class CharacterDetails
     public int Entitylevel { get; set; }
     public int Levelup { get; set; }
     public int Wealth { get; set; }
+    public int Worth { get; set; }
     public bool IsHidden { get; set; }
     public bool IsAlive { get; set; }
     public bool IsLocked { get; set; }
@@ -91,7 +92,7 @@ public class CharacterCrafts
     public int Advocacy { get; set; }
     public int Mercantile { get; set; }
     public int Tactics { get; set; }
-    public int Travelling { get; set; }
+    public int Traveling { get; set; }
     public int Medicine { get; set; }
     public int Sailing { get; set; }
 }
