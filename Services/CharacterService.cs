@@ -46,9 +46,9 @@ public class CharacterService : ICharacterService
         }
         else
         {
-            var craft = typeof(CharacterCrafts).GetProperty(levelup.Attribute)!;
-            value = (int)craft.GetValue(character.Crafts)!;
-            craft.SetValue(character.Crafts, value + 1);
+            var craft = typeof(CharacterFeats).GetProperty(levelup.Attribute)!;
+            value = (int)craft.GetValue(character.Feats)!;
+            craft.SetValue(character.Feats, value + 1);
         }
 
         if (value <= 0)
@@ -69,7 +69,7 @@ public class CharacterService : ICharacterService
 
         var charVm = GetCharacter(character.Identity);
 
-        var roll = _dice.Roll_vs_effort(charVm, Statics.Crafts.Mercantile, Statics.EffortLevels.Easy);
+        var roll = _dice.Roll_vs_effort(charVm, Statics.Feats.Social, Statics.EffortLevels.Easy);
 
         if (item.Type == Statics.Items.Types.Trinket)
         {
@@ -157,10 +157,8 @@ public class CharacterService : ICharacterService
 
         SetDetails(create, character);
         SetStats(create, character);
-        SetCrafts(create, character);
+        SetFeats(create, character);
         SetInventory(character);
-        SetTrinkets(character);
-
 
         // *********************************************************************** TODO: remove this part ***********************************************************************
         character.Supplies.Items.AddRange(_items.GenerateRandomItems(5));
@@ -195,7 +193,7 @@ public class CharacterService : ICharacterService
             },
             Details = character!.Details,
             Stats = character.Stats,
-            Crafts = character.Crafts,
+            Feats = character.Feats,
             Inventory = character.Inventory,
             Regalia = character.Regalia,
             Supplies = character.Supplies
@@ -219,80 +217,111 @@ public class CharacterService : ICharacterService
     #region private methods
     private static void CalculateActuals(CharacterBase character)
     {
-        character.Actuals.Stats.Strength    += character.Stats.Strength     + character.Inventory.Select(s => s.Stats.Strength).Sum()   + character.Regalia.Select(s => s.Stats.Strength).Sum();
-        character.Actuals.Stats.Athletics   += character.Stats.Athletics    + character.Inventory.Select(s => s.Stats.Athletics).Sum()  + character.Regalia.Select(s => s.Stats.Athletics).Sum();
-        character.Actuals.Stats.Willpower   += character.Stats.Willpower    + character.Inventory.Select(s => s.Stats.Willpower).Sum()  + character.Regalia.Select(s => s.Stats.Willpower).Sum();
-        character.Actuals.Stats.Abstract += character.Stats.Abstract + character.Inventory.Select(s => s.Stats.Abstract).Sum() + character.Regalia.Select(s => s.Stats.Abstract).Sum();
-        character.Actuals.Stats.Harm += character.Stats.Harm + character.Inventory.Select(s => s.Stats.Harm).Sum() + character.Regalia.Select(s => s.Stats.Harm).Sum();
-        character.Actuals.Stats.Fortitude += character.Stats.Fortitude + character.Inventory.Select(s => s.Stats.Fortitude).Sum() + character.Regalia.Select(s => s.Stats.Fortitude).Sum();
-        character.Actuals.Stats.Accretion += character.Stats.Accretion + character.Inventory.Select(s => s.Stats.Accretion).Sum() + character.Regalia.Select(s => s.Stats.Accretion).Sum();
-        character.Actuals.Stats.Guile += character.Stats.Guile + character.Inventory.Select(s => s.Stats.Guile).Sum() + character.Regalia.Select(s => s.Stats.Guile).Sum();
-        character.Actuals.Stats.Awareness += character.Stats.Awareness + character.Inventory.Select(s => s.Stats.Awareness).Sum() + character.Regalia.Select(s => s.Stats.Awareness).Sum();
-        character.Actuals.Stats.Charm += character.Stats.Charm + character.Inventory.Select(s => s.Stats.Charm).Sum() + character.Regalia.Select(s => s.Stats.Charm).Sum();
-        character.Actuals.Stats.Defense += character.Stats.Defense + character.Inventory.Select(s => s.Stats.Defense).Sum() + character.Regalia.Select(s => s.Stats.Defense).Sum();
-        character.Actuals.Stats.Resist += character.Stats.Resist + character.Inventory.Select(s => s.Stats.Resist).Sum() + character.Regalia.Select(s => s.Stats.Resist).Sum();
-        character.Actuals.Stats.Apcom += character.Stats.Apcom + character.Inventory.Select(s => s.Stats.Apcom).Sum() + character.Regalia.Select(s => s.Stats.Apcom).Sum();
-        character.Actuals.Stats.Hitpoints += character.Stats.Hitpoints + character.Inventory.Select(s => s.Stats.Hitpoints).Sum() + character.Regalia.Select(s => s.Stats.Hitpoints).Sum();
-        character.Actuals.Stats.Mana += character.Stats.Mana + character.Inventory.Select(s => s.Stats.Mana).Sum() + character.Regalia.Select(s => s.Stats.Mana).Sum();
-
-        character.Actuals.Crafts.Combat += character.Crafts.Combat + character.Inventory.Select(s => s.Crafts.Combat).Sum() + character.Regalia.Select(s => s.Crafts.Combat).Sum();
-        character.Actuals.Crafts.Arcane += character.Crafts.Arcane + character.Inventory.Select(s => s.Crafts.Arcane).Sum() + character.Regalia.Select(s => s.Crafts.Arcane).Sum();
-        character.Actuals.Crafts.Alchemy += character.Crafts.Alchemy + character.Inventory.Select(s => s.Crafts.Alchemy).Sum() + character.Regalia.Select(s => s.Crafts.Alchemy).Sum();
-        character.Actuals.Crafts.Psionics += character.Crafts.Psionics + character.Inventory.Select(s => s.Crafts.Psionics).Sum() + character.Regalia.Select(s => s.Crafts.Psionics).Sum();
-        character.Actuals.Crafts.Hunting += character.Crafts.Hunting + character.Inventory.Select(s => s.Crafts.Hunting).Sum() + character.Regalia.Select(s => s.Crafts.Hunting).Sum();
-        character.Actuals.Crafts.Advocacy += character.Crafts.Advocacy + character.Inventory.Select(s => s.Crafts.Advocacy).Sum() + character.Regalia.Select(s => s.Crafts.Advocacy).Sum();
-        character.Actuals.Crafts.Mercantile += character.Crafts.Mercantile + character.Inventory.Select(s => s.Crafts.Mercantile).Sum() + character.Regalia.Select(s => s.Crafts.Mercantile).Sum();
-        character.Actuals.Crafts.Tactics += character.Crafts.Tactics + character.Inventory.Select(s => s.Crafts.Tactics).Sum() + character.Regalia.Select(s => s.Crafts.Tactics).Sum();
-        character.Actuals.Crafts.Traveling += character.Crafts.Traveling + character.Inventory.Select(s => s.Crafts.Traveling).Sum() + character.Regalia.Select(s => s.Crafts.Traveling).Sum();
-        character.Actuals.Crafts.Medicine += character.Crafts.Medicine + character.Inventory.Select(s => s.Crafts.Medicine).Sum() + character.Regalia.Select(s => s.Crafts.Medicine).Sum();
-        character.Actuals.Crafts.Sailing += character.Crafts.Sailing + character.Inventory.Select(s => s.Crafts.Sailing).Sum() + character.Regalia.Select(s => s.Crafts.Sailing).Sum();
+        // stats
+        character.Actuals.Stats.Defense      += character.Stats.Defense      + character.Inventory.Select(s => s.Stats.Defense).Sum()      + character.Regalia.Select(s => s.Stats.Defense).Sum();
+        character.Actuals.Stats.Resist       += character.Stats.Resist       + character.Inventory.Select(s => s.Stats.Resist).Sum()       + character.Regalia.Select(s => s.Stats.Resist).Sum();
+        character.Actuals.Stats.Actions      += character.Stats.Actions      + character.Inventory.Select(s => s.Stats.Actions).Sum()      + character.Regalia.Select(s => s.Stats.Actions).Sum();
+        character.Actuals.Stats.Endurance    += character.Stats.Endurance    + character.Inventory.Select(s => s.Stats.Endurance).Sum()    + character.Regalia.Select(s => s.Stats.Endurance).Sum();
+        character.Actuals.Stats.Accretion    += character.Stats.Accretion    + character.Inventory.Select(s => s.Stats.Accretion).Sum()    + character.Regalia.Select(s => s.Stats.Accretion).Sum();
+        // feats roll                                                                                                                      
+        character.Actuals.Feats.Combat       += character.Feats.Combat       + character.Inventory.Select(s => s.Feats.Combat).Sum()       + character.Regalia.Select(s => s.Feats.Combat).Sum();
+        character.Actuals.Feats.Strength     += character.Feats.Strength     + character.Inventory.Select(s => s.Feats.Strength).Sum()     + character.Regalia.Select(s => s.Feats.Strength).Sum();
+        character.Actuals.Feats.Tactics      += character.Feats.Tactics      + character.Inventory.Select(s => s.Feats.Tactics).Sum()      + character.Regalia.Select(s => s.Feats.Tactics).Sum();
+        character.Actuals.Feats.Athletics    += character.Feats.Athletics    + character.Inventory.Select(s => s.Feats.Athletics).Sum()    + character.Regalia.Select(s => s.Feats.Athletics).Sum();
+        character.Actuals.Feats.Survival     += character.Feats.Survival     + character.Inventory.Select(s => s.Feats.Survival).Sum()     + character.Regalia.Select(s => s.Feats.Survival).Sum();
+        character.Actuals.Feats.Social       += character.Feats.Social       + character.Inventory.Select(s => s.Feats.Social).Sum()       + character.Regalia.Select(s => s.Feats.Social).Sum();
+        character.Actuals.Feats.Abstract     += character.Feats.Abstract     + character.Inventory.Select(s => s.Feats.Abstract).Sum()     + character.Regalia.Select(s => s.Feats.Abstract).Sum();
+        character.Actuals.Feats.Psionic      += character.Feats.Psionic      + character.Inventory.Select(s => s.Feats.Psionic).Sum()      + character.Regalia.Select(s => s.Feats.Psionic).Sum();
+        character.Actuals.Feats.Crafting     += character.Feats.Crafting     + character.Inventory.Select(s => s.Feats.Crafting).Sum()     + character.Regalia.Select(s => s.Feats.Crafting).Sum();
+        character.Actuals.Feats.Medicine     += character.Feats.Medicine     + character.Inventory.Select(s => s.Feats.Medicine).Sum()     + character.Regalia.Select(s => s.Feats.Medicine).Sum();
+        // feats effect
+        character.Actuals.Feats.CombatEff    += character.Feats.CombatEff    + character.Inventory.Select(s => s.Feats.CombatEff).Sum()    + character.Regalia.Select(s => s.Feats.CombatEff).Sum();
+        character.Actuals.Feats.StrengthEff  += character.Feats.StrengthEff  + character.Inventory.Select(s => s.Feats.StrengthEff).Sum()  + character.Regalia.Select(s => s.Feats.StrengthEff).Sum();
+        character.Actuals.Feats.TacticsEff   += character.Feats.TacticsEff   + character.Inventory.Select(s => s.Feats.TacticsEff).Sum()   + character.Regalia.Select(s => s.Feats.TacticsEff).Sum();
+        character.Actuals.Feats.AthleticsEff += character.Feats.AthleticsEff + character.Inventory.Select(s => s.Feats.AthleticsEff).Sum() + character.Regalia.Select(s => s.Feats.AthleticsEff).Sum();
+        character.Actuals.Feats.SurvivalEff  += character.Feats.SurvivalEff  + character.Inventory.Select(s => s.Feats.SurvivalEff).Sum()  + character.Regalia.Select(s => s.Feats.SurvivalEff).Sum();
+        character.Actuals.Feats.SocialEff    += character.Feats.SocialEff    + character.Inventory.Select(s => s.Feats.SocialEff).Sum()    + character.Regalia.Select(s => s.Feats.SocialEff).Sum();
+        character.Actuals.Feats.AbstractEff  += character.Feats.AbstractEff  + character.Inventory.Select(s => s.Feats.AbstractEff).Sum()  + character.Regalia.Select(s => s.Feats.AbstractEff).Sum();
+        character.Actuals.Feats.PsionicEff   += character.Feats.PsionicEff   + character.Inventory.Select(s => s.Feats.PsionicEff).Sum()   + character.Regalia.Select(s => s.Feats.PsionicEff).Sum();
+        character.Actuals.Feats.CraftingEff  += character.Feats.CraftingEff  + character.Inventory.Select(s => s.Feats.CraftingEff).Sum()  + character.Regalia.Select(s => s.Feats.CraftingEff).Sum();
+        character.Actuals.Feats.MedicineEff  += character.Feats.MedicineEff  + character.Inventory.Select(s => s.Feats.MedicineEff).Sum()  + character.Regalia.Select(s => s.Feats.MedicineEff).Sum();
     }
 
-    private static void SetCrafts(CreateCharacter create, Character character)
+    private static void SetFeats(CreateCharacter create, Character character)
     {
         // races
-        // sets the initial values
         if (create.Race == Statics.Races.Human)
         {
-            character.Crafts.Combat       = Statics.Races.Humans.Combat;
-            character.Crafts.Arcane       = Statics.Races.Humans.Arcane;
-            character.Crafts.Alchemy      = Statics.Races.Humans.Alchemy;
-            character.Crafts.Psionics     = Statics.Races.Humans.Psionics;
-            character.Crafts.Hunting      = Statics.Races.Humans.Hunting;
-            character.Crafts.Advocacy     = Statics.Races.Humans.Advocacy;
-            character.Crafts.Mercantile   = Statics.Races.Humans.Mercantile;
-            character.Crafts.Tactics      = Statics.Races.Humans.Tactics;
-            character.Crafts.Traveling   = Statics.Races.Humans.Traveling;
-            character.Crafts.Medicine     = Statics.Races.Humans.Medicine;
-            character.Crafts.Sailing      = Statics.Races.Humans.Sail;
+            // roll
+            character.Feats.Combat      += Statics.Races.Humans.Combat;
+            character.Feats.Strength    += Statics.Races.Humans.Strength;
+            character.Feats.Tactics     += Statics.Races.Humans.Tactics;
+            character.Feats.Athletics   += Statics.Races.Humans.Athletics;
+            character.Feats.Survival    += Statics.Races.Humans.Survival;
+            character.Feats.Social      += Statics.Races.Humans.Social;
+            character.Feats.Abstract    += Statics.Races.Humans.Abstract;
+            character.Feats.Psionic     += Statics.Races.Humans.Psionic;
+            character.Feats.Crafting    += Statics.Races.Humans.Crafting;
+            character.Feats.Medicine    += Statics.Races.Humans.Medicine;
+            // effect
+            character.Feats.CombatEff       += Statics.Races.Humans.CombatEff;
+            character.Feats.StrengthEff     += Statics.Races.Humans.StrengthEff;
+            character.Feats.TacticsEff      += Statics.Races.Humans.TacticsEff;
+            character.Feats.AthleticsEff    += Statics.Races.Humans.AthleticsEff;
+            character.Feats.SurvivalEff     += Statics.Races.Humans.SurvivalEff;
+            character.Feats.SocialEff       += Statics.Races.Humans.SocialEff;
+            character.Feats.AbstractEff     += Statics.Races.Humans.AbstractEff;
+            character.Feats.PsionicEff      += Statics.Races.Humans.PsionicEff;
+            character.Feats.CraftingEff     += Statics.Races.Humans.CraftingEff;
+            character.Feats.MedicineEff     += Statics.Races.Humans.MedicineEff;
         }
         else if (create.Race == Statics.Races.Elf)
         {
-            character.Crafts.Combat       = Statics.Races.Elves.Combat;
-            character.Crafts.Arcane       = Statics.Races.Elves.Arcane;
-            character.Crafts.Alchemy      = Statics.Races.Elves.Alchemy;
-            character.Crafts.Psionics     = Statics.Races.Elves.Psionics;
-            character.Crafts.Hunting      = Statics.Races.Elves.Hunting;
-            character.Crafts.Advocacy     = Statics.Races.Elves.Advocacy;
-            character.Crafts.Mercantile   = Statics.Races.Elves.Mercantile;
-            character.Crafts.Tactics      = Statics.Races.Elves.Tactics;
-            character.Crafts.Traveling   = Statics.Races.Elves.Traveling;
-            character.Crafts.Medicine     = Statics.Races.Elves.Medicine;
-            character.Crafts.Sailing      = Statics.Races.Elves.Sail;
+            character.Feats.Combat      += Statics.Races.Elfs.Combat;
+            character.Feats.Strength    += Statics.Races.Elfs.Strength;
+            character.Feats.Tactics     += Statics.Races.Elfs.Tactics;
+            character.Feats.Athletics   += Statics.Races.Elfs.Athletics;
+            character.Feats.Survival    += Statics.Races.Elfs.Survival;
+            character.Feats.Social      += Statics.Races.Elfs.Social;
+            character.Feats.Abstract    += Statics.Races.Elfs.Abstract;
+            character.Feats.Psionic     += Statics.Races.Elfs.Psionic;
+            character.Feats.Crafting    += Statics.Races.Elfs.Crafting;
+            character.Feats.Medicine    += Statics.Races.Elfs.Medicine;
+
+            character.Feats.CombatEff       += Statics.Races.Elfs.CombatEff;
+            character.Feats.StrengthEff     += Statics.Races.Elfs.StrengthEff;
+            character.Feats.TacticsEff      += Statics.Races.Elfs.TacticsEff;
+            character.Feats.AthleticsEff    += Statics.Races.Elfs.AthleticsEff;
+            character.Feats.SurvivalEff     += Statics.Races.Elfs.SurvivalEff;
+            character.Feats.SocialEff       += Statics.Races.Elfs.SocialEff;
+            character.Feats.AbstractEff     += Statics.Races.Elfs.AbstractEff;
+            character.Feats.PsionicEff      += Statics.Races.Elfs.PsionicEff;
+            character.Feats.CraftingEff     += Statics.Races.Elfs.CraftingEff;
+            character.Feats.MedicineEff     += Statics.Races.Elfs.MedicineEff;
         }
         else if (create.Race == Statics.Races.Dwarf)
         {
-            character.Crafts.Combat       = Statics.Races.Dwarves.Combat;
-            character.Crafts.Arcane       = Statics.Races.Dwarves.Arcane;
-            character.Crafts.Alchemy      = Statics.Races.Dwarves.Alchemy;
-            character.Crafts.Psionics     = Statics.Races.Dwarves.Psionics;
-            character.Crafts.Hunting      = Statics.Races.Dwarves.Hunting;
-            character.Crafts.Advocacy     = Statics.Races.Dwarves.Advocacy;
-            character.Crafts.Mercantile   = Statics.Races.Dwarves.Mercantile;
-            character.Crafts.Tactics      = Statics.Races.Dwarves.Tactics;
-            character.Crafts.Traveling   = Statics.Races.Dwarves.Traveling;
-            character.Crafts.Medicine     = Statics.Races.Dwarves.Medicine;
-            character.Crafts.Sailing      = Statics.Races.Dwarves.Sail;
+            character.Feats.Combat      += Statics.Races.Dwarfs.Combat;
+            character.Feats.Strength    += Statics.Races.Dwarfs.Strength;
+            character.Feats.Tactics     += Statics.Races.Dwarfs.Tactics;
+            character.Feats.Athletics   += Statics.Races.Dwarfs.Athletics;
+            character.Feats.Survival    += Statics.Races.Dwarfs.Survival;
+            character.Feats.Social      += Statics.Races.Dwarfs.Social;
+            character.Feats.Abstract    += Statics.Races.Dwarfs.Abstract;
+            character.Feats.Psionic     += Statics.Races.Dwarfs.Psionic;
+            character.Feats.Crafting    += Statics.Races.Dwarfs.Crafting;
+            character.Feats.Medicine    += Statics.Races.Dwarfs.Medicine;
+
+            character.Feats.CombatEff       += Statics.Races.Elfs.CombatEff;
+            character.Feats.StrengthEff     += Statics.Races.Elfs.StrengthEff;
+            character.Feats.TacticsEff      += Statics.Races.Elfs.TacticsEff;
+            character.Feats.AthleticsEff    += Statics.Races.Elfs.AthleticsEff;
+            character.Feats.SurvivalEff     += Statics.Races.Elfs.SurvivalEff;
+            character.Feats.SocialEff       += Statics.Races.Elfs.SocialEff;
+            character.Feats.AbstractEff     += Statics.Races.Elfs.AbstractEff;
+            character.Feats.PsionicEff      += Statics.Races.Elfs.PsionicEff;
+            character.Feats.CraftingEff     += Statics.Races.Elfs.CraftingEff;
+            character.Feats.MedicineEff     += Statics.Races.Elfs.MedicineEff;
         }
         else
         {
@@ -300,48 +329,77 @@ public class CharacterService : ICharacterService
         }
 
         // cultures
-        // they add to the initial values with +
         if (create.Culture == Statics.Cultures.Danarian)
         {
-            character.Crafts.Combat       += Statics.Cultures.Danarians.Combat;
-            character.Crafts.Arcane       += Statics.Cultures.Danarians.Arcane;
-            character.Crafts.Alchemy      += Statics.Cultures.Danarians.Alchemy;
-            character.Crafts.Psionics     += Statics.Cultures.Danarians.Psionics;
-            character.Crafts.Hunting      += Statics.Cultures.Danarians.Hunting;
-            character.Crafts.Advocacy     += Statics.Cultures.Danarians.Advocacy;
-            character.Crafts.Mercantile   += Statics.Cultures.Danarians.Mercantile;
-            character.Crafts.Tactics      += Statics.Cultures.Danarians.Tactics;
-            character.Crafts.Traveling   += Statics.Cultures.Danarians.Traveling;
-            character.Crafts.Medicine     += Statics.Cultures.Danarians.Medicine;
-            character.Crafts.Sailing      += Statics.Cultures.Danarians.Sail;
+            character.Feats.Combat      += Statics.Cultures.Danarians.Combat;
+            character.Feats.Strength    += Statics.Cultures.Danarians.Strength;
+            character.Feats.Tactics     += Statics.Cultures.Danarians.Tactics;
+            character.Feats.Athletics   += Statics.Cultures.Danarians.Athletics;
+            character.Feats.Survival    += Statics.Cultures.Danarians.Survival;
+            character.Feats.Social      += Statics.Cultures.Danarians.Social;
+            character.Feats.Abstract    += Statics.Cultures.Danarians.Abstract;
+            character.Feats.Psionic     += Statics.Cultures.Danarians.Psionic;
+            character.Feats.Crafting    += Statics.Cultures.Danarians.Crafting;
+            character.Feats.Medicine    += Statics.Cultures.Danarians.Medicine;
+
+            character.Feats.CombatEff       += Statics.Cultures.Danarians.CombatEff;
+            character.Feats.StrengthEff     += Statics.Cultures.Danarians.StrengthEff;
+            character.Feats.TacticsEff      += Statics.Cultures.Danarians.TacticsEff;
+            character.Feats.AthleticsEff    += Statics.Cultures.Danarians.AthleticsEff;
+            character.Feats.SurvivalEff     += Statics.Cultures.Danarians.SurvivalEff;
+            character.Feats.SocialEff       += Statics.Cultures.Danarians.SocialEff;
+            character.Feats.AbstractEff     += Statics.Cultures.Danarians.AbstractEff;
+            character.Feats.PsionicEff      += Statics.Cultures.Danarians.PsionicEff;
+            character.Feats.CraftingEff     += Statics.Cultures.Danarians.CraftingEff;
+            character.Feats.MedicineEff     += Statics.Cultures.Danarians.MedicineEff;
         }
         else if (create.Culture == Statics.Cultures.Highborn)
         {
-            character.Crafts.Combat       += Statics.Cultures.Highborns.Combat;
-            character.Crafts.Arcane       += Statics.Cultures.Highborns.Arcane;
-            character.Crafts.Alchemy      += Statics.Cultures.Highborns.Alchemy;
-            character.Crafts.Psionics     += Statics.Cultures.Highborns.Psionics;
-            character.Crafts.Hunting      += Statics.Cultures.Highborns.Hunting;
-            character.Crafts.Advocacy     += Statics.Cultures.Highborns.Advocacy;
-            character.Crafts.Mercantile   += Statics.Cultures.Highborns.Mercantile;
-            character.Crafts.Tactics      += Statics.Cultures.Highborns.Tactics;
-            character.Crafts.Traveling   += Statics.Cultures.Highborns.Traveling;
-            character.Crafts.Medicine     += Statics.Cultures.Highborns.Medicine;
-            character.Crafts.Sailing      += Statics.Cultures.Highborns.Sail;
+            character.Feats.Combat      += Statics.Cultures.Highborns.Combat;
+            character.Feats.Strength    += Statics.Cultures.Highborns.Strength;
+            character.Feats.Tactics     += Statics.Cultures.Highborns.Tactics;
+            character.Feats.Athletics   += Statics.Cultures.Highborns.Athletics;
+            character.Feats.Survival    += Statics.Cultures.Highborns.Survival;
+            character.Feats.Social      += Statics.Cultures.Highborns.Social;
+            character.Feats.Abstract    += Statics.Cultures.Highborns.Abstract;
+            character.Feats.Psionic     += Statics.Cultures.Highborns.Psionic;
+            character.Feats.Crafting    += Statics.Cultures.Highborns.Crafting;
+            character.Feats.Medicine    += Statics.Cultures.Highborns.Medicine;
+
+            character.Feats.CombatEff       += Statics.Cultures.Highborns.CombatEff;
+            character.Feats.StrengthEff     += Statics.Cultures.Highborns.StrengthEff;
+            character.Feats.TacticsEff      += Statics.Cultures.Highborns.TacticsEff;
+            character.Feats.AthleticsEff    += Statics.Cultures.Highborns.AthleticsEff;
+            character.Feats.SurvivalEff     += Statics.Cultures.Highborns.SurvivalEff;
+            character.Feats.SocialEff       += Statics.Cultures.Highborns.SocialEff;
+            character.Feats.AbstractEff     += Statics.Cultures.Highborns.AbstractEff;
+            character.Feats.PsionicEff      += Statics.Cultures.Highborns.PsionicEff;
+            character.Feats.CraftingEff     += Statics.Cultures.Highborns.CraftingEff;
+            character.Feats.MedicineEff     += Statics.Cultures.Highborns.MedicineEff;
         }
         else if (create.Culture == Statics.Cultures.Undermountain)
         {
-            character.Crafts.Combat       += Statics.Cultures.Undermountains.Combat;
-            character.Crafts.Arcane       += Statics.Cultures.Undermountains.Arcane;
-            character.Crafts.Alchemy      += Statics.Cultures.Undermountains.Alchemy;
-            character.Crafts.Psionics     += Statics.Cultures.Undermountains.Psionics;
-            character.Crafts.Hunting      += Statics.Cultures.Undermountains.Hunting;
-            character.Crafts.Advocacy     += Statics.Cultures.Undermountains.Advocacy;
-            character.Crafts.Mercantile   += Statics.Cultures.Undermountains.Mercantile;
-            character.Crafts.Tactics      += Statics.Cultures.Undermountains.Tactics;
-            character.Crafts.Traveling   += Statics.Cultures.Undermountains.Traveling;
-            character.Crafts.Medicine     += Statics.Cultures.Undermountains.Medicine;
-            character.Crafts.Sailing      += Statics.Cultures.Undermountains.Sail;
+            character.Feats.Combat      += Statics.Cultures.Undermountains.Combat;
+            character.Feats.Strength    += Statics.Cultures.Undermountains.Strength;
+            character.Feats.Tactics     += Statics.Cultures.Undermountains.Tactics;
+            character.Feats.Athletics   += Statics.Cultures.Undermountains.Athletics;
+            character.Feats.Survival    += Statics.Cultures.Undermountains.Survival;
+            character.Feats.Social      += Statics.Cultures.Undermountains.Social;
+            character.Feats.Abstract    += Statics.Cultures.Undermountains.Abstract;
+            character.Feats.Psionic     += Statics.Cultures.Undermountains.Psionic;
+            character.Feats.Crafting    += Statics.Cultures.Undermountains.Crafting;
+            character.Feats.Medicine    += Statics.Cultures.Undermountains.Medicine;
+
+            character.Feats.CombatEff       += Statics.Cultures.Undermountains.CombatEff;
+            character.Feats.StrengthEff     += Statics.Cultures.Undermountains.StrengthEff;
+            character.Feats.TacticsEff      += Statics.Cultures.Undermountains.TacticsEff;
+            character.Feats.AthleticsEff    += Statics.Cultures.Undermountains.AthleticsEff;
+            character.Feats.SurvivalEff     += Statics.Cultures.Undermountains.SurvivalEff;
+            character.Feats.SocialEff       += Statics.Cultures.Undermountains.SocialEff;
+            character.Feats.AbstractEff     += Statics.Cultures.Undermountains.AbstractEff;
+            character.Feats.PsionicEff      += Statics.Cultures.Undermountains.PsionicEff;
+            character.Feats.CraftingEff     += Statics.Cultures.Undermountains.CraftingEff;
+            character.Feats.MedicineEff     += Statics.Cultures.Undermountains.MedicineEff;
         }
         else
         {
@@ -349,48 +407,77 @@ public class CharacterService : ICharacterService
         }
 
         // spec
-        // also adds to the initial values with +
         if (create.Spec == Statics.Specs.Warring)
         {
-            character.Crafts.Combat       += Statics.Specs.Warrings.Combat;
-            character.Crafts.Arcane       += Statics.Specs.Warrings.Arcane;
-            character.Crafts.Alchemy      += Statics.Specs.Warrings.Alchemy;
-            character.Crafts.Psionics     += Statics.Specs.Warrings.Psionics;
-            character.Crafts.Hunting      += Statics.Specs.Warrings.Hunting;
-            character.Crafts.Advocacy     += Statics.Specs.Warrings.Advocacy;
-            character.Crafts.Mercantile   += Statics.Specs.Warrings.Mercantile;
-            character.Crafts.Tactics      += Statics.Specs.Warrings.Tactics;
-            character.Crafts.Traveling   += Statics.Specs.Warrings.Traveling;
-            character.Crafts.Medicine     += Statics.Specs.Warrings.Medicine;
-            character.Crafts.Sailing      += Statics.Specs.Warrings.Sail;
+            character.Feats.Combat      += Statics.Specs.Warrings.Combat;
+            character.Feats.Strength    += Statics.Specs.Warrings.Strength;
+            character.Feats.Tactics     += Statics.Specs.Warrings.Tactics;
+            character.Feats.Athletics   += Statics.Specs.Warrings.Athletics;
+            character.Feats.Survival    += Statics.Specs.Warrings.Survival;
+            character.Feats.Social      += Statics.Specs.Warrings.Social;
+            character.Feats.Abstract    += Statics.Specs.Warrings.Abstract;
+            character.Feats.Psionic     += Statics.Specs.Warrings.Psionic;
+            character.Feats.Crafting    += Statics.Specs.Warrings.Crafting;
+            character.Feats.Medicine    += Statics.Specs.Warrings.Medicine;
+
+            character.Feats.CombatEff       += Statics.Specs.Warrings.CombatEff;
+            character.Feats.StrengthEff     += Statics.Specs.Warrings.StrengthEff;
+            character.Feats.TacticsEff      += Statics.Specs.Warrings.TacticsEff;
+            character.Feats.AthleticsEff    += Statics.Specs.Warrings.AthleticsEff;
+            character.Feats.SurvivalEff     += Statics.Specs.Warrings.SurvivalEff;
+            character.Feats.SocialEff       += Statics.Specs.Warrings.SocialEff;
+            character.Feats.AbstractEff     += Statics.Specs.Warrings.AbstractEff;
+            character.Feats.PsionicEff      += Statics.Specs.Warrings.PsionicEff;
+            character.Feats.CraftingEff     += Statics.Specs.Warrings.CraftingEff;
+            character.Feats.MedicineEff     += Statics.Specs.Warrings.MedicineEff;
         }
         else if (create.Spec == Statics.Specs.Sorcery)
         {
-            character.Crafts.Combat       += Statics.Specs.Sorcerys.Combat;
-            character.Crafts.Arcane       += Statics.Specs.Sorcerys.Arcane;
-            character.Crafts.Alchemy      += Statics.Specs.Sorcerys.Alchemy;
-            character.Crafts.Psionics     += Statics.Specs.Sorcerys.Psionics;
-            character.Crafts.Hunting      += Statics.Specs.Sorcerys.Hunting;
-            character.Crafts.Advocacy     += Statics.Specs.Sorcerys.Advocacy;
-            character.Crafts.Mercantile   += Statics.Specs.Sorcerys.Mercantile;
-            character.Crafts.Tactics      += Statics.Specs.Sorcerys.Tactics;
-            character.Crafts.Traveling   += Statics.Specs.Sorcerys.Traveling;
-            character.Crafts.Medicine     += Statics.Specs.Sorcerys.Medicine;
-            character.Crafts.Sailing      += Statics.Specs.Sorcerys.Sail;
+            character.Feats.Combat      += Statics.Specs.Sorcerys.Combat;
+            character.Feats.Strength    += Statics.Specs.Sorcerys.Strength;
+            character.Feats.Tactics     += Statics.Specs.Sorcerys.Tactics;
+            character.Feats.Athletics   += Statics.Specs.Sorcerys.Athletics;
+            character.Feats.Survival    += Statics.Specs.Sorcerys.Survival;
+            character.Feats.Social      += Statics.Specs.Sorcerys.Social;
+            character.Feats.Abstract    += Statics.Specs.Sorcerys.Abstract;
+            character.Feats.Psionic     += Statics.Specs.Sorcerys.Psionic;
+            character.Feats.Crafting    += Statics.Specs.Sorcerys.Crafting;
+            character.Feats.Medicine    += Statics.Specs.Sorcerys.Medicine;
+
+            character.Feats.CombatEff       += Statics.Specs.Sorcerys.CombatEff;
+            character.Feats.StrengthEff     += Statics.Specs.Sorcerys.StrengthEff;
+            character.Feats.TacticsEff      += Statics.Specs.Sorcerys.TacticsEff;
+            character.Feats.AthleticsEff    += Statics.Specs.Sorcerys.AthleticsEff;
+            character.Feats.SurvivalEff     += Statics.Specs.Sorcerys.SurvivalEff;
+            character.Feats.SocialEff       += Statics.Specs.Sorcerys.SocialEff;
+            character.Feats.AbstractEff     += Statics.Specs.Sorcerys.AbstractEff;
+            character.Feats.PsionicEff      += Statics.Specs.Sorcerys.PsionicEff;
+            character.Feats.CraftingEff     += Statics.Specs.Sorcerys.CraftingEff;
+            character.Feats.MedicineEff     += Statics.Specs.Sorcerys.MedicineEff;
         }
         else if (create.Spec == Statics.Specs.Tracking)
         {
-            character.Crafts.Combat       += Statics.Specs.Trackings.Combat;
-            character.Crafts.Arcane       += Statics.Specs.Trackings.Arcane;
-            character.Crafts.Alchemy      += Statics.Specs.Trackings.Alchemy;
-            character.Crafts.Psionics     += Statics.Specs.Trackings.Psionics;
-            character.Crafts.Hunting      += Statics.Specs.Trackings.Hunting;
-            character.Crafts.Advocacy     += Statics.Specs.Trackings.Advocacy;
-            character.Crafts.Mercantile   += Statics.Specs.Trackings.Mercantile;
-            character.Crafts.Tactics      += Statics.Specs.Trackings.Tactics;
-            character.Crafts.Traveling   += Statics.Specs.Trackings.Traveling;
-            character.Crafts.Medicine     += Statics.Specs.Trackings.Medicine;
-            character.Crafts.Sailing      += Statics.Specs.Trackings.Sail;
+            character.Feats.Combat      += Statics.Specs.Trackings.Combat;
+            character.Feats.Strength    += Statics.Specs.Trackings.Strength;
+            character.Feats.Tactics     += Statics.Specs.Trackings.Tactics;
+            character.Feats.Athletics   += Statics.Specs.Trackings.Athletics;
+            character.Feats.Survival    += Statics.Specs.Trackings.Survival;
+            character.Feats.Social      += Statics.Specs.Trackings.Social;
+            character.Feats.Abstract    += Statics.Specs.Trackings.Abstract;
+            character.Feats.Psionic     += Statics.Specs.Trackings.Psionic;
+            character.Feats.Crafting    += Statics.Specs.Trackings.Crafting;
+            character.Feats.Medicine    += Statics.Specs.Trackings.Medicine;
+
+            character.Feats.CombatEff       += Statics.Specs.Trackings.CombatEff;
+            character.Feats.StrengthEff     += Statics.Specs.Trackings.StrengthEff;
+            character.Feats.TacticsEff      += Statics.Specs.Trackings.TacticsEff;
+            character.Feats.AthleticsEff    += Statics.Specs.Trackings.AthleticsEff;
+            character.Feats.SurvivalEff     += Statics.Specs.Trackings.SurvivalEff;
+            character.Feats.SocialEff       += Statics.Specs.Trackings.SocialEff;
+            character.Feats.AbstractEff     += Statics.Specs.Trackings.AbstractEff;
+            character.Feats.PsionicEff      += Statics.Specs.Trackings.PsionicEff;
+            character.Feats.CraftingEff     += Statics.Specs.Trackings.CraftingEff;
+            character.Feats.MedicineEff     += Statics.Specs.Trackings.MedicineEff;
         }
         else
         {
@@ -403,57 +490,28 @@ public class CharacterService : ICharacterService
         // races
         if (create.Race == Statics.Races.Human)
         {
-            character.Stats.Strength    = Statics.Races.Humans.Strength;
-            character.Stats.Athletics   = Statics.Races.Humans.Athletics;
-            character.Stats.Willpower   = Statics.Races.Humans.Willpower;
-            character.Stats.Abstract    = Statics.Races.Humans.Abstract;
-            character.Stats.Harm        = Statics.Races.Humans.Harm;
-            character.Stats.Fortitude   = Statics.Races.Humans.Fortitude;
-            character.Stats.Accretion   = Statics.Races.Humans.Accretion;
-            character.Stats.Guile       = Statics.Races.Humans.Guile;
-            character.Stats.Awareness   = Statics.Races.Humans.Awareness;
-            character.Stats.Charm       = Statics.Races.Humans.Charm;
-            character.Stats.Hitpoints   = Statics.Races.Humans.Hitpoints;
-            character.Stats.Mana        = Statics.Races.Humans.Mana;
-            character.Stats.Apcom       = Statics.Races.Humans.Actions;
-            character.Stats.Defense     = Statics.Races.Humans.Defense;
-            character.Stats.Resist      = Statics.Races.Humans.Resist;
+            character.Stats.Defense     += Statics.Races.Humans.Defense;
+            character.Stats.Resist      += Statics.Races.Humans.Resist;
+            character.Stats.Actions     += Statics.Races.Humans.Actions;
+            character.Stats.Endurance   += Statics.Races.Humans.Endurance;
+            character.Stats.Accretion   += Statics.Races.Humans.Accretion;
+            
         }
         else if (create.Race == Statics.Races.Elf)
         {
-            character.Stats.Strength = Statics.Races.Elves.Strength;
-            character.Stats.Athletics = Statics.Races.Elves.Athletics;
-            character.Stats.Willpower = Statics.Races.Elves.Willpower;
-            character.Stats.Abstract = Statics.Races.Elves.Abstract;
-            character.Stats.Harm = Statics.Races.Elves.Harm;
-            character.Stats.Fortitude = Statics.Races.Elves.Fortitude;
-            character.Stats.Accretion = Statics.Races.Elves.Accretion;
-            character.Stats.Guile = Statics.Races.Elves.Guile;
-            character.Stats.Awareness = Statics.Races.Elves.Awareness;
-            character.Stats.Charm = Statics.Races.Elves.Charm;
-            character.Stats.Hitpoints = Statics.Races.Elves.Hitpoints;
-            character.Stats.Mana = Statics.Races.Elves.Mana;
-            character.Stats.Apcom = Statics.Races.Elves.Actions;
-            character.Stats.Defense = Statics.Races.Elves.Defense;
-            character.Stats.Resist = Statics.Races.Elves.Resist;
+            character.Stats.Defense     += Statics.Races.Elfs.Defense;
+            character.Stats.Resist      += Statics.Races.Elfs.Resist;
+            character.Stats.Actions     += Statics.Races.Elfs.Actions;
+            character.Stats.Endurance   += Statics.Races.Elfs.Endurance;
+            character.Stats.Accretion   += Statics.Races.Elfs.Accretion;
         }
         else if (create.Race == Statics.Races.Dwarf)
         {
-            character.Stats.Strength = Statics.Races.Dwarves.Strength;
-            character.Stats.Athletics = Statics.Races.Dwarves.Athletics;
-            character.Stats.Willpower = Statics.Races.Dwarves.Willpower;
-            character.Stats.Abstract = Statics.Races.Dwarves.Abstract;
-            character.Stats.Harm = Statics.Races.Dwarves.Harm;
-            character.Stats.Fortitude = Statics.Races.Dwarves.Fortitude;
-            character.Stats.Accretion = Statics.Races.Dwarves.Accretion;
-            character.Stats.Guile = Statics.Races.Dwarves.Guile;
-            character.Stats.Awareness = Statics.Races.Dwarves.Awareness;
-            character.Stats.Charm = Statics.Races.Dwarves.Charm;
-            character.Stats.Hitpoints = Statics.Races.Dwarves.Hitpoints;
-            character.Stats.Mana = Statics.Races.Dwarves.Mana;
-            character.Stats.Apcom = Statics.Races.Dwarves.Actions;
-            character.Stats.Defense = Statics.Races.Dwarves.Defense;
-            character.Stats.Resist = Statics.Races.Dwarves.Resist;
+            character.Stats.Defense     += Statics.Races.Dwarfs.Defense;
+            character.Stats.Resist      += Statics.Races.Dwarfs.Resist;
+            character.Stats.Actions     += Statics.Races.Dwarfs.Actions;
+            character.Stats.Endurance   += Statics.Races.Dwarfs.Endurance;
+            character.Stats.Accretion   += Statics.Races.Dwarfs.Accretion;
         }
         else
         {
@@ -463,57 +521,27 @@ public class CharacterService : ICharacterService
         // cultures
         if (create.Culture == Statics.Cultures.Danarian)
         {
-            character.Stats.Strength    += Statics.Cultures.Danarians.Strength;
-            character.Stats.Athletics   += Statics.Cultures.Danarians.Athletics;
-            character.Stats.Willpower   += Statics.Cultures.Danarians.Willpower;
-            character.Stats.Abstract    += Statics.Cultures.Danarians.Abstract;
-            character.Stats.Harm        += Statics.Cultures.Danarians.Harm;
-            character.Stats.Fortitude   += Statics.Cultures.Danarians.Fortitude;
-            character.Stats.Accretion   += Statics.Cultures.Danarians.Accretion;
-            character.Stats.Guile       += Statics.Cultures.Danarians.Guile;
-            character.Stats.Awareness   += Statics.Cultures.Danarians.Awareness;
-            character.Stats.Charm       += Statics.Cultures.Danarians.Charm;
-            character.Stats.Hitpoints   += Statics.Cultures.Danarians.Hitpoints;
-            character.Stats.Mana        += Statics.Cultures.Danarians.Mana;
-            character.Stats.Apcom       += Statics.Cultures.Danarians.Actions;
             character.Stats.Defense     += Statics.Cultures.Danarians.Defense;
             character.Stats.Resist      += Statics.Cultures.Danarians.Resist;
+            character.Stats.Actions     += Statics.Cultures.Danarians.Actions;
+            character.Stats.Endurance   += Statics.Cultures.Danarians.Endurance;
+            character.Stats.Accretion   += Statics.Cultures.Danarians.Accretion;
         }
         else if (create.Culture == Statics.Cultures.Highborn)
         {
-            character.Stats.Strength    += Statics.Cultures.Highborns.Strength;
-            character.Stats.Athletics   += Statics.Cultures.Highborns.Athletics;
-            character.Stats.Willpower   += Statics.Cultures.Highborns.Willpower;
-            character.Stats.Abstract    += Statics.Cultures.Highborns.Abstract;
-            character.Stats.Harm        += Statics.Cultures.Highborns.Harm;
-            character.Stats.Fortitude   += Statics.Cultures.Highborns.Fortitude;
-            character.Stats.Accretion   += Statics.Cultures.Highborns.Accretion;
-            character.Stats.Guile       += Statics.Cultures.Highborns.Guile;
-            character.Stats.Awareness   += Statics.Cultures.Highborns.Awareness;
-            character.Stats.Charm       += Statics.Cultures.Highborns.Charm;
-            character.Stats.Hitpoints   += Statics.Cultures.Highborns.Hitpoints;
-            character.Stats.Mana        += Statics.Cultures.Highborns.Mana;
-            character.Stats.Apcom       += Statics.Cultures.Highborns.Actions;
             character.Stats.Defense     += Statics.Cultures.Highborns.Defense;
             character.Stats.Resist      += Statics.Cultures.Highborns.Resist;
+            character.Stats.Actions     += Statics.Cultures.Highborns.Actions;
+            character.Stats.Endurance   += Statics.Cultures.Highborns.Endurance;
+            character.Stats.Accretion   += Statics.Cultures.Highborns.Accretion;
         }
         else if (create.Culture == Statics.Cultures.Undermountain)
         {
-            character.Stats.Strength    += Statics.Cultures.Undermountains.Strength;
-            character.Stats.Athletics   += Statics.Cultures.Undermountains.Athletics;
-            character.Stats.Willpower   += Statics.Cultures.Undermountains.Willpower;
-            character.Stats.Abstract    += Statics.Cultures.Undermountains.Abstract;
-            character.Stats.Harm        += Statics.Cultures.Undermountains.Harm;
-            character.Stats.Fortitude   += Statics.Cultures.Undermountains.Fortitude;
-            character.Stats.Accretion   += Statics.Cultures.Undermountains.Accretion;
-            character.Stats.Guile       += Statics.Cultures.Undermountains.Guile;
-            character.Stats.Awareness   += Statics.Cultures.Undermountains.Awareness;
-            character.Stats.Charm       += Statics.Cultures.Undermountains.Charm;
-            character.Stats.Hitpoints   += Statics.Cultures.Undermountains.Hitpoints;
-            character.Stats.Mana        += Statics.Cultures.Undermountains.Mana;
-            character.Stats.Apcom       += Statics.Cultures.Undermountains.Actions;
             character.Stats.Defense     += Statics.Cultures.Undermountains.Defense;
             character.Stats.Resist      += Statics.Cultures.Undermountains.Resist;
+            character.Stats.Actions     += Statics.Cultures.Undermountains.Actions;
+            character.Stats.Endurance   += Statics.Cultures.Undermountains.Endurance;
+            character.Stats.Accretion   += Statics.Cultures.Undermountains.Accretion;
         }
         else
         {
@@ -523,57 +551,27 @@ public class CharacterService : ICharacterService
         // specs
         if (create.Spec == Statics.Specs.Warring)
         {
-            character.Stats.Strength    += Statics.Specs.Warrings.Strength;
-            character.Stats.Athletics   += Statics.Specs.Warrings.Athletics;
-            character.Stats.Willpower   += Statics.Specs.Warrings.Willpower;
-            character.Stats.Abstract    += Statics.Specs.Warrings.Abstract;
-            character.Stats.Harm        += Statics.Specs.Warrings.Harm;
-            character.Stats.Fortitude   += Statics.Specs.Warrings.Fortitude;
-            character.Stats.Accretion   += Statics.Specs.Warrings.Accretion;
-            character.Stats.Guile       += Statics.Specs.Warrings.Guile;
-            character.Stats.Awareness   += Statics.Specs.Warrings.Awareness;
-            character.Stats.Charm       += Statics.Specs.Warrings.Charm;
-            character.Stats.Hitpoints   += Statics.Specs.Warrings.Hitpoints;
-            character.Stats.Mana        += Statics.Specs.Warrings.Mana;
-            character.Stats.Apcom       += Statics.Specs.Warrings.Actions;
             character.Stats.Defense     += Statics.Specs.Warrings.Defense;
             character.Stats.Resist      += Statics.Specs.Warrings.Resist;
+            character.Stats.Actions     += Statics.Specs.Warrings.Actions;
+            character.Stats.Endurance   += Statics.Specs.Warrings.Endurance;
+            character.Stats.Accretion   += Statics.Specs.Warrings.Accretion;
         }
         else if (create.Spec == Statics.Specs.Sorcery)
         {
-            character.Stats.Strength    += Statics.Specs.Sorcerys.Strength;
-            character.Stats.Athletics   += Statics.Specs.Sorcerys.Athletics;
-            character.Stats.Willpower   += Statics.Specs.Sorcerys.Willpower;
-            character.Stats.Abstract    += Statics.Specs.Sorcerys.Abstract;
-            character.Stats.Harm        += Statics.Specs.Sorcerys.Harm;
-            character.Stats.Fortitude   += Statics.Specs.Sorcerys.Fortitude;
-            character.Stats.Accretion   += Statics.Specs.Sorcerys.Accretion;
-            character.Stats.Guile       += Statics.Specs.Sorcerys.Guile;
-            character.Stats.Awareness   += Statics.Specs.Sorcerys.Awareness;
-            character.Stats.Charm       += Statics.Specs.Sorcerys.Charm;
-            character.Stats.Hitpoints   += Statics.Specs.Sorcerys.Hitpoints;
-            character.Stats.Mana        += Statics.Specs.Sorcerys.Mana;
-            character.Stats.Apcom       += Statics.Specs.Sorcerys.Actions;
             character.Stats.Defense     += Statics.Specs.Sorcerys.Defense;
             character.Stats.Resist      += Statics.Specs.Sorcerys.Resist;
+            character.Stats.Actions     += Statics.Specs.Sorcerys.Actions;
+            character.Stats.Endurance   += Statics.Specs.Sorcerys.Endurance;
+            character.Stats.Accretion   += Statics.Specs.Sorcerys.Accretion;
         }
         else if (create.Spec == Statics.Specs.Tracking)
         {
-            character.Stats.Strength    += Statics.Specs.Trackings.Strength;
-            character.Stats.Athletics   += Statics.Specs.Trackings.Athletics;
-            character.Stats.Willpower   += Statics.Specs.Trackings.Willpower;
-            character.Stats.Abstract    += Statics.Specs.Trackings.Abstract;
-            character.Stats.Harm        += Statics.Specs.Trackings.Harm;
-            character.Stats.Fortitude   += Statics.Specs.Trackings.Fortitude;
-            character.Stats.Accretion   += Statics.Specs.Trackings.Accretion;
-            character.Stats.Guile       += Statics.Specs.Trackings.Guile;
-            character.Stats.Awareness   += Statics.Specs.Trackings.Awareness;
-            character.Stats.Charm       += Statics.Specs.Trackings.Charm;
-            character.Stats.Hitpoints   += Statics.Specs.Trackings.Hitpoints;
-            character.Stats.Mana        += Statics.Specs.Trackings.Mana;
-            character.Stats.Apcom       += Statics.Specs.Trackings.Actions;
             character.Stats.Defense     += Statics.Specs.Trackings.Defense;
             character.Stats.Resist      += Statics.Specs.Trackings.Resist;
+            character.Stats.Actions     += Statics.Specs.Trackings.Actions;
+            character.Stats.Endurance   += Statics.Specs.Trackings.Endurance;
+            character.Stats.Accretion   += Statics.Specs.Trackings.Accretion;
         }
         else
         {
@@ -600,13 +598,10 @@ public class CharacterService : ICharacterService
     private void SetInventory(Character character)
     {
         character.Inventory.Add(_items.GenerateSpecificItem(Statics.Items.Types.Weapon));
-    }
 
-    private void SetTrinkets(Character character)
-    {
-        character.Regalia.Add(_items.GenerateRandomTrinket());
+        var trinket = (Trinket)_items.GenerateSpecificItem(Statics.Items.Types.Trinket);
+        character.Regalia.Add(trinket);
     }
-
     #endregion
 }
 

@@ -15,7 +15,7 @@ public class Item
     public int Level { get; set; }
 
     public CharacterStats Stats { get; set; } = new();
-    public CharacterCrafts Crafts { get; set; } = new();
+    public CharacterFeats Feats { get; set; } = new();
 
     public int Value { get; set; }
 }

@@ -6,7 +6,7 @@ public class CharacterBase
 {
     public CharacterDetails Details { get; set; } = new();
     public CharacterStats Stats { get; set; } = new();
-    public CharacterCrafts Crafts { get; set; } = new();
+    public CharacterFeats Feats { get; set; } = new();
     public CharacterActuals Actuals { get; set; } = new();
 
     [MaxLength(4)]
@@ -43,7 +43,7 @@ public class CharacterIdentityVm
 public class CharacterActuals
 {
     public CharacterStats Stats { get; set; } = new();
-    public CharacterCrafts Crafts { get; set; } = new();
+    public CharacterFeats Feats { get; set; } = new();
 }
 
 public class CharacterDetails
@@ -65,36 +65,36 @@ public class CharacterDetails
 
 public class CharacterStats
 {
-    public int Strength { get; set; }
-    public int Athletics { get; set; }
-    public int Willpower { get; set; }
-    public int Abstract { get; set; }
-    public int Harm { get; set; }
-    public int Fortitude { get; set; }
-    public int Accretion { get; set; }
-    public int Guile { get; set; }
-    public int Awareness { get; set; }
-    public int Charm { get; set; }
-    public int Apcom { get; set; }
     public int Defense { get; set; }
     public int Resist { get; set; }
-    public int Hitpoints { get; set; }
-    public int Mana { get; set; }
+    public int Actions { get; set; }
+    public int Endurance { get; set; }
+    public int Accretion { get; set; }
 }
 
-public class CharacterCrafts
+public class CharacterFeats
 {
-    public int Combat { get; set; } // dodge included
-    public int Arcane { get; set; }
-    public int Alchemy { get; set; } // potions and wearables
-    public int Psionics { get; set; }
-    public int Hunting { get; set; } // hide included
-    public int Advocacy { get; set; }
-    public int Mercantile { get; set; }
+    public int Combat { get; set; }
+    public int Strength { get; set; }
     public int Tactics { get; set; }
-    public int Traveling { get; set; }
+    public int Athletics { get; set; }
+    public int Survival { get; set; }
+    public int Social { get; set; }
+    public int Abstract { get; set; }
+    public int Psionic { get; set; }
+    public int Crafting { get; set; }
     public int Medicine { get; set; }
-    public int Sailing { get; set; }
+
+    public int CombatEff { get; set; }
+    public int StrengthEff { get; set; }
+    public int TacticsEff { get; set; }
+    public int AthleticsEff { get; set; }
+    public int SurvivalEff { get; set; }
+    public int SocialEff { get; set; }
+    public int AbstractEff { get; set; }
+    public int PsionicEff { get; set; }
+    public int CraftingEff { get; set; }
+    public int MedicineEff { get; set; }
 }
 
 public class CharacterSupplies

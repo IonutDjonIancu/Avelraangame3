@@ -79,7 +79,7 @@ internal class Validators
         ValidateString(levelup.Attribute, "Attribute missing or invalid for levelup.");
         var character = ValidateCharacterExists(levelup.CharacterId, levelup.SessionId, ss);
 
-        if (!Statics.Stats.All.Union(Statics.Crafts.All).Contains(levelup.Attribute))
+        if (!Statics.Stats.All.Union(Statics.Feats.All).Contains(levelup.Attribute))
             throw new Exception("Unable to find attribute in list of stats and crafts.");
 
         if (character.Details.Levelup == 0)
@@ -94,8 +94,8 @@ internal class Validators
         }
         else
         {
-            var craft = typeof(CharacterCrafts).GetProperty(levelup.Attribute)!;
-            value = (int)craft.GetValue(character.Crafts)!;
+            var craft = typeof(CharacterFeats).GetProperty(levelup.Attribute)!;
+            value = (int)craft.GetValue(character.Feats)!;
         }
 
         if (value <= 0 && character.Details.Levelup < 1)

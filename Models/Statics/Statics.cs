@@ -4,75 +4,53 @@ public static class Statics
 {
     public static class EffortLevels
     {
-        public const int Easy = 20;
-        public const int Medium = 40;
-        public const int Hard = 80;
+        public const int Easy = 20; // up to
+        public const int Medium = 40; // up to
+        public const int Hard = 80; // up to
     }
 
     public static class Stats
     {
-        public const string Strength = "Strength";
-        public const string Athletics = "Athletics";
-        public const string Willpower = "Willpower";
-        public const string Abstract = "Abstract";
-        public const string Harm = "Harm";
-        public const string Fortitude = "Fortitude";
-        public const string Accretion = "Accretion";
-        public const string Guile = "Guile";
-        public const string Awareness = "Awareness";
-        public const string Charm = "Charm";
         public const string Defense = "Defense";
-        public const string Resist = "Resist";
-        public const string Apcom = "Apcom";
-        public const string Hitpoints = "Hitpoints";
-        public const string Mana = "Mana";
+        public const string Resist = "Resist ";
+        public const string Actions = "Actions";
+        public const string Endurance = "Endurance";
+        public const string Accretion = "Accretion";
 
         public static readonly List<string> All =
         [
-            Strength,
-            Athletics,
-            Willpower,
-            Abstract,
-            Harm,
-            Fortitude,
-            Accretion,
-            Guile,
-            Awareness,
-            Charm,
             Defense,
             Resist,
-            Apcom,
-            Hitpoints,
-            Mana
+            Actions,
+            Endurance,
+            Accretion
         ];
     }
 
-    public static class Crafts
+    public static class Feats
     {
         public const string Combat = "Combat";
-        public const string Arcane = "Arcane";
-        public const string Alchemy = "Alchemy";
-        public const string Psionics = "Psionics";
-        public const string Hunting = "Hunting";
-        public const string Advocacy = "Advocacy";
-        public const string Mercantile = "Mercantile";
+        public const string Strength = "Strength";
         public const string Tactics = "Tactics";
-        public const string Traveling = "Traveling";
-        public const string Sailing = "Sailing";
+        public const string Athletics = "Athletics";
+        public const string Survival = "Survival";
+        public const string Social = "Social";
+        public const string Abstract = "Abstract";
+        public const string Psionic = "Psionic";
+        public const string Crafting = "Crafting";
         public const string Medicine = "Medicine";
 
         public static readonly List<string> All =
         [
-            Combat, 
-            Arcane, 
-            Alchemy, 
-            Psionics, 
-            Hunting, 
-            Advocacy, 
-            Mercantile, 
-            Tactics, 
-            Traveling, 
-            Sailing, 
+            Combat,
+            Strength,
+            Tactics,
+            Athletics,
+            Survival,
+            Social,
+            Abstract,
+            Psionic,
+            Crafting,
             Medicine
         ];
     }
@@ -131,6 +109,21 @@ public static class Statics
             ];
         }
 
+        public static class Trinkets
+        {
+            public const string AmuletOfStars = "Amulet of stars";
+            public const string RingOfTheMadji = "Ring of the madji";
+            public const string SashOfTenebre = "Sash of tenebre";
+            public const string SealOfSojourn = "Seal of sojourn";
+            public const string RuneOfTheSouthernStar = "Rune of the southern star";
+            public const string OrbOfSepteracorium = "Orb of septeracorium";
+
+            public static readonly List<string> All =
+            [
+                AmuletOfStars, RingOfTheMadji, SashOfTenebre, SealOfSojourn, RuneOfTheSouthernStar, OrbOfSepteracorium
+            ];
+        }
+
         public static class Types
         {
             public const string Weapon = "Weapon";
@@ -151,99 +144,96 @@ public static class Statics
         public static class Humans
         {
             // stats
-            public const int Strength   = 1;
-            public const int Athletics  = 1;
-            public const int Willpower  = 2;
-            public const int Abstract   = 1;
-            public const int Harm       = 1;
-            public const int Fortitude  = 2;
-            public const int Accretion  = 0;
-            public const int Guile      = 2;
-            public const int Awareness  = 1;
-            public const int Charm      = 2;
-            public const int Hitpoints  = 10;
-            public const int Mana       = 0;
-            public const int Actions    = 1;
-            public const int Defense    = 0;
-            public const int Resist     = 0;
-            // crafts
-            public const int Combat     = 1;
-            public const int Arcane     = 1;
-            public const int Alchemy    = 1;
-            public const int Psionics   = 1;
-            public const int Hunting    = 1;
-            public const int Advocacy   = 2;
-            public const int Mercantile = 2;
-            public const int Tactics    = 1;
-            public const int Traveling  = 2;
-            public const int Medicine   = 1;
-            public const int Sail       = 1;
+            public const int Defense        = 1;
+            public const int Resist         = 1;
+            public const int Actions        = 1;
+            public const int Endurance      = 15;
+            public const int Accretion      = 5;
+            // feats
+            public const int Combat         = 1;
+            public const int CombatEff      = 5;
+            public const int Strength       = 1;
+            public const int StrengthEff    = 2;
+            public const int Tactics        = 2;
+            public const int TacticsEff     = 5;
+            public const int Athletics      = 1;
+            public const int AthleticsEff   = 2;
+            public const int Survival       = 1;
+            public const int SurvivalEff    = 3;
+            public const int Social         = 2;
+            public const int SocialEff      = 5;
+            public const int Abstract       = 1;
+            public const int AbstractEff    = 1;
+            public const int Psionic        = 3;
+            public const int PsionicEff     = 3;
+            public const int Crafting       = 3;
+            public const int CraftingEff    = 3;
+            public const int Medicine       = 2;
+            public const int MedicineEff    = 2;
         }
 
         public const string Elf = "Elf";
-        public static class Elves
+        public static class Elfs
         {
             // stats
-            public const int Strength   = 1;
-            public const int Athletics  = 2;
-            public const int Willpower  = 1;
-            public const int Abstract   = 2;
-            public const int Harm       = 1;
-            public const int Fortitude  = 1;
-            public const int Accretion  = 3;
-            public const int Guile      = 1;
-            public const int Awareness  = 2;
-            public const int Charm      = 0;
-            public const int Hitpoints  = 8;
-            public const int Mana       = 5;
-            public const int Actions    = 1;
-            public const int Defense    = 0;
-            public const int Resist     = 0;
-            // crafts
-            public const int Combat     = 2;
-            public const int Arcane     = 2;
-            public const int Alchemy    = 0;
-            public const int Psionics   = 1;
-            public const int Hunting    = 2;
-            public const int Advocacy   = 1;
-            public const int Mercantile = 1;
-            public const int Tactics    = 1;
-            public const int Traveling  = 1;
-            public const int Medicine   = 1;
-            public const int Sail       = 1;
+            public const int Defense        = 1;
+            public const int Resist         = 1;
+            public const int Actions        = 1;
+            public const int Endurance      = 10;
+            public const int Accretion      = 10;
+            // feats
+            public const int Combat         = 1;
+            public const int CombatEff      = 3;
+            public const int Strength       = 2;
+            public const int StrengthEff    = 1;
+            public const int Tactics        = 1;
+            public const int TacticsEff     = 0;
+            public const int Athletics      = 2;
+            public const int AthleticsEff   = 5;
+            public const int Survival       = 1;
+            public const int SurvivalEff    = 5;
+            public const int Social         = 1;
+            public const int SocialEff      = 3;
+            public const int Abstract       = 5;
+            public const int AbstractEff    = 5;
+            public const int Psionic        = 1;
+            public const int PsionicEff     = 0;
+            public const int Crafting       = 2;
+            public const int CraftingEff    = 5;
+            public const int Medicine       = 5;
+            public const int MedicineEff    = 3;
         }
 
         public const string Dwarf = "Dwarf";
-        public static class Dwarves
+        public static class Dwarfs
         {
             // stats
-            public const int Strength   = 2;
-            public const int Athletics  = 1;
-            public const int Willpower  = 2;
-            public const int Abstract   = 1;
-            public const int Harm       = 3;
-            public const int Fortitude  = 3;
-            public const int Accretion  = 0;
-            public const int Guile      = 0;
-            public const int Awareness  = 0;
-            public const int Charm      = -1;
-            public const int Hitpoints  = 15;
-            public const int Mana       = 0;
-            public const int Actions    = 1;
-            public const int Defense    = 0;
-            public const int Resist     = 0;
-            // crafts
-            public const int Combat     = 2;
-            public const int Arcane     = 0;
-            public const int Alchemy    = 0;
-            public const int Psionics   = 1;
-            public const int Hunting    = 2;
-            public const int Advocacy   = 1;
-            public const int Mercantile = 2;
-            public const int Tactics    = 1;
-            public const int Traveling  = 0;
-            public const int Medicine   = 2;
-            public const int Sail       = 0;
+            public const int Defense        = 3;
+            public const int Resist         = 3;
+            public const int Actions        = 1;
+            public const int Endurance      = 20;
+            public const int Accretion      = 1;
+            // feats
+            public const int Combat         = 2;
+            public const int CombatEff      = 5;
+            public const int Strength       = 1;
+            public const int StrengthEff    = 5;
+            public const int Tactics        = 2;
+            public const int TacticsEff     = 2;
+            public const int Athletics      = 1;
+            public const int AthleticsEff   = -2;
+            public const int Survival       = 3;
+            public const int SurvivalEff    = 5;
+            public const int Social         = 1;
+            public const int SocialEff      = 1;
+            public const int Abstract       = 5;
+            public const int AbstractEff    = 1;
+            public const int Psionic        = 1;
+            public const int PsionicEff     = 3;
+            public const int Crafting       = 5;
+            public const int CraftingEff    = 5;
+            public const int Medicine       = 1;
+            public const int MedicineEff    = 2;
         }
 
         public static readonly List<string> All =
@@ -260,99 +250,96 @@ public static class Statics
         public static class Danarians
         {
             // stats
-            public const int Strength   = 0;
-            public const int Athletics  = 0;
-            public const int Willpower  = 1;
-            public const int Abstract   = 0;
-            public const int Harm       = 0;
-            public const int Fortitude  = 0;
-            public const int Accretion  = 0;
-            public const int Guile      = 0;
-            public const int Awareness  = 0;
-            public const int Charm      = 1;
-            public const int Hitpoints  = 2;
-            public const int Mana       = 0;
-            public const int Actions    = 0;
-            public const int Defense    = 2;
-            public const int Resist     = 0;
-            // crafts
-            public const int Combat     = 1;
-            public const int Arcane     = 0;
-            public const int Alchemy    = 0;
-            public const int Psionics   = 0;
-            public const int Hunting    = 0;
-            public const int Advocacy   = 1;
-            public const int Mercantile = 1;
-            public const int Tactics    = 1;
-            public const int Traveling  = 0;
-            public const int Medicine   = 0;
-            public const int Sail       = 0;
+            public const int Defense        = 2;
+            public const int Resist         = 0;
+            public const int Actions        = 0;
+            public const int Endurance      = 3;
+            public const int Accretion      = 0;
+            // feats
+            public const int Combat         = 1;
+            public const int CombatEff      = 1;
+            public const int Strength       = 0;
+            public const int StrengthEff    = 0;
+            public const int Tactics        = 3;
+            public const int TacticsEff     = 5;
+            public const int Athletics      = 0;
+            public const int AthleticsEff   = 0;
+            public const int Survival       = -1;
+            public const int SurvivalEff    = -2;
+            public const int Social         = 2;
+            public const int SocialEff      = 2;
+            public const int Abstract       = 0;
+            public const int AbstractEff    = 0;
+            public const int Psionic        = 1;
+            public const int PsionicEff     = 1;
+            public const int Crafting       = 1;
+            public const int CraftingEff    = 0;
+            public const int Medicine       = 1;
+            public const int MedicineEff    = 1;
         }
 
         public const string Highborn = "Highborn";
         public static class Highborns
         {
             // stats
-            public const int Strength   = 0;
-            public const int Athletics  = 0;
-            public const int Willpower  = 0;
-            public const int Abstract   = 1;
-            public const int Harm       = 0;
-            public const int Fortitude  = 0;
-            public const int Accretion  = 2;
-            public const int Guile      = 0;
-            public const int Awareness  = 0;
-            public const int Charm      = 1;
-            public const int Hitpoints  = 1;
-            public const int Mana       = 10;
-            public const int Actions    = 0;
-            public const int Defense    = 0;
-            public const int Resist     = 0;
-            // crafts
-            public const int Combat     = 1;
-            public const int Arcane     = 1;
-            public const int Alchemy    = 0;
-            public const int Psionics   = 0;
-            public const int Hunting    = 0;
-            public const int Advocacy   = 1;
-            public const int Mercantile = 0;
-            public const int Tactics    = 1;
-            public const int Traveling  = 0;
-            public const int Medicine   = 0;
-            public const int Sail       = 0;
+            public const int Defense        = 0;
+            public const int Resist         = 0;
+            public const int Actions        = 0;
+            public const int Endurance      = 1;
+            public const int Accretion      = 10;
+            // feats
+            public const int Combat         = 2;
+            public const int CombatEff      = 2;
+            public const int Strength       = 2;
+            public const int StrengthEff    = 2;
+            public const int Tactics        = 3;
+            public const int TacticsEff     = 3;
+            public const int Athletics      = 0;
+            public const int AthleticsEff   = 3;
+            public const int Survival       = -1;
+            public const int SurvivalEff    = -1;
+            public const int Social         = 2;
+            public const int SocialEff      = 1;
+            public const int Abstract       = 1;
+            public const int AbstractEff    = 1;
+            public const int Psionic        = 2;
+            public const int PsionicEff     = 2;
+            public const int Crafting       = 5;
+            public const int CraftingEff    = 4;
+            public const int Medicine       = 4;
+            public const int MedicineEff    = 4;
         }
 
         public const string Undermountain = "Undermountain";
         public static class Undermountains
         {
             // stats
-            public const int Strength   = 1;
-            public const int Athletics  = 0;
-            public const int Willpower  = 1;
-            public const int Abstract   = 0;
-            public const int Harm       = 1;
-            public const int Fortitude  = 1;
-            public const int Accretion  = 0;
-            public const int Guile      = 0;
-            public const int Awareness  = 0;
-            public const int Charm      = -1;
-            public const int Hitpoints  = 5;
-            public const int Mana       = 0;
-            public const int Actions    = 0;
-            public const int Defense    = 5;
-            public const int Resist     = 5;
-            // crafts
-            public const int Combat     = 1;
-            public const int Arcane     = 0;
-            public const int Alchemy    = 0;
-            public const int Psionics   = 0;
-            public const int Hunting    = 1;
-            public const int Advocacy   = 0;
-            public const int Mercantile = 0;
-            public const int Tactics    = 1;
-            public const int Traveling  = 0;
-            public const int Medicine   = 0;
-            public const int Sail       = 0;
+            public const int Defense        = 5;
+            public const int Resist         = 5;
+            public const int Actions        = 0;
+            public const int Endurance      = 5;
+            public const int Accretion      = 0;
+            // feats
+            public const int Combat         = 3;
+            public const int CombatEff      = 3;
+            public const int Strength       = 3;
+            public const int StrengthEff    = 3;
+            public const int Tactics        = 1;
+            public const int TacticsEff     = 0;
+            public const int Athletics      = -1;
+            public const int AthleticsEff   = -1;
+            public const int Survival       = 3;
+            public const int SurvivalEff    = 5;
+            public const int Social         = 1;
+            public const int SocialEff      = 0;
+            public const int Abstract       = 3;
+            public const int AbstractEff    = 0;
+            public const int Psionic        = 1;
+            public const int PsionicEff     = 2;
+            public const int Crafting       = 5;
+            public const int CraftingEff    = 5;
+            public const int Medicine       = 2;
+            public const int MedicineEff    = 2;
         }
 
         public static readonly List<string> All =
@@ -369,99 +356,96 @@ public static class Statics
         public static class Warrings
         {
             // stats
-            public const int Strength   = 1;
-            public const int Athletics  = 0;
-            public const int Willpower  = 0;
-            public const int Abstract   = 0;
-            public const int Harm       = 3;
-            public const int Fortitude  = 3;
-            public const int Accretion  = 0;
-            public const int Guile      = 0;
-            public const int Awareness  = 1;
-            public const int Charm      = 0;
-            public const int Hitpoints  = 15;
-            public const int Mana       = 0;
-            public const int Actions    = 0;
-            public const int Defense    = 5;
-            public const int Resist     = 0;
-            // crafts
-            public const int Combat     = 1;
-            public const int Arcane     = 0;
-            public const int Alchemy    = 0;
-            public const int Psionics   = 0;
-            public const int Hunting    = 0;
-            public const int Advocacy   = 0;
-            public const int Mercantile = 0;
-            public const int Tactics    = 1;
-            public const int Traveling  = 0;
-            public const int Medicine   = 1;
-            public const int Sail       = 1;
+            public const int Defense        = 5;
+            public const int Resist         = 0;
+            public const int Actions        = 1;
+            public const int Endurance      = 15;
+            public const int Accretion      = 0;
+            // feats
+            public const int Combat         = 5;
+            public const int CombatEff      = 5;
+            public const int Strength       = 4;
+            public const int StrengthEff    = 4;
+            public const int Tactics        = 4;
+            public const int TacticsEff     = 1;
+            public const int Athletics      = 2;
+            public const int AthleticsEff   = 1;
+            public const int Survival       = 2;
+            public const int SurvivalEff    = 2;
+            public const int Social         = 1;
+            public const int SocialEff      = -1;
+            public const int Abstract       = -1;
+            public const int AbstractEff    = -1;
+            public const int Psionic        = 0;
+            public const int PsionicEff     = 0;
+            public const int Crafting       = 1;
+            public const int CraftingEff    = 1;
+            public const int Medicine       = 2;
+            public const int MedicineEff    = 2;
         }
 
         public const string Sorcery = "Sorcery";
         public static class Sorcerys
         {
             // stats
-            public const int Strength   = 0;
-            public const int Athletics  = 0;
-            public const int Willpower  = 0;
-            public const int Abstract   = 2;
-            public const int Harm       = 0;
-            public const int Fortitude  = 2;
-            public const int Accretion  = 4;
-            public const int Guile      = 0;
-            public const int Awareness  = 0;
-            public const int Charm      = 1;
-            public const int Hitpoints  = 2;
-            public const int Mana       = 15;
-            public const int Actions    = 0;
-            public const int Defense    = 0;
-            public const int Resist     = 5;
-            // crafts
-            public const int Combat     = 0;
-            public const int Arcane     = 2;
-            public const int Alchemy    = 1;
-            public const int Psionics   = 0;
-            public const int Hunting    = 0;
-            public const int Advocacy   = 0;
-            public const int Mercantile = 0;
-            public const int Tactics    = 0;
-            public const int Traveling  = 0;
-            public const int Medicine   = 0;
-            public const int Sail       = 0;
+            public const int Defense        = 0;
+            public const int Resist         = 5;
+            public const int Actions        = 0;
+            public const int Endurance      = 5;
+            public const int Accretion      = 15;
+            // feats
+            public const int Combat         = 1;
+            public const int CombatEff      = 1;
+            public const int Strength       = -1;
+            public const int StrengthEff    = -2;
+            public const int Tactics        = 0;
+            public const int TacticsEff     = 1;
+            public const int Athletics      = 1;
+            public const int AthleticsEff   = 1;
+            public const int Survival       = 2;
+            public const int SurvivalEff    = 1;
+            public const int Social         = 2;
+            public const int SocialEff      = 1;
+            public const int Abstract       = 5;
+            public const int AbstractEff    = 5;
+            public const int Psionic        = 0;
+            public const int PsionicEff     = 0;
+            public const int Crafting       = 0;
+            public const int CraftingEff    = 0;
+            public const int Medicine       = 2;
+            public const int MedicineEff    = 3;
         }
 
         public const string Tracking = "Tracking";
         public static class Trackings
         {
             // stats
-            public const int Strength   = 0;
-            public const int Athletics  = 1;
-            public const int Willpower  = 0;
-            public const int Abstract   = 0;
-            public const int Harm       = 1;
-            public const int Fortitude  = 2;
-            public const int Accretion  = 0;
-            public const int Guile      = 1;
-            public const int Awareness  = 3;
-            public const int Charm      = 0;
-            public const int Hitpoints  = 5;
-            public const int Mana       = 0;
-            public const int Actions    = 0;
-            public const int Defense    = 1;
-            public const int Resist     = 0;
-            // crafts
-            public const int Combat     = 0;
-            public const int Arcane     = 0;
-            public const int Alchemy    = 0;
-            public const int Psionics   = 0;
-            public const int Hunting    = 1;
-            public const int Advocacy   = 0;
-            public const int Mercantile = 0;
-            public const int Tactics    = 0;
-            public const int Traveling  = 1;
-            public const int Medicine   = 1;
-            public const int Sail       = 1;
+            public const int Defense        = 2;
+            public const int Resist         = 2;
+            public const int Actions        = 0;
+            public const int Endurance      = 10;
+            public const int Accretion      = 5;
+            // feats
+            public const int Combat         = 2;
+            public const int CombatEff      = 2;
+            public const int Strength       = 3;
+            public const int StrengthEff    = 3;
+            public const int Tactics        = 2;
+            public const int TacticsEff     = 2;
+            public const int Athletics      = 3;
+            public const int AthleticsEff   = 2;
+            public const int Survival       = 5;
+            public const int SurvivalEff    = 5;
+            public const int Social         = 0;
+            public const int SocialEff      = -2;
+            public const int Abstract       = 1;
+            public const int AbstractEff    = 1;
+            public const int Psionic        = 1;
+            public const int PsionicEff     = 0;
+            public const int Crafting       = 4;
+            public const int CraftingEff    = 4;
+            public const int Medicine       = 4;
+            public const int MedicineEff    = 5;
         }
 
         public static readonly List<string> All =

@@ -12,5 +12,6 @@ public class ItemServiceTests : TestBase
 
         // assert
        items.Should().NotBeNullOrEmpty();
+        // such test much wow
     }
 }

@@ -36,14 +36,14 @@ public class DiceService : IDiceService
 {
     static readonly Random random = new();
 
-    public double Roll_vs_effort(CharacterVm charVm, string craft, int effort)
+    public double Roll_vs_effort(CharacterVm charVm, string feat, int effort)
     {
-        if (!Statics.Crafts.All.Contains(craft))
+        if (!Statics.Feats.All.Contains(feat))
             throw new Exception("No such craft found to roll.");
 
         Validators.ValidateAgainstNull(charVm, "CharacterVm cannot be null.");
 
-        var charRoll = RollCraft(charVm, craft);
+        var charRoll = RollCraft(charVm, feat);
         var result = effort - charRoll;
 
         if (result <= 0)
@@ -110,17 +110,16 @@ public class DiceService : IDiceService
     {
         return craft switch
         {
-            Statics.Crafts.Combat => Roll_d20() + charVm.Actuals.Crafts.Combat,
-            Statics.Crafts.Arcane => Roll_d20() + charVm.Actuals.Crafts.Arcane,
-            Statics.Crafts.Alchemy => Roll_d20() + charVm.Actuals.Crafts.Alchemy,
-            Statics.Crafts.Psionics => Roll_d20() + charVm.Actuals.Crafts.Psionics,
-            Statics.Crafts.Hunting => Roll_d20() + charVm.Actuals.Crafts.Hunting,
-            Statics.Crafts.Advocacy => Roll_d20() + charVm.Actuals.Crafts.Advocacy,
-            Statics.Crafts.Mercantile => Roll_d20() + charVm.Actuals.Crafts.Mercantile,
-            Statics.Crafts.Tactics => Roll_d20() + charVm.Actuals.Crafts.Tactics,
-            Statics.Crafts.Traveling => Roll_d20() + charVm.Actuals.Crafts.Traveling,
-            Statics.Crafts.Sailing => Roll_d20() + charVm.Actuals.Crafts.Sailing,
-            Statics.Crafts.Medicine => Roll_d20() + charVm.Actuals.Crafts.Medicine,
+            Statics.Feats.Combat => Roll_d20() + charVm.Actuals.Feats.Combat,
+            Statics.Feats.Strength => Roll_d20() + charVm.Actuals.Feats.Strength,
+            Statics.Feats.Tactics => Roll_d20() + charVm.Actuals.Feats.Tactics,
+            Statics.Feats.Athletics => Roll_d20() + charVm.Actuals.Feats.Athletics,
+            Statics.Feats.Survival => Roll_d20() + charVm.Actuals.Feats.Survival,
+            Statics.Feats.Social => Roll_d20() + charVm.Actuals.Feats.Social,
+            Statics.Feats.Abstract => Roll_d20() + charVm.Actuals.Feats.Abstract,
+            Statics.Feats.Psionic => Roll_d20() + charVm.Actuals.Feats.Psionic,
+            Statics.Feats.Crafting => Roll_d20() + charVm.Actuals.Feats.Crafting,
+            Statics.Feats.Medicine => Roll_d20() + charVm.Actuals.Feats.Medicine,
             _ => throw new Exception("Wrong craft provided.")
         };
     }
