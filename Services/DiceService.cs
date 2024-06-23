@@ -121,7 +121,8 @@ public class DiceService : IDiceService
         var character = snapshot.Characters.Find(s => s.Identity.Id == charVm.Identity.Id)!;
         var roll = Roll_d20();
 
-        RollLevelUp(roll, character);
+        UpgradeEntityLevel(roll, character);
+        LevelUp(roll, character);
 
         return craft switch
         {
@@ -139,10 +140,33 @@ public class DiceService : IDiceService
         };
     }
 
-    private static void RollLevelUp(int roll, Character character)
+    private static void UpgradeEntityLevel(int roll, Character character)
+    {
+        if (roll >= 40 && character.Details.Entitylevel < 2)
+        {
+            character.Details.Entitylevel = 2;
+        }
+        else if (roll >= 60 && character.Details.Entitylevel < 3)
+        {
+            character.Details.Entitylevel = 3;
+        }
+        else if (roll >= 80 && character.Details.Entitylevel < 4)
+        {
+            character.Details.Entitylevel = 4;
+        }
+        else if (roll >= 100 && character.Details.Entitylevel < 5)
+        {
+            character.Details.Entitylevel = 5;
+        }
+        else if (roll >= 120 && character.Details.Entitylevel < 6)
+        {
+            character.Details.Entitylevel = 6;
+        }
+    }
+
+    private static void LevelUp(int roll, Character character)
     {
         var result = (int)(roll / 20);
-
         character.Details.Levelup = result * 10 * character.Details.Entitylevel;
     }
     #endregion
