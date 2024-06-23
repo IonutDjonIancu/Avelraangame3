@@ -76,7 +76,7 @@ public class CharacterService : ICharacterService
 
         var charVm = GetCharacter(character.Identity);
 
-        var roll = _dice.Roll_vs_effort(charVm, Statics.Feats.Social, Statics.EffortLevels.Easy);
+        var roll = _dice.Roll_vs_effort(charVm, Statics.Feats.Social, Statics.EffortLevels.Easy, _snapshot);
 
         if (item.Type == Statics.Items.Types.Trinket)
         {

@@ -29,21 +29,30 @@ public interface IDiceService
     /// <returns></returns>
     int Roll_mdn(int m, int n);
 
-    double Roll_vs_effort(CharacterVm charVm, string craft, int effort);
+    double Roll_vs_effort(CharacterVm charVm, string craft, int effort, ISnapshot snapshot);
 }
 
 public class DiceService : IDiceService
 {
     static readonly Random random = new();
 
-    public double Roll_vs_effort(CharacterVm charVm, string feat, int effort)
+    /// <summary>
+    /// return a percentage of the result
+    /// </summary>
+    /// <param name="charVm"></param>
+    /// <param name="feat"></param>
+    /// <param name="effort"></param>
+    /// <param name="snapshot"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public double Roll_vs_effort(CharacterVm charVm, string feat, int effort, ISnapshot snapshot)
     {
         if (!Statics.Feats.All.Contains(feat))
             throw new Exception("No such craft found to roll.");
 
         Validators.ValidateAgainstNull(charVm, "CharacterVm cannot be null.");
 
-        var charRoll = RollCraft(charVm, feat);
+        var charRoll = RollFeat(charVm, feat, snapshot);
         var effortRoll = Roll_1dn(effort);
         var result = charRoll - effortRoll;
 
@@ -107,8 +116,13 @@ public class DiceService : IDiceService
     }
 
     #region private methods
-    private int RollCraft(CharacterVm charVm, string craft)
+    private int RollFeat(CharacterVm charVm, string craft, ISnapshot snapshot)
     {
+        var character = snapshot.Characters.Find(s => s.Identity.Id == charVm.Identity.Id)!;
+        var roll = Roll_d20();
+
+        RollLevelUp(roll, character);
+
         return craft switch
         {
             Statics.Feats.Combat => Roll_d20() + charVm.Actuals.Feats.Combat,
@@ -123,6 +137,13 @@ public class DiceService : IDiceService
             Statics.Feats.Medicine => Roll_d20() + charVm.Actuals.Feats.Medicine,
             _ => throw new Exception("Wrong craft provided.")
         };
+    }
+
+    private static void RollLevelUp(int roll, Character character)
+    {
+        var result = (int)(roll / 20);
+
+        character.Details.Levelup = result * 10 * character.Details.Entitylevel;
     }
     #endregion
 }
