@@ -7,6 +7,7 @@ namespace Services;
 public interface ICharacterService
 {
     CharacterVm GetCharacter(Guid id, Guid sessionId);
+    CharactersVm GetAllCharacters();
 
     string CreateCharacter(CreateCharacter create);
     ImportCharacterResponse ImportCharacter(ImportCharacter import);
@@ -189,6 +190,14 @@ public class CharacterService : ICharacterService
     public CharacterVm GetCharacter(CharacterIdentity identity)
     {
         return GetCharacter(identity.Id, identity.SessionId);
+    }
+
+    public CharactersVm GetAllCharacters()
+    {
+        return new CharactersVm
+        {
+            CharactersPortraits = _snapshot.Characters.Select(s => s.Details.Portrait).ToList(),
+        };
     }
 
     public CharacterVm GetCharacter(Guid id, Guid sessionId)

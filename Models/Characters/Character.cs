@@ -29,6 +29,11 @@ public class CharacterVm : CharacterBase
     public CharacterIdentityVm Identity { get; set; } = new();
 }
 
+public class CharactersVm
+{
+    public List<string> CharactersPortraits { get; set; }
+}
+
 public class CharacterIdentity
 {
     public Guid Id { get; set; }
