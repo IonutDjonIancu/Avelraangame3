@@ -45,7 +45,7 @@ public class CharacterController(ICharacterService characterService) : Controlle
     // GET: Character/Error?info=infoToDisplay
     public IActionResult Error(string info)
     {
-        return Content(info);
+        return Content($"{info}\n\n\n<<< click back to return");
     }
     #endregion
 

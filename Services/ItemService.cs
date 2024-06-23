@@ -67,18 +67,6 @@ public class ItemService : IItemService
     }
 
     #region private methods
-    private void SetValue(Trinket trinket)
-    {
-        if (trinket.IsPermanent)
-        {
-            trinket.Value = 1 + trinket.Level * _diceService.Roll_mdn(100, 300);
-        } 
-        else
-        {
-            trinket.Value = 1 + trinket.Level * _diceService.Roll_mdn(1, 10);
-        }
-    }
-
     private void SetValue(Item item)
     {
         if (item.HasTaint)
@@ -88,30 +76,6 @@ public class ItemService : IItemService
         else
         {
             item.Value += 1 + _diceService.Roll_1dn(20) * 3;
-        }
-    }
-
-    private void SetStats(Item item)
-    {
-        if (item.HasTaint)
-        {
-            IncreaseRandomStatForTaintedItem(item);
-        }
-        else
-        {
-            IncreaseRandomStatForNonTaintedItem(item);
-        }
-    }
-
-    private void SetFeats(Item item)
-    {
-        if (item.HasTaint)
-        {
-            IncreaseRandomFeatForTaintedItem(item);
-        }
-        else
-        {
-            IncreaseRandomFeatForNonTaintedItem(item);
         }
     }
 
@@ -211,623 +175,176 @@ public class ItemService : IItemService
         }
     }
 
-    private void IncreaseRandomStatForNonTaintedItem(Item item)
+    private void SetStats(Item item)
     {
-        var rollTimes = _diceService.Roll_1dn(5) * item.Level;
-
-        for (int i = 0; i < rollTimes; i++)
-        {
-            var statNr = _diceService.Roll_1dn(Statics.Stats.All.Count); // accounts for the nr of stats
-            switch (statNr)
-            {
-                // defense
-                case 1:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Feats.Combat += _diceService.Roll_1dn(2) * item.Level;
-                        item.Feats.CombatEff += _diceService.Roll_1dn(2) * item.Level;
-                        item.Value += _diceService.Roll_1dn(5) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Value += _diceService.Roll_1dn(10) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(7) * item.Level;
-                        item.Feats.CombatEff += _diceService.Roll_1dn(2) * item.Level;
-                        item.Value += _diceService.Roll_1dn(5) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(20) * item.Level;
-                        item.Feats.CombatEff += _diceService.Roll_1dn(2) * item.Level;
-                        item.Feats.PsionicEff += _diceService.Roll_1dn(5) * item.Level;
-                        item.Value += _diceService.Roll_1dn(25) * item.Level;
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                // resist
-                case 2:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Stats.Resist += _diceService.Roll_1dn(5) * item.Level;
-                        item.Value += _diceService.Roll_1dn(5) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Stats.Resist += _diceService.Roll_1dn(5) * item.Level;
-                        item.Value += _diceService.Roll_1dn(10) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(3) * item.Level;
-                        item.Stats.Resist += _diceService.Roll_1dn(10) * item.Level;
-                        item.Value += _diceService.Roll_1dn(5) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(5) * item.Level;
-                        item.Stats.Resist += _diceService.Roll_1dn(10) * item.Level;
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                // actions
-                case 3:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Stats.Actions += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Stats.Actions += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(3) * item.Level;
-                        item.Stats.Actions += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(5) * item.Level;
-                        item.Stats.Actions += _diceService.Roll_1dn(3) * item.Level;
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                // endurance
-                case 4:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Feats.Combat += _diceService.Roll_1dn(2) * item.Level;
-                        item.Feats.CombatEff += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Value += _diceService.Roll_1dn(7) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(3) * item.Level;
-                        item.Feats.CombatEff += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(5) * item.Level;
-                        item.Stats.Endurance += _diceService.Roll_1dn(10) * item.Level;
-                        item.Feats.CombatEff += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                // accretion
-                case 5:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Stats.Resist += _diceService.Roll_1dn(3) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Stats.Resist += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(3) * item.Level;
-                        item.Stats.Resist += _diceService.Roll_1dn(5) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(5) * item.Level;
-                        item.Stats.Resist += _diceService.Roll_1dn(10) * item.Level;
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-    }
-
-    private void IncreaseRandomStatForTaintedItem(Item item)
-    {
-        var rollTimes = _diceService.Roll_1dn(5) * item.Level;
-
-        for (int i = 0; i < rollTimes; i++)
-        {
-            var statNr = _diceService.Roll_1dn(Statics.Stats.All.Count); // accounts for the nr of stats
-            switch (statNr)
-            {
-                // defense
-                case 1:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(2) * item.Level;
-                        item.Stats.Resist -= _diceService.Roll_1dn(5);
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(2) * item.Level;
-                        item.Stats.Resist -= _diceService.Roll_1dn(10);
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(5) * item.Level;
-                        item.Stats.Resist -= _diceService.Roll_1dn(5);
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(10) * item.Level;
-                        item.Stats.Resist -= _diceService.Roll_1dn(15);
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                // resist
-                case 2:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Stats.Resist += _diceService.Roll_1dn(3) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Stats.Resist += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(3) * item.Level;
-                        item.Stats.Resist += _diceService.Roll_1dn(5) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(5) * item.Level;
-                        item.Stats.Resist += _diceService.Roll_1dn(10) * item.Level;
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                // actions
-                case 3:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Stats.Actions += _diceService.Roll_1dn(3) * item.Level;
-                        item.Stats.Resist -= _diceService.Roll_1dn(3);
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Stats.Actions += _diceService.Roll_1dn(2) * item.Level;
-                        item.Stats.Resist -= _diceService.Roll_1dn(2);
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(2) * item.Level;
-                        item.Stats.Actions += _diceService.Roll_1dn(5) * item.Level;
-                        item.Stats.Resist -= _diceService.Roll_1dn(3);
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(3) * item.Level;
-                        item.Stats.Actions += _diceService.Roll_1dn(10) * item.Level;
-                        item.Stats.Resist -= _diceService.Roll_1dn(5);
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                // endurance
-                case 4:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Stats.Endurance += _diceService.Roll_1dn(10) * item.Level;
-                        item.Stats.Resist -= _diceService.Roll_1dn(3);
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Stats.Endurance += _diceService.Roll_1dn(20) * item.Level;
-                        item.Stats.Resist -= _diceService.Roll_1dn(2);
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(2) * item.Level;
-                        item.Stats.Endurance += _diceService.Roll_1dn(5) * item.Level;
-                        item.Stats.Resist -= _diceService.Roll_1dn(3);
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(5) * item.Level;
-                        item.Stats.Endurance += _diceService.Roll_1dn(25) * item.Level;
-                        item.Stats.Resist -= _diceService.Roll_1dn(5);
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                // accretion
-                case 5:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Stats.Accretion += _diceService.Roll_1dn(15) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Stats.Accretion += _diceService.Roll_1dn(40) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(3) * item.Level;
-                        item.Stats.Accretion += _diceService.Roll_1dn(20) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Stats.Defense += _diceService.Roll_1dn(5) * item.Level;
-                        item.Stats.Accretion += _diceService.Roll_1dn(50) * item.Level;
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-    }
-
-    private void IncreaseRandomFeatForTaintedItem(Item item) // keep 8 roll / 8 effect as max
-    {
-        var rollTimes = _diceService.Roll_1dn(5) * item.Level;
-
-        for (int i = 0; i < rollTimes; i++)
-        {
-            var featNr = _diceService.Roll_1dn(Statics.Feats.All.Count); // accounts for the nr of feats
-            switch (featNr)
-            {
-                // combat
-                case 1:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Feats.Combat += _diceService.Roll_1dn(8) * item.Level;
-                        item.Feats.CombatEff += _diceService.Roll_1dn(8) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Feats.Combat += _diceService.Roll_1dn(3) * item.Level;
-                        item.Feats.CombatEff += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Feats.Combat += _diceService.Roll_1dn(5) * item.Level;
-                        item.Feats.CombatEff += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Feats.Combat += _diceService.Roll_1dn(5) * item.Level;
-                        item.Feats.CombatEff += _diceService.Roll_1dn(5) * item.Level;
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                // strength
-                case 2:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Feats.Strength += _diceService.Roll_1dn(5) * item.Level;
-                        item.Feats.StrengthEff += _diceService.Roll_1dn(5) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Feats.Strength += _diceService.Roll_1dn(3) * item.Level;
-                        item.Feats.StrengthEff += _diceService.Roll_1dn(3) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Feats.Strength += _diceService.Roll_1dn(2) * item.Level;
-                        item.Feats.StrengthEff += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Feats.Strength += _diceService.Roll_1dn(7) * item.Level;
-                        item.Feats.StrengthEff += _diceService.Roll_1dn(6) * item.Level;
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                // tactics
-                case 3:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Feats.Tactics += _diceService.Roll_1dn(3) * item.Level;
-                        item.Feats.TacticsEff += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Feats.Tactics += _diceService.Roll_1dn(5) * item.Level;
-                        item.Feats.TacticsEff += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Feats.Tactics += _diceService.Roll_1dn(3) * item.Level;
-                        item.Feats.TacticsEff += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Feats.Tactics += _diceService.Roll_1dn(5) * item.Level;
-                        item.Feats.TacticsEff += _diceService.Roll_1dn(3) * item.Level;
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                // athletics
-                case 4:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Feats.Athletics += _diceService.Roll_1dn(7) * item.Level;
-                        item.Feats.AthleticsEff += _diceService.Roll_1dn(5) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Feats.Athletics += _diceService.Roll_1dn(3) * item.Level;
-                        item.Feats.AthleticsEff += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Feats.Athletics += _diceService.Roll_1dn(2) * item.Level;
-                        item.Feats.AthleticsEff += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Feats.Athletics += _diceService.Roll_1dn(7) * item.Level;
-                        item.Feats.AthleticsEff += _diceService.Roll_1dn(6) * item.Level;
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                // survival
-                case 5:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Feats.Survival += _diceService.Roll_1dn(7) * item.Level;
-                        item.Feats.SurvivalEff += _diceService.Roll_1dn(5) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Feats.Survival += _diceService.Roll_1dn(3) * item.Level;
-                        item.Feats.SurvivalEff += _diceService.Roll_1dn(3) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Feats.Survival += _diceService.Roll_1dn(2) * item.Level;
-                        item.Feats.SurvivalEff += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Feats.Survival += _diceService.Roll_1dn(7) * item.Level;
-                        item.Feats.SurvivalEff += _diceService.Roll_1dn(7) * item.Level;
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                // social
-                case 6:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Feats.Social += _diceService.Roll_1dn(3) * item.Level;
-                        item.Feats.SocialEff += _diceService.Roll_1dn(3) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Feats.Social += _diceService.Roll_1dn(8) * item.Level;
-                        item.Feats.SocialEff += _diceService.Roll_1dn(7) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Feats.Social += _diceService.Roll_1dn(2) * item.Level;
-                        item.Feats.SocialEff += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Feats.Social += _diceService.Roll_1dn(5) * item.Level;
-                        item.Feats.SocialEff += _diceService.Roll_1dn(5) * item.Level;
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                // abstract
-                case 7:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Feats.Abstract += _diceService.Roll_1dn(8) * item.Level;
-                        item.Feats.AbstractEff += _diceService.Roll_1dn(8) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Feats.Abstract += _diceService.Roll_1dn(5) * item.Level;
-                        item.Feats.AbstractEff += _diceService.Roll_1dn(5) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Feats.Abstract += _diceService.Roll_1dn(2) * item.Level;
-                        item.Feats.AbstractEff += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Feats.Abstract += _diceService.Roll_1dn(5) * item.Level;
-                        item.Feats.AbstractEff += _diceService.Roll_1dn(8) * item.Level;
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                // psionic
-                case 8:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Feats.Social += _diceService.Roll_1dn(2) * item.Level;
-                        item.Feats.SocialEff += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Feats.Social += _diceService.Roll_1dn(3) * item.Level;
-                        item.Feats.SocialEff += _diceService.Roll_1dn(3) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Feats.Social += _diceService.Roll_1dn(2) * item.Level;
-                        item.Feats.SocialEff += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Feats.Social += _diceService.Roll_1dn(2) * item.Level;
-                        item.Feats.SocialEff += _diceService.Roll_1dn(2) * item.Level;
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                // crafting
-                case 9:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Feats.Crafting += _diceService.Roll_1dn(7) * item.Level;
-                        item.Feats.CraftingEff += _diceService.Roll_1dn(6) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Feats.Crafting += _diceService.Roll_1dn(3) * item.Level;
-                        item.Feats.CraftingEff += _diceService.Roll_1dn(3) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Feats.Crafting += _diceService.Roll_1dn(3) * item.Level;
-                        item.Feats.CraftingEff += _diceService.Roll_1dn(4) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Feats.Crafting += _diceService.Roll_1dn(5) * item.Level;
-                        item.Feats.CraftingEff += _diceService.Roll_1dn(5) * item.Level;
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                // medicine
-                case 10:
-                    if (item.Type == Statics.Items.Types.Weapon)
-                    {
-                        item.Feats.Medicine += _diceService.Roll_1dn(5) * item.Level;
-                        item.Feats.MedicineEff += _diceService.Roll_1dn(5) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Trinket)
-                    {
-                        item.Feats.Medicine += _diceService.Roll_1dn(5) * item.Level;
-                        item.Feats.MedicineEff += _diceService.Roll_1dn(5) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Shield)
-                    {
-                        item.Feats.Medicine += _diceService.Roll_1dn(5) * item.Level;
-                        item.Feats.MedicineEff += _diceService.Roll_1dn(5) * item.Level;
-                    }
-                    else if (item.Type == Statics.Items.Types.Armour)
-                    {
-                        item.Feats.Medicine += _diceService.Roll_1dn(5) * item.Level;
-                        item.Feats.MedicineEff += _diceService.Roll_1dn(5) * item.Level;
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-    }
-
-    private void IncreaseRandomFeatForNonTaintedItem(Item item) // keep 8 roll / 8 effect as max
-    {
-        var rollTimes = _diceService.Roll_1dn(5) * item.Level;
+        var rollTimes = _diceService.Roll_1dn(5 + item.Level);
 
         for (int i = 0; i < rollTimes; i++)
         {
             if (item.Type == Statics.Items.Types.Weapon)
             {
-                item.Feats.Combat += _diceService.Roll_1dn(2) * item.Level;
-                item.Feats.CombatEff += _diceService.Roll_1dn(2) * item.Level;
+                // flat bonus
+                item.Feats.Combat += _diceService.Roll_1dn(2 + item.Level);
+                item.Feats.CombatEff += _diceService.Roll_1dn(2 + item.Level);
+                // taint notaint bonus
+                if (item.HasTaint)
+                {
+                    item.Feats.Abstract += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.AbstractEff += _diceService.Roll_1dn(3 + item.Level);
+                    item.Stats.Accretion += _diceService.Roll_1dn(3 + item.Level);
+                    item.Stats.Resist -= _diceService.Roll_1dn(2 + item.Level);
+                }
+                else
+                {
+                    item.Feats.Psionic += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.PsionicEff += _diceService.Roll_1dn(3 + item.Level);
+                    item.Stats.Resist += _diceService.Roll_1dn(2 + item.Level);
+                }
             }
             else if (item.Type == Statics.Items.Types.Trinket)
             {
-                item.Value += _diceService.Roll_1dn(10) * item.Level;
+                // flat bonus
+                item.Value += _diceService.Roll_d20();
+                // taint notaint bonus
+                if (item.HasTaint)
+                {
+                    item.Feats.Abstract += _diceService.Roll_1dn(2 + item.Level);
+                    item.Feats.AbstractEff += _diceService.Roll_1dn(2 + item.Level);
+                    item.Stats.Accretion += _diceService.Roll_1dn(2 + item.Level);
+                    item.Stats.Resist -= _diceService.Roll_1dn(2 + item.Level);
+                }
+                else
+                {
+                    item.Feats.Crafting += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.CraftingEff += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.Medicine += _diceService.Roll_1dn(2 + item.Level);
+                    item.Feats.MedicineEff += _diceService.Roll_1dn(2 + item.Level);
+                }
             }
             else if (item.Type == Statics.Items.Types.Shield)
             {
-                item.Feats.Combat += _diceService.Roll_1dn(2) * item.Level;
-                item.Feats.CombatEff += _diceService.Roll_1dn(2) * item.Level;
+                // flat bonus
+                item.Stats.Defense += _diceService.Roll_1dn(3 + item.Level);
+                item.Stats.Resist += _diceService.Roll_1dn(3 + item.Level);
+                // taint notaint bonus
+                if (item.HasTaint)
+                {
+                    item.Feats.Abstract += _diceService.Roll_1dn(2 + item.Level);
+                    item.Feats.AbstractEff += _diceService.Roll_1dn(2 + item.Level);
+                    item.Stats.Accretion += _diceService.Roll_1dn(2 + item.Level);
+                    item.Stats.Resist -= _diceService.Roll_1dn(2 + item.Level);
+                }
+                else
+                {
+                    item.Feats.Psionic += _diceService.Roll_1dn(2 + item.Level);
+                    item.Feats.PsionicEff += _diceService.Roll_1dn(2 + item.Level);
+                    item.Stats.Resist += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.CombatEff += _diceService.Roll_1dn(2 + item.Level);
+                }
             }
             else if (item.Type == Statics.Items.Types.Armour)
             {
-                item.Feats.Combat += _diceService.Roll_1dn(2) * item.Level;
-                item.Feats.CombatEff += _diceService.Roll_1dn(2) * item.Level;
+                // flat bonus
+                item.Stats.Defense += _diceService.Roll_1dn(3 + item.Level);
+                item.Stats.Endurance += _diceService.Roll_1dn(5 + item.Level);
+                // taint notaint bonus
+                if (item.HasTaint)
+                {
+                    item.Feats.Abstract += _diceService.Roll_1dn(2 + item.Level);
+                    item.Feats.AbstractEff += _diceService.Roll_1dn(2 + item.Level);
+                    item.Stats.Accretion += _diceService.Roll_1dn(2 + item.Level);
+                    item.Stats.Resist -= _diceService.Roll_1dn(2 + item.Level);
+                }
+                else
+                {
+                    item.Feats.Psionic += _diceService.Roll_1dn(2 + item.Level);
+                    item.Feats.PsionicEff += _diceService.Roll_1dn(2 + item.Level);
+                    item.Stats.Resist += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.CombatEff += _diceService.Roll_1dn(2 + item.Level);
+                }
             }
             else
             {
                 throw new NotImplementedException();
             }
+
+            var statNr = _diceService.Roll_1dn(Statics.Stats.All.Count); // accounts for the nr of stats
+            switch (statNr)
+            {
+                case 1:
+                    item.Stats.Defense += _diceService.Roll_1dn(2 + item.Level);
+                    break;
+                case 2:
+                    item.Stats.Resist += _diceService.Roll_1dn(2 + item.Level);
+                    break;
+                case 3:
+                    item.Stats.Actions += _diceService.Roll_1dn(2 + item.Level);
+                    break;
+                case 4:
+                    item.Stats.Endurance += _diceService.Roll_1dn(5 + item.Level);
+                    break;
+                case 5:
+                    item.Stats.Accretion += _diceService.Roll_1dn(10 + item.Level);
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
         }
     }
 
+    private void SetFeats(Item item)
+    {
+        var rollTimes = _diceService.Roll_1dn(5 + item.Level);
 
+        for (int i = 0; i < rollTimes; i++)
+        {
+            var featNr = _diceService.Roll_1dn(Statics.Feats.All.Count); // accounts for the nr of stats
+            switch (featNr)
+            {
+                case 1:
+                    item.Feats.Combat += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.CombatEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                case 2:
+                    item.Feats.Strength += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.StrengthEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                case 3:
+                    item.Feats.Tactics += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.TacticsEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                case 4:
+                    item.Feats.Athletics += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.AthleticsEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                case 5:
+                    item.Feats.Survival += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.SurvivalEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                case 6:
+                    item.Feats.Social += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.SocialEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                case 7:
+                    item.Feats.Abstract += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.AbstractEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                case 8:
+                    item.Feats.Psionic += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.PsionicEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                case 9:
+                    item.Feats.Crafting += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.CraftingEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                case 10:
+                    item.Feats.Medicine += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.MedicineEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+    }
     #endregion
 }
