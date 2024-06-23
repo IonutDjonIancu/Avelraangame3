@@ -20,7 +20,18 @@ internal class Validators
     #endregion
 
     #region characters
-    internal static void ValidateOnImportCharacter(ImportCharacter import)
+    internal static Character ValidateOnExportCharacter(Guid characterId, Guid sessionId, ISnapshot snapshot)
+    {
+        var character = ValidateCharacterExists(characterId, sessionId, snapshot);
+
+        if (character.Details.IsLocked)
+            throw new Exception("Unable to export: character is locked.");
+
+        return character;
+    }
+
+
+    internal static void ValidateOnImportCharacter(ImportCharacter import, ISnapshot snapshot)
     {
         ValidateAgainstNull(import, "Import object is either missing or invalid.");
         ValidateString(import.CharacterString, "Import character string cannot be null.");
@@ -28,6 +39,8 @@ internal class Validators
 
         var character = JsonConvert.DeserializeObject<Character>(decryptString) ?? throw new Exception("Unable to properly deserialize character.");
 
+        if (snapshot.CharactersImported.Contains(character.Identity.Id))
+            throw new Exception("Character already imported and has an active session.");
         if (character.Details.IsNpc)
             throw new Exception("Cannot play an NPC character.");
         if (character.Details.IsLocked)
@@ -61,9 +74,9 @@ internal class Validators
             throw new Exception("Specialization not found.");
     }
 
-    internal static Character ValidateCharacterExists(Guid characterId, Guid sessionId, ISnapshot ss)
+    internal static Character ValidateCharacterExists(Guid characterId, Guid sessionId, ISnapshot snapshot)
     {
-        var character = ss.Characters.FirstOrDefault(s => s.Identity.Id == characterId) ?? throw new Exception("Character not found.");
+        var character = snapshot.Characters.FirstOrDefault(s => s.Identity.Id == characterId) ?? throw new Exception("Character not found.");
 
         if (character.Identity.SessionId != sessionId)
             throw new Exception("Wrong session id.");
@@ -73,11 +86,11 @@ internal class Validators
     #endregion
 
     #region items
-    internal static Character ValidateLevelupAndReturn(CharacterLevelup levelup, ISnapshot ss)
+    internal static Character ValidateLevelupAndReturn(CharacterLevelup levelup, ISnapshot snapshot)
     {
         ValidateAgainstNull(levelup, "Level up cannot be null.");
         ValidateString(levelup.Attribute, "Attribute missing or invalid for levelup.");
-        var character = ValidateCharacterExists(levelup.CharacterId, levelup.SessionId, ss);
+        var character = ValidateCharacterExists(levelup.CharacterId, levelup.SessionId, snapshot);
 
         if (!Statics.Stats.All.Union(Statics.Feats.All).Contains(levelup.Attribute))
             throw new Exception("Unable to find attribute in list of stats and crafts.");
@@ -107,13 +120,13 @@ internal class Validators
         return character;
     }
 
-    internal static (Item, Character) ValidateSellItemAndReturn(EquipItem equipItem, ISnapshot ss)
+    internal static (Item, Character) ValidateSellItemAndReturn(EquipItem equipItem, ISnapshot snapshot)
     {
         ValidateAgainstNull(equipItem, "Equip item cannot be null.");
-        ValidateAgainstNull(ss, "Snapshot cannot be null.");
-        ValidateCharacterExists(equipItem.CharacterId, equipItem.SessionId, ss);
+        ValidateAgainstNull(snapshot, "Snapshot cannot be null.");
+        ValidateCharacterExists(equipItem.CharacterId, equipItem.SessionId, snapshot);
 
-        var character = ss.Characters.Find(s => s.Identity.Id == equipItem.CharacterId)!;
+        var character = snapshot.Characters.Find(s => s.Identity.Id == equipItem.CharacterId)!;
 
         if (character.Details.IsLocked)
             throw new Exception("Character is locked.");
@@ -124,16 +137,19 @@ internal class Validators
 
         var item = character.Supplies.Items.Union(character.Supplies.Regalia).First(s => s.Id == equipItem.ItemId)!;
 
+        if (snapshot.ItemsSold.Contains(item.Id))
+            throw new Exception("This item has already been sold.");
+
         return (item, character);
     }
 
-    internal static (Item, Character) ValidateUnequipItemAndReturn(EquipItem equipItem, ISnapshot ss)
+    internal static (Item, Character) ValidateUnequipItemAndReturn(EquipItem equipItem, ISnapshot snapshot)
     {
         ValidateAgainstNull(equipItem, "Equip item cannot be null.");
-        ValidateAgainstNull(ss, "Snapshot cannot be null.");
-        ValidateCharacterExists(equipItem.CharacterId, equipItem.SessionId, ss);
+        ValidateAgainstNull(snapshot, "Snapshot cannot be null.");
+        ValidateCharacterExists(equipItem.CharacterId, equipItem.SessionId, snapshot);
 
-        var character = ss.Characters.Find(s => s.Identity.Id == equipItem.CharacterId)!;
+        var character = snapshot.Characters.Find(s => s.Identity.Id == equipItem.CharacterId)!;
         
         if (character.Details.IsLocked)
             throw new Exception("Character is locked.");
@@ -147,13 +163,13 @@ internal class Validators
         return (item, character);   
     }
 
-    internal static (Item, Character) ValidateEquipItemAndReturn(EquipItem equipItem, ISnapshot ss)
+    internal static (Item, Character) ValidateEquipItemAndReturn(EquipItem equipItem, ISnapshot snapshot)
     {
         ValidateAgainstNull(equipItem, "Equip item cannot be null.");
-        ValidateAgainstNull(ss, "Snapshot cannot be null.");
-        ValidateCharacterExists(equipItem.CharacterId, equipItem.SessionId, ss);
+        ValidateAgainstNull(snapshot, "Snapshot cannot be null.");
+        ValidateCharacterExists(equipItem.CharacterId, equipItem.SessionId, snapshot);
 
-        var character = ss.Characters.Find(s => s.Identity.Id == equipItem.CharacterId)!;
+        var character = snapshot.Characters.Find(s => s.Identity.Id == equipItem.CharacterId)!;
 
         if (character.Details.IsLocked)
             throw new Exception("Character is locked.");

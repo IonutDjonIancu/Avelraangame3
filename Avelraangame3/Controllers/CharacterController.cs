@@ -98,7 +98,24 @@ public class CharacterController(ICharacterService characterService) : Controlle
         }
     }
 
-    // PUT: Item/EquipItem
+    // PUT: Character/ExportCharacter
+    [HttpPut]
+    public IActionResult ExportCharacter([FromBody] CharacterIdentity identity)
+    {
+        try
+        {
+            var characterResponse = _characterService.ExportCharacter(identity);
+
+            return Ok(characterResponse);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+
+    // PUT: Character/EquipItem
     [HttpPut]
     public IActionResult EquipItem([FromBody] EquipItem equipItem)
     {
@@ -114,7 +131,7 @@ public class CharacterController(ICharacterService characterService) : Controlle
         }
     }
 
-    // PUT: Item/UnequipItem
+    // PUT: Character/UnequipItem
     [HttpPut]
     public IActionResult UnequipItem([FromBody] EquipItem equipItem)
     {
@@ -130,7 +147,7 @@ public class CharacterController(ICharacterService characterService) : Controlle
         }
     }
 
-    // PUT: Item/UnequipItem
+    // PUT: Character/UnequipItem
     [HttpPut]
     public IActionResult SellItem([FromBody] EquipItem equipItem)
     {
@@ -146,7 +163,7 @@ public class CharacterController(ICharacterService characterService) : Controlle
         }
     }
 
-    // PUT: Item/Levelup
+    // PUT: Character/Levelup
     [HttpPut]
     public IActionResult Levelup([FromBody] CharacterLevelup levelup)
     {

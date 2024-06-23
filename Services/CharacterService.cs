@@ -7,8 +7,10 @@ namespace Services;
 public interface ICharacterService
 {
     CharacterVm GetCharacter(Guid id, Guid sessionId);
-    string CreateCharacter(CreateCharacter createCharacter);
-    ImportCharacterResponse ImportCharacter(ImportCharacter characterString);
+
+    string CreateCharacter(CreateCharacter create);
+    ImportCharacterResponse ImportCharacter(ImportCharacter import);
+    string ExportCharacter(CharacterIdentity identity);
 
     CharacterVm EquipItem(EquipItem equipItem);
     CharacterVm UnequipItem(EquipItem equipItem);
@@ -18,7 +20,7 @@ public interface ICharacterService
 
 public class CharacterService : ICharacterService
 {
-    private readonly ISnapshot ss;
+    private readonly ISnapshot _snapshot;
     private readonly IItemService _items;
     private readonly IDiceService _dice;
 
@@ -27,14 +29,14 @@ public class CharacterService : ICharacterService
         IItemService itemService,
         IDiceService dice)
     {
-        ss = snapshot;
+        _snapshot = snapshot;
         _items = itemService;
         _dice = dice;
     }
 
     public CharacterVm Levelup(CharacterLevelup levelup)
     {
-        var character = Validators.ValidateLevelupAndReturn(levelup, ss);
+        var character = Validators.ValidateLevelupAndReturn(levelup, _snapshot);
 
         int value;
 
@@ -65,7 +67,12 @@ public class CharacterService : ICharacterService
 
     public CharacterVm SellItem(EquipItem equipItem)
     {
-        var (item, character) = Validators.ValidateSellItemAndReturn(equipItem, ss)!;
+        var (item, character) = Validators.ValidateSellItemAndReturn(equipItem, _snapshot)!;
+
+        if (_snapshot.ItemsSold.Count >= 1000)
+            _snapshot.ItemsSold.Remove(_snapshot.ItemsSold.First());
+
+        _snapshot.ItemsSold.Add(item.Id);
 
         var charVm = GetCharacter(character.Identity);
 
@@ -87,7 +94,7 @@ public class CharacterService : ICharacterService
 
     public CharacterVm UnequipItem(EquipItem equipItem)
     {
-        var (item, character) = Validators.ValidateUnequipItemAndReturn(equipItem, ss)!;
+        var (item, character) = Validators.ValidateUnequipItemAndReturn(equipItem, _snapshot)!;
 
         if (item.Type == Statics.Items.Types.Trinket)
         {
@@ -105,7 +112,7 @@ public class CharacterService : ICharacterService
 
     public CharacterVm EquipItem(EquipItem equipItem)
     {
-        var (item, character) = Validators.ValidateEquipItemAndReturn(equipItem, ss)!;
+        var (item, character) = Validators.ValidateEquipItemAndReturn(equipItem, _snapshot)!;
 
         if (item.Type == Statics.Items.Types.Trinket)
         {
@@ -121,19 +128,30 @@ public class CharacterService : ICharacterService
         return GetCharacter(character.Identity);
     }
 
+    public string ExportCharacter(CharacterIdentity identity)
+    {
+        var character = Validators.ValidateOnExportCharacter(identity.Id, identity.SessionId, _snapshot);
+
+        _snapshot.CharactersImported.Remove(character.Identity.Id);
+
+        return EncryptionService.EncryptString(JsonConvert.SerializeObject(character));
+    }
+
     public ImportCharacterResponse ImportCharacter(ImportCharacter import)
     {
-        Validators.ValidateOnImportCharacter(import);
+        Validators.ValidateOnImportCharacter(import, _snapshot);
         var decryptString = EncryptionService.DecryptString(import.CharacterString);
 
         var character = JsonConvert.DeserializeObject<Character>(decryptString)!;
 
-        var oldChar = ss.Characters.FirstOrDefault(s => s.Identity.Id == character.Identity.Id);
+        _snapshot.CharactersImported.Add(character.Identity.Id);
+
+        var oldChar = _snapshot.Characters.FirstOrDefault(s => s.Identity.Id == character.Identity.Id);
 
         if (oldChar != null)
-            ss.Characters.Remove(oldChar);
+            _snapshot.Characters.Remove(oldChar);
         
-        ss.Characters.Add(character);
+        _snapshot.Characters.Add(character);
 
         return new ImportCharacterResponse
         {
@@ -159,13 +177,9 @@ public class CharacterService : ICharacterService
         SetStats(create, character);
         SetFeats(create, character);
         SetInventory(character);
+        SetWorth(character);
 
-        // *********************************************************************** TODO: remove this part ***********************************************************************
-        character.Supplies.Items.AddRange(_items.GenerateRandomItems(5));
-        character.Details.Levelup = 10000;
-        // *********************************************************************** TODO: remove this part ***********************************************************************
-
-        ss.Characters.Add(character);
+        _snapshot.Characters.Add(character);
 
         var characterEncr = EncryptionService.EncryptString(JsonConvert.SerializeObject(character));
 
@@ -181,7 +195,7 @@ public class CharacterService : ICharacterService
     {
         Validators.ValidateOnGetCharacter(id, sessionId);
 
-        var character = ss.Characters.FirstOrDefault(s => s.Identity.Id == id && s.Identity.SessionId == sessionId);
+        var character = _snapshot.Characters.FirstOrDefault(s => s.Identity.Id == id && s.Identity.SessionId == sessionId);
 
         Validators.ValidateAgainstNull(character!, "No character found. Go to import first.");
 
@@ -601,6 +615,27 @@ public class CharacterService : ICharacterService
 
         var trinket = (Trinket)_items.GenerateSpecificItem(Statics.Items.Types.Trinket);
         character.Regalia.Add(trinket);
+    }
+
+    private void SetWorth(Character character)
+    {
+        character.Details.Worth = _dice.Roll_d20_no_rr() +
+            character.Stats.Defense +
+            character.Stats.Resist +
+            character.Stats.Actions +
+            character.Stats.Endurance +
+            character.Stats.Accretion +
+            character.Feats.Combat +
+            character.Feats.Strength +
+            character.Feats.Tactics +
+            character.Feats.Athletics +
+            character.Feats.Survival +
+            character.Feats.Social +
+            character.Feats.Abstract +
+            character.Feats.Psionic +
+            character.Feats.Crafting +
+            character.Feats.Medicine +
+            (int)(character.Details.Wealth * 0.1);
     }
     #endregion
 }

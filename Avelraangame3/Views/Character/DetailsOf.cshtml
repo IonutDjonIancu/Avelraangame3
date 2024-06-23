@@ -16,7 +16,7 @@
     </div>
 </div>
 
-@* Stats and assets *@
+@* Stats and feats *@
 <div class="container mt-3 footer-border">
     <div class="row mt-3">
         <div class="col-2">
@@ -172,7 +172,7 @@
     </div>
 </div>
 
-@* Items *@
+@* Items and inventory *@
 <div class="container mt-3 footer-border">
     @* Item actions *@
     <div id="inventoryActions" class="btn-group btn-group-sm pt-3" role="group" style="display:none">
@@ -233,6 +233,12 @@ MED @item.Feats.Medicine | @item.Feats.MedicineEff" />
 @trinket.Type.ToLower()
 level @trinket.Level
 value @trinket.Value
+*** stats ***
+DEF @trinket.Stats.Defense
+RES @trinket.Stats.Resist
+ACT @trinket.Stats.Actions
+END @trinket.Stats.Endurance
+ACC @trinket.Stats.Accretion
 *** feats ***
 COM @trinket.Feats.Combat | @trinket.Feats.CombatEff
 STR @trinket.Feats.Strength | @trinket.Feats.StrengthEff
@@ -315,7 +321,65 @@ MED @trinket.Feats.Medicine | @trinket.Feats.MedicineEff" />
     </div>
 </div>
 
+<div class="container mt-3 footer-border">
+    <div id="characterString" style="display:none">
+        <div class="row mt-3">
+            <div class="col d-flex justify-content-center align-items-center">
+                <textarea id="characterStringArea" class="input-with-color w-75 mt-2 p-0 ps-2 rounded-2" title="this is your character's encrypted string" style="font-size:xx-small"></textarea>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col d-flex justify-content-center align-items-center">
+                <div class="btn-group btn-group-sm">
+                    <button onclick="copyCharacter()" id="copyBtn" class="btn btn-sm btn-outline-dark">Copy</button>
+                    <button onclick="hideCopyCharacterAction()" title="close export tab" type="button" class="btn btn-outline-dark actions secondary-darkred">&#10008;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div>
+            <button onclick="exportCharacter()" class="btn btn-sm btn-outline-dark float-end">Export character</button>
+        </div>
+    </div>
+</div>
+
 <script>
+    const hideCopyCharacterAction = () => {
+        $("#characterString").slideUp();
+    }
+
+    const copyCharacter = () => {
+        $("#characterStringArea").select();
+        document.execCommand('copy');
+    }
+
+    const exportCharacter = () => {
+        const characterId = localStorage.getItem("characterId");
+        const sessionId = localStorage.getItem("sessionId");
+
+        if (!characterId) return;
+        $("#spinner").show();
+
+        $.ajax({
+            type: 'PUT',
+            url: '@Url.Action("ExportCharacter", "Character")',
+            contentType: "application/json",
+            data: JSON.stringify({
+                id: characterId,
+                sessionId: sessionId
+            }),
+            success: function (response) {
+                $("#characterStringArea").val(response);
+                $('#characterString').slideDown()
+                hideLoading();
+            },
+            error: function (xhr, status, error) {
+                window.location.href = "/character/error?info=" + xhr.responseText;
+            }
+        });
+    }
+
     const equipUnequipItem = (id, action, type) => {
         $("#inventoryActions").show();
         itemSelect(id);
@@ -454,7 +518,7 @@ MED @trinket.Feats.Medicine | @trinket.Feats.MedicineEff" />
     }
 
     const hideLoading = () => {
-        $(document).ready(function () {
+        $(document).ready(() => {
             $("#spinner").hide(500);
         });
     }
