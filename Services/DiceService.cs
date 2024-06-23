@@ -44,7 +44,8 @@ public class DiceService : IDiceService
         Validators.ValidateAgainstNull(charVm, "CharacterVm cannot be null.");
 
         var charRoll = RollCraft(charVm, feat);
-        var result = effort - charRoll;
+        var effortRoll = Roll_1dn(effort);
+        var result = charRoll - effortRoll;
 
         if (result <= 0)
         {

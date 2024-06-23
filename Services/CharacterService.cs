@@ -80,7 +80,7 @@ public class CharacterService : ICharacterService
             character.Supplies.Items.Remove(item);
         }
 
-        character.Details.Wealth += (int)(item.Value * roll);
+        character.Details.Wealth += 2 + (int)((item.Value * roll + charVm.Feats.SocialEff * roll) / 2);
 
         return GetCharacter(character.Identity);
     }

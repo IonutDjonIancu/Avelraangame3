@@ -169,7 +169,8 @@ internal class Validators
         {
             throw new Exception("Regalia is full.");
         } 
-        else if (character.Inventory.Count >= 4)
+        else if (item.Type != Statics.Items.Types.Trinket
+            && character.Inventory.Count >= 4)
         {
             throw new Exception("Inventory is full.");
         }
