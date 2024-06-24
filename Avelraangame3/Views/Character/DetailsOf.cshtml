@@ -25,7 +25,7 @@
                 @if(Model.Details.IsLocked)
                 {
                     <li>
-                        <span class="text-red">character locked</span>
+                        <span class="text-red">character locked (@Model.Details.BattleboardType)</span>
                     </li>
                 }
                 <li>
@@ -193,6 +193,7 @@
                     id="@item.Id"
                     onclick="equipUnequipItem('@item.Id', 'unequip', 'inventory')"
                     title="@item.Name
+
 *** details ***
 @(item.HasTaint ? "tainted" : "untainted")
 @item.Type.ToLower()
@@ -227,6 +228,7 @@ MED @item.Feats.Medicine | @item.Feats.MedicineEff" />
                         id="@trinket.Id"
                         onclick="equipUnequipItem('@trinket.Id', 'unequip', 'regalia')"
                         title="@trinket.Name
+
 *** details ***
 @(trinket.HasTaint ? "tainted" : "untainted")
 @(trinket.IsPermanent ? "can be consumed" : "can only be worn")
@@ -263,6 +265,7 @@ MED @trinket.Feats.Medicine | @trinket.Feats.MedicineEff" />
                     id="@item.Id"
                     onclick="equipUnequipItem('@item.Id', 'equip', 'inventory')"
                     title="@item.Name
+
 *** details ***
 @(item.HasTaint ? "tainted" : "untainted")
 @item.Type.ToLower()
@@ -293,6 +296,7 @@ MED @item.Feats.Medicine | @item.Feats.MedicineEff" />
                      id="@trinket.Id"
                      onclick="equipUnequipItem('@trinket.Id', 'equip', 'regalia')"
                      title="@trinket.Name
+
 *** details ***
 @(trinket.HasTaint ? "tainted" : "untainted")
 @(trinket.IsPermanent ? "can be consumed" : "can only be worn")
@@ -346,7 +350,7 @@ MED @trinket.Feats.Medicine | @trinket.Feats.MedicineEff" />
 
 <script>
     const hideCopyCharacterAction = () => {
-        $("#characterString").slideUp();
+        $("#characterString").slideUp(200);
     }
 
     const copyCharacter = () => {
@@ -371,11 +375,11 @@ MED @trinket.Feats.Medicine | @trinket.Feats.MedicineEff" />
             }),
             success: function (response) {
                 $("#characterStringArea").val(response);
-                $('#characterString').slideDown()
+                $('#characterString').slideDown(200)
                 hideLoading();
             },
             error: function (xhr, status, error) {
-                window.location.href = "/character/error?info=" + xhr.responseText;
+                window.location.href = "/home/error?info=" + xhr.responseText;
             }
         });
     }
@@ -429,7 +433,7 @@ MED @trinket.Feats.Medicine | @trinket.Feats.MedicineEff" />
                 location.reload();
             },
             error: function (xhr, status, error) {
-                window.location.href = "/character/error?info=" + xhr.responseText;
+                window.location.href = "/home/error?info=" + xhr.responseText;
             }
         });
     }
@@ -457,7 +461,7 @@ MED @trinket.Feats.Medicine | @trinket.Feats.MedicineEff" />
                 location.reload();
             },
             error: function (xhr, status, error) {
-                window.location.href = "/character/error?info=" + xhr.responseText;
+                window.location.href = "/home/error?info=" + xhr.responseText;
             }
         });
     }
@@ -485,7 +489,7 @@ MED @trinket.Feats.Medicine | @trinket.Feats.MedicineEff" />
                 location.reload();
             },
             error: function (xhr, status, error) {
-                window.location.href = "/character/error?info=" + xhr.responseText;
+                window.location.href = "/home/error?info=" + xhr.responseText;
             }
         });
     }
@@ -512,7 +516,7 @@ MED @trinket.Feats.Medicine | @trinket.Feats.MedicineEff" />
                 location.reload();
             },
             error: function (xhr, status, error) {
-                window.location.href = "/character/error?info=" + xhr.responseText;
+                window.location.href = "/home/error?info=" + xhr.responseText;
             }
         });
     }

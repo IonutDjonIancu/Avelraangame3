@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Character";
+}
+
+<div class="row">
+    <div class="col-8">
+        <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+            <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Upload">Upload</a>
+            <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Create">Create</a>
+            <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Details">Details</a>
+        </div>
+    </div>
+    <div class="col-4">
+        <div id="spinner" class="spinner-grow text-secondary float-end" role="status" title="Loading...">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-3 footer-border">
+    <div class="row mt-2">
+        <div class="col d-flex justify-content-center align-items-center">
+            <p class="mb-0 text-muted">Character section...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const hideLoading = () => {
+        $(document).ready(() => {
+            $("#spinner").hide(500);
+        });
+    }
+
+    hideLoading();
+</script>

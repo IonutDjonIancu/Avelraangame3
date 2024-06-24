@@ -29,6 +29,11 @@ public class CharacterVm : CharacterBase
     public CharacterIdentityVm Identity { get; set; } = new();
 }
 
+public class CharacterNpc : CharacterBase
+{
+    public CharacterIdentity Identity { get; set; } = new();
+}
+
 public class CharactersVm
 {
     public List<string> CharactersPortraits { get; set; }
@@ -66,6 +71,8 @@ public class CharacterDetails
     public bool IsAlive { get; set; }
     public bool IsLocked { get; set; }
     public bool IsNpc { get; set; }
+    public Guid BattleboardId { get; set; }
+    public string BattleboardType { get; set; }
 }
 
 public class CharacterStats

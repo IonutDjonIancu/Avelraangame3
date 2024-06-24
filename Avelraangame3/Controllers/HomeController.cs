@@ -12,15 +12,32 @@ public class HomeController : Controller
         _characterService = characterService;
     }
 
+    #region views
+    // GET: Home/Index
     public IActionResult Index()
     {
-        var charactersPortraits = _characterService.GetAllCharacters();
+        try
+        {
+            var charactersPortraits = _characterService.GetAllAliveCharacters();
 
-        return View(charactersPortraits);
+            return View(charactersPortraits);
+        }
+        catch (Exception ex)
+        {
+            return Error(ex.Message);
+        }
     }
 
+    // GET: Home/Privacy
     public IActionResult Privacy()
     {
         return View();
     }
+
+    // GET: Home/Error?info=infoToDisplay
+    public IActionResult Error(string info)
+    {
+        return Content($"<<< click back to return\n\n\n{info}");
+    }
+    #endregion
 }

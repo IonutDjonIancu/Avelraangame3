@@ -19,6 +19,25 @@ internal class Validators
     }
     #endregion
 
+    #region npcs
+    internal static Character ValidateCharacterOnNpcGenerate(CharacterIdentity identity, ISnapshot snapshot) 
+    {
+        var character = ValidateCharacterExists(identity.Id, identity.SessionId, snapshot);
+
+        if (character.Details.BattleboardId != Guid.Empty)
+        {
+            var npc = snapshot.Npcs.First(s => s.Details.BattleboardId == character.Details.BattleboardId) ?? throw new Exception("Npc not found for duel.");
+        }
+
+        if (!character.Details.IsAlive)
+            throw new Exception("Unable to generate an NPC for a dead character.");
+
+        return character;
+    }
+
+
+    #endregion
+
     #region characters
     internal static Character ValidateOnExportCharacter(Guid characterId, Guid sessionId, ISnapshot snapshot)
     {

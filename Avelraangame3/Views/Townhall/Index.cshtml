@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "Townhall";
+}
+
+<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+    <button onclick="gotoDuel()" type="button" class="btn btn-outline-dark">Duel</button>
+    <button type="button" class="btn btn-outline-dark">Tournament</button>
+    <button type="button" class="btn btn-outline-dark">Adventure</button>
+    <button type="button" class="btn btn-outline-dark">Market</button>
+    <button type="button" class="btn btn-outline-dark">Mercs</button>
+</div>
+
+<div class="container mt-3 footer-border">
+    <div class="row mt-2">
+        <div class="col d-flex justify-content-center align-items-center">
+            <p class="mb-0 text-muted">Townhall section...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const gotoDuel = () => {
+        var characterId = localStorage.getItem("characterId");
+        var sessionId = localStorage.getItem("sessionId");
+
+        if (!characterId || !sessionId) {
+            return;
+        }
+
+        window.location.href = "/townhall/duel?characterId=" + characterId + "&sessionId=" + sessionId;
+    }
+
+</script>
+

@@ -24,12 +24,17 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Character" asp-action="Upload">Character</a>
+                            <a class="nav-link text-dark" asp-controller="Character" asp-action="Index">Character</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Townhall" asp-action="Index">Townhall</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                </div>
+                <div id="navbar">
                 </div>
             </div>
         </nav>
@@ -51,3 +56,36 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+<script>
+    const loginCharacter = () => {
+        var characterId = localStorage.getItem("characterId");
+        var sessionId = localStorage.getItem("sessionId");
+
+        if (!characterId) {
+            return;
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("GetCharacter", "Character")' +
+                '?characterId=' + encodeURIComponent(characterId) +
+                '&sessionId=' + encodeURIComponent(sessionId),
+            dataType: 'json',
+            success: function (response) {
+                localStorage.setItem("character", JSON.stringify(response));
+                console.log(response);
+
+                var charImageHtml = `
+                    <img style="border: solid 2px gray" class="rounded-3 me-2 pointer" src="${response.details.portrait}" width="30" height="30" title="${response.details.name}" />
+                `
+
+                $("#navbar").append(charImageHtml);
+            },
+        });
+
+
+    }
+
+    loginCharacter();
+</script>

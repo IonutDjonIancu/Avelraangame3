@@ -1,13 +1,12 @@
 ﻿using Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Services;
 
 public interface ICharacterService
 {
     CharacterVm GetCharacter(Guid id, Guid sessionId);
-    CharactersVm GetAllCharacters();
+    CharactersVm GetAllAliveCharacters();
 
     string CreateCharacter(CreateCharacter create);
     ImportCharacterResponse ImportCharacter(ImportCharacter import);
@@ -192,14 +191,23 @@ public class CharacterService : ICharacterService
         return GetCharacter(identity.Id, identity.SessionId);
     }
 
-    public CharactersVm GetAllCharacters()
+    public CharactersVm GetAllAliveCharacters()
     {
         return new CharactersVm
         {
-            CharactersPortraits = _snapshot.Characters.Select(s => s.Details.Portrait).ToList(),
+            CharactersPortraits = _snapshot.Characters
+                .Where(s => s.Details.IsAlive && !s.Details.IsNpc)
+                .Select(s => s.Details.Portrait)
+                .ToList(),
         };
     }
 
+    /// <summary>
+    /// Includes character actuals.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="sessionId"></param>
+    /// <returns></returns>
     public CharacterVm GetCharacter(Guid id, Guid sessionId)
     {
         Validators.ValidateOnGetCharacter(id, sessionId);
@@ -616,6 +624,8 @@ public class CharacterService : ICharacterService
         character.Details.Entitylevel = 1;
         character.Details.Levelup = 10;
         character.Details.Wealth = 10;
+        character.Details.BattleboardId = Guid.Empty;
+        character.Details.BattleboardType = string.Empty;
     }
 
     private void SetInventory(Character character)

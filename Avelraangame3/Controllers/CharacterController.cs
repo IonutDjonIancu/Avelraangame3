@@ -9,6 +9,12 @@ public class CharacterController(ICharacterService characterService) : Controlle
     private readonly ICharacterService _characterService = characterService;
 
     #region views
+    // GET: Character/Index
+    public IActionResult Index()
+    {
+        return View();
+    }
+
     // GET: Character/Upload
     public IActionResult Upload()
     {
@@ -38,7 +44,7 @@ public class CharacterController(ICharacterService characterService) : Controlle
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return Error(ex.Message);
         }
     }
 

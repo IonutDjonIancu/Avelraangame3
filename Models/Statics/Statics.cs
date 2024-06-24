@@ -1,7 +1,23 @@
-﻿namespace Models;
+﻿using System;
+
+namespace Models;
 
 public static class Statics
 {
+    public static class Battleboards
+    {
+        public static class Types
+        {
+            public const string Duel = "Duel";
+
+            public static readonly List<string> All =
+            [
+                Duel
+            ];
+        }
+
+    }
+
     public static class EffortLevels
     {
         public const int Easy = 20; // up to
