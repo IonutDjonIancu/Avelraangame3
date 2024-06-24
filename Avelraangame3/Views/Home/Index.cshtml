@@ -1,29 +1,27 @@
-﻿@* @model Character; *@
+﻿@model CharactersVm;
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
-@* <div id="model" hidden value="@Model"></div> *@
-
-<div class="text-center">
-    <h3>some text goes here</h3>
-    <p class="primary-green my-1">Some text stuff</p>
-    <p class="text-muted my-1">some other text goes here</p>
-    <button onclick="logCharacter()" class="btn btn-outline-secondary primary-green my-1">click</button>
+<p class="text-center text-muted">Av'el'Raan game</p>
+<div class="container mt-3 footer-border">
+    <div class="row mt-3 ">
+        <div class="col flex-wrap d-flex justify-content-center align-items-center">
+            <p>Known adventurers</p>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col d-flex justify-content-center align-items-center">
+            @foreach (var characterPortrait in Model.CharactersPortraits)
+            {
+                <img src="@characterPortrait" style="width: 50px; height: 50px" class="rounded-2 p-0 m-2" />
+            }
+        </div>
+    </div>
 </div>
 
 
 <script>
-    const logCharacter = () => {
-        console.log('joe');
-    }
-
-    // const toggleSections = (section) => {
-    //     section === "roll" ? $("#roll").slideDown(400) : $("#roll").slideUp(200)
-    //     section === "race" ? $("#race").slideDown(400) : $("#race").slideUp(200)
-    //     section === "culture" ? $("#culture").slideDown(400) : $("#culture").slideUp(200)
-    //     section === "name" ? $("#name").slideDown(400) : $("#name").slideUp(200)
-    // }
-
+    
 </script>

@@ -1,0 +1,94 @@
+﻿@model CharacterVm
+
+@* Townhall/Duel *@
+
+<div class="row">
+    <div class="col-8">
+        <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+            <button type="button" class="btn btn-outline-secondary">Duel</button>
+            <button type="button" class="btn btn-outline-dark">Tournament</button>
+            <button type="button" class="btn btn-outline-dark">Adventure</button>
+            <button type="button" class="btn btn-outline-dark">Market</button>
+            <button type="button" class="btn btn-outline-dark">Mercs</button>
+        </div>
+    </div>
+    <div class="col-4">
+        <div id="spinner" class="spinner-grow text-secondary float-end" role="status" title="Loading...">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-3 footer-border">
+    <div id="challengeBtn">
+        <button onclick="challengeNpc()" class="btn btn-sm btn-outline-secondary mt-3">Challenge NPC</button>
+    </div>
+    <div class="row mt-3" id="battleboard" style="display:none">
+        @* Character *@
+        <div class="col-6">
+            <div class="float-end">
+                <img class="rounded-3 m-2 pointer item-@Model.Details.Entitylevel" src="@Model.Details.Portrait" width="60" height="80" title="@Model.Details.Name" />
+            </div>
+        </div>
+        @* Npc *@
+        <div class="col-6" id="npcArea">
+        </div>
+    </div>
+</div>
+
+<script>
+    const challengeNpc = () => {
+
+        console.clear();
+
+        const characterId = localStorage.getItem("characterId");
+        const sessionId = localStorage.getItem("sessionId");
+
+        if (!characterId) return;
+        $("#spinner").show();
+
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("GetNpcForDuel", "Townhall")',
+            contentType: "application/json",
+            data: JSON.stringify({
+                id: characterId,
+                sessionId: sessionId
+            }),
+            success: function (response) {
+                console.log(response);
+                console.log(JSON.parse(localStorage.getItem("character")));
+                
+                localStorage.setItem("npc", response);
+
+                $("#challengeBtn").hide();
+                $("#battleboard").show();
+
+                var npcHtml = `
+                    <div>
+                        <img class="rounded-3 m-2 pointer item-${response.details.entitylevel}" src="${response.details.portrait}" width="60" height="80" title="${response.details.name}" />
+                    </div>
+                `
+                $("#npcArea").append(npcHtml);
+
+                hideLoading();
+            },
+            error: function (xhr, status, error) {
+                window.location.href = "/home/error?info=" + xhr.responseText;
+            }
+        });
+
+
+
+
+    }
+
+    const hideLoading = () => {
+        $(document).ready(() => {
+            $("#spinner").hide(500);
+        });
+    }
+
+    hideLoading();
+</script>

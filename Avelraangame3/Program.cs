@@ -7,6 +7,7 @@ builder.Services.AddSingleton<ISnapshot, Snapshot>();
 builder.Services.AddSingleton<IDiceService, DiceService>();
 builder.Services.AddTransient<IItemService, ItemService>();
 builder.Services.AddTransient<ICharacterService, CharacterService>();
+builder.Services.AddTransient<INpcService, NpcService>();
 
 builder.Services.AddControllersWithViews();
 

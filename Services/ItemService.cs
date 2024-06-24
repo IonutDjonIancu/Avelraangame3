@@ -6,28 +6,16 @@ public interface IItemService
 {
     Item GenerateRandomItem();
     Item GenerateSpecificItem(string type);
-    HashSet<Item> GenerateRandomItems(int amount);
-    
-    Trinket GenerateRandomTrinket();
+    List<Item> GenerateRandomItems(int amount);
 }
 
-public class ItemService(IDiceService diceService) : IItemService
+public class ItemService : IItemService
 {
-    private readonly IDiceService _dice = diceService;
+    private readonly IDiceService _diceService;
 
-    public Trinket GenerateRandomTrinket()
+    public ItemService(IDiceService diceService)
     {
-        var trinket = new Trinket
-        {
-            Id = Guid.NewGuid(),
-        };
-
-        SetLevel(null, trinket);
-        SetName(null, trinket);
-        SetTrinketAssets(trinket);
-        SetTrinketValue(trinket);
-
-        return trinket;
+        _diceService = diceService;
     }
 
     public Item GenerateRandomItem()
@@ -35,18 +23,12 @@ public class ItemService(IDiceService diceService) : IItemService
         var item = new Item
         {
             Id = Guid.NewGuid(),
-            HasTaint = _dice.Roll_1dn(2) % 2 == 0,
+            HasTaint = _diceService.Roll_1dn(2) % 2 == 0,
         };
 
-        SetLevel(item, null);
         SetType(item);
-        SetName(item, null);
-        SetCrafts(item);
-        SetStats(item);
-        SetItemAssets(item);
-        SetItemValue(item);
-
-        return item;
+        
+        return GenerateSpecificItem(item.Type);
     }
 
     public Item GenerateSpecificItem(string type)
@@ -56,26 +38,25 @@ public class ItemService(IDiceService diceService) : IItemService
             throw new Exception("Wrong item type provided.");
         }
 
-        var item = new Item()
-        {
-            Id = Guid.NewGuid(),
-            HasTaint = _dice.Roll_1dn(2) % 2 == 0,
-            Type = type
-        };
+        var item = type == Statics.Items.Types.Trinket ? new Trinket() : new Item();
 
-        SetLevel(item, null);
-        SetName(item, null);
-        SetCrafts(item);
+        item.Id = Guid.NewGuid();
+        item.HasTaint = _diceService.Roll_1dn(2) % 2 == 0;
+        item.Type = type;   
+
+        SetLevel(item);
+        SetIcon(item);
         SetStats(item);
-        SetItemAssets(item);
-        SetItemValue(item);
+        SetFeats(item);
+        SetValue(item);
+        SetName(item);
 
         return item;
     }
 
-    public HashSet<Item> GenerateRandomItems(int amount)
+    public List<Item> GenerateRandomItems(int amount)
     {
-        var items = new HashSet<Item>();
+        var items = new List<Item>();
 
         for (int i = 0; i < amount; i++)
         {
@@ -86,389 +67,283 @@ public class ItemService(IDiceService diceService) : IItemService
     }
 
     #region private methods
-    private void SetTrinketValue(Trinket trinket)
-    {
-        if (trinket.IsPermanent)
-        {
-            trinket.Value = trinket.Level * _dice.Roll_mdn(100, 300);
-        } 
-        else
-        {
-            trinket.Value = trinket.Level / 10;
-        }
-    }
-
-    private void SetItemValue(Item item)
+    private void SetValue(Item item)
     {
         if (item.HasTaint)
         {
-            item.Value += _dice.Roll_1dn(item.Level) / 3;
+            item.Value += 1 + _diceService.Roll_1dn(10);
         }
         else
         {
-            item.Value += _dice.Roll_1dn(item.Level) / 2;
+            item.Value += 1 + _diceService.Roll_1dn(20) * 3;
         }
     }
 
-    private void SetTrinketAssets(Trinket trinket)
+    private static void SetIcon(Item item)
     {
-        if (trinket.Level <= 40)
+        if (item.Type == Statics.Items.Types.Weapon)
         {
-            var oddEvenRoll = _dice.Roll_1dn(2);
-
-            if (oddEvenRoll % 2 == 0)
+            item.Icon = item.HasTaint ? "https://wow.zamimg.com/images/wow/icons/large/inv_sword_05.jpg" : "https://wow.zamimg.com/images/wow/icons/large/inv_sword_04.jpg";
+        }
+        else if (item.Type == Statics.Items.Types.Shield)
+        {
+            item.Icon = item.HasTaint ? "https://wow.zamimg.com/images/wow/icons/large/inv_shield_06.jpg" : "https://wow.zamimg.com/images/wow/icons/large/inv_shield_04.jpg";
+        }
+        else if (item.Type == Statics.Items.Types.Armour)
+        {
+            item.Icon = item.HasTaint ? "https://wow.zamimg.com/images/wow/icons/large/inv_chest_plate09.jpg" : "https://wow.zamimg.com/images/wow/icons/large/inv_chest_plate04.jpg";
+        }
+        else if (item.Type == Statics.Items.Types.Trinket)
+        {
+            if (((Trinket)item).IsPermanent)
             {
-                trinket.Assets.HitpointsBase += _dice.Roll_1dn(trinket.Level);
+                item.Icon = "https://wow.zamimg.com/images/wow/icons/large/inv_misc_food_vendor_witchberries.jpg";
             }
             else
             {
-                trinket.Assets.ManaBase += _dice.Roll_1dn(trinket.Level);
-            }
-
-            return;
-        }
-
-        var stat = _dice.Roll_1dn(6); // accounts for the nr of assets
-        
-        switch (stat)
-        {
-            case 1:
-                trinket.Assets.HitpointsBase += _dice.Roll_1dn(trinket.Level) * 2;
-                break;
-            case 2:
-                trinket.Assets.ManaBase += _dice.Roll_1dn(trinket.Level) * 3;
-                break;
-            case 3:
-                trinket.Assets.DefenseBase += _dice.Roll_1dn(trinket.Level) / 2;
-                break;
-            case 4:
-                trinket.Assets.ActionsBase += _dice.Roll_1dn(trinket.Level) / 10;
-                break;
-            case 5:
-                trinket.Assets.ResistBase += _dice.Roll_1dn(trinket.Level) / 2;
-                break;
-            case 6:
-                trinket.Assets.ReflexBase += _dice.Roll_1dn(trinket.Level) / 10;
-                break;
-            default:
-                throw new NotImplementedException();
-        }
-
-    }
-
-    private void SetItemAssets(Item item)
-    {
-        int times;
-
-        #region set bonus and times
-        if (item.Level <= 39)
-        {
-            // do nothing
-            return;
-        }
-        else if (item.Level >= 40 && item.Level <= 59) // 2x20
-        {
-            times = _dice.Roll_1dn(5);
-        }
-        else if (item.Level >= 60 && item.Level <= 79) // 3x20
-        {
-            times = _dice.Roll_1dn(10);
-        }
-        else if (item.Level >= 80 && item.Level <= 99) // 4x20
-        {
-            times = _dice.Roll_1dn(20);
-        }
-        else // 5x20 and up
-        {
-            times = _dice.Roll_1dn(40);
-        }
-        #endregion
-
-        for (int i = 0; i < times; i++)
-        {
-            var stat = _dice.Roll_1dn(6); // accounts for the nr of assets
-            int bonus;
-
-            switch (stat)
-            {
-                case 1:
-                    bonus = item.HasTaint ? _dice.Roll_1dn(5 * item.Level) + item.Level : _dice.Roll_1dn(10);
-                    if (item.HasTaint)
-                    {
-                        item.Assets.HitpointsBase += bonus;
-                    }
-                    else
-                    {
-                        item.Assets.ResistBase += bonus;
-                    }
-                    break;
-                case 2:
-                    bonus = item.HasTaint ? _dice.Roll_1dn(10 * item.Level) : _dice.Roll_1dn(50);
-                    if (item.HasTaint)
-                    {
-                        item.Assets.ManaBase += bonus;
-                    }
-                    else
-                    {
-                        item.Assets.ManaBase -= bonus;
-                    }
-                    break;
-                case 3:
-                    if (item.Type == Statics.Items.Types.Weapon) break;
-                    
-                    bonus = item.HasTaint ? _dice.Roll_1dn(item.Level / 10) : _dice.Roll_1dn(item.Level / 5);
-                    if (item.HasTaint)
-                    {
-                        item.Assets.DefenseBase += bonus;
-                    }
-                    else
-                    {
-                        item.Assets.DefenseBase += bonus;
-                    }
-                    break;
-                case 4:
-                    bonus = item.HasTaint ? _dice.Roll_1dn(item.Level / 10) : _dice.Roll_1dn(20);
-                    if (item.HasTaint)
-                    {
-                        item.Assets.ActionsBase += bonus;
-                    }
-                    else
-                    {
-                        item.Assets.ResistBase += bonus;
-                    }
-                    break;
-                case 5:
-                    bonus = item.HasTaint ? _dice.Roll_1dn(item.Level / 10) : _dice.Roll_1dn(20);
-                    if (item.HasTaint)
-                    {
-                        item.Assets.ResistBase -= bonus;
-                    }
-                    else
-                    {
-                        item.Assets.ResistBase += bonus;
-                    }
-                    break;
-                case 6:
-                    bonus = _dice.Roll_1dn(item.Level / 10);
-                    if (item.HasTaint)
-                    {
-                        item.Assets.ReflexBase += bonus;
-                    }
-                    else
-                    {
-                        item.Assets.ResistBase += bonus;
-                    }
-                    break;
-                default:
-                    throw new NotImplementedException();
+                item.Icon = item.HasTaint ? "https://wow.zamimg.com/images/wow/icons/large/inv_jewelry_amulet_04.jpg" : "https://wow.zamimg.com/images/wow/icons/large/inv_jewelry_amulet_02.jpg";
             }
         }
-    }
-
-    private void SetStats(Item item)
-    {
-        int bonusRoll;
-        int times;
-
-        #region set bonus and times
-        if (item.Level <= 19)
+        else
         {
-            // do nothing
-            return;
-        }
-        else if (item.Level >= 20 && item.Level <= 39) // 1x20
-        {
-            bonusRoll = _dice.Roll_1dn(3);
-            times = _dice.Roll_1dn(3);
-        }
-        else if (item.Level >= 40 && item.Level <= 59) // 2x20
-        {
-            bonusRoll = _dice.Roll_1dn(5);
-            times = _dice.Roll_1dn(5);
-        }
-        else if (item.Level >= 60 && item.Level <= 79) // 3x20
-        {
-            bonusRoll = _dice.Roll_1dn(10);
-            times = _dice.Roll_1dn(10);
-        }
-        else if (item.Level >= 80 && item.Level <= 99) // 4x20
-        {
-            bonusRoll = _dice.Roll_1dn(20);
-            times = _dice.Roll_1dn(20);
-        }
-        else // 5x20 and up
-        {
-            bonusRoll = _dice.Roll_1dn(40);
-            times = _dice.Roll_1dn(40);
-        }
-        #endregion
-
-        for (int i = 0; i < times; i++)
-        {
-            var stat = _dice.Roll_1dn(4); // accounts for the nr of stats
-            var bonus = _dice.Roll_1dn(bonusRoll);
-
-            switch (stat)
-            {
-                case 1:
-                    item.Stats.Strength += bonus;
-                    break;
-                case 2:
-                    item.Stats.Athletics += bonus;
-                    break;
-                case 3:
-                    item.Stats.Willpower += bonus;
-                    break;
-                case 4:
-                    item.Stats.Abstract += bonus;
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-    }
-
-    private void SetCrafts(Item item)
-    {
-        int bonusRoll;
-        int times;
-
-        #region set bonus and times
-        if (item.Level <= 19)
-        {
-            bonusRoll = _dice.Roll_1dn(3);
-            times = _dice.Roll_1dn(3);
-        }
-        else if (item.Level >= 20 && item.Level <= 39) // 1x20
-        {
-            bonusRoll = _dice.Roll_1dn(5);
-            times = _dice.Roll_1dn(10);
-        }
-        else if (item.Level >= 40 && item.Level <= 59) // 2x20
-        {
-            bonusRoll = _dice.Roll_1dn(9);
-            times = _dice.Roll_1dn(20);
-        }
-        else if (item.Level >= 60 && item.Level <= 79) // 3x20
-        {
-            bonusRoll = _dice.Roll_1dn(15);
-            times = _dice.Roll_1dn(30);
-        }
-        else if (item.Level >= 80 && item.Level <= 99) // 4x20
-        {
-            bonusRoll = _dice.Roll_1dn(25);
-            times = _dice.Roll_1dn(40);
-        }
-        else // 5x20 and up
-        {
-            bonusRoll = _dice.Roll_1dn(50);
-            times = _dice.Roll_1dn(60);
-        }
-        #endregion
-
-        for (int i = 0; i < times; i++)
-        {
-            var craft = _dice.Roll_1dn(10); // accounts for nr of crafts
-            var bonus = _dice.Roll_1dn(bonusRoll);
-
-            switch (craft)
-            {
-                case 1:
-                    item.Crafts.Combat += bonus;
-                    break;
-                case 2:
-                    item.Crafts.Arcane += bonus;
-                    break;
-                case 3:
-                    item.Crafts.Alchemy += bonus;
-                    break;
-                case 4:
-                    item.Crafts.Psionics += bonus;
-                    break;
-                case 5:
-                    item.Crafts.Hunting += bonus;
-                    break;
-                case 6:
-                    item.Crafts.Advocacy += bonus;
-                    break;
-                case 7:
-                    item.Crafts.Mercantile += bonus;
-                    break;
-                case 8:
-                    item.Crafts.Tactics += bonus;
-                    break;
-                case 9:
-                    item.Crafts.Sailing += bonus;
-                    break;
-                case 10:
-                    item.Crafts.Medicine += bonus;
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
+            throw new NotImplementedException(); 
         }
     }
 
     private void SetType(Item item)
     {
-        var roll = _dice.Roll_d20();
+        var roll = _diceService.Roll_d20_no_rr();
 
-        if (roll <= 10)
+        if (roll <= 8)
         {
-            item.Type = Statics.Items.Types.Weapon;
+            item.Type = Statics.Items.Types.Weapon; // 40%
         }
-        else if (roll > 10 && roll <= 16)
+        else if (roll > 8 && roll <= 14)
         {
-            item.Type = Statics.Items.Types.Shield;
+            item.Type = Statics.Items.Types.Shield; // 30%
         }
-        else
+        else if (roll > 14 && roll <= 18)
         {
-            item.Type = Statics.Items.Types.Armour;
+            item.Type = Statics.Items.Types.Trinket; // 20%
+        }
+        else if (roll > 18)
+        {
+            item.Type = Statics.Items.Types.Armour; // 10%
+        }
+        else // lol
+        {
+            throw new NotImplementedException();
         }
     }
 
-    private void SetName(Item? item, Trinket? trinket)
+    private void SetName(Item item)
     {
-        Validators.ValidateTrinketOrItemNotNull(item, trinket);
-
-        if (item is null)
+        if (item.Type == Statics.Items.Types.Weapon)
         {
-            trinket!.Name = $"Trinket {trinket.Id.ToString()[..7]}";
+            var index = _diceService.Roll_1dn(Statics.Items.Weapons.All.Count) - 1;
+            item.Name = Statics.Items.Weapons.All[index];
+        }
+        else if (item.Type == Statics.Items.Types.Shield)
+        {
+            var index = _diceService.Roll_1dn(Statics.Items.Shields.All.Count) - 1;
+            item.Name = Statics.Items.Shields.All[index];
+        }
+        else if (item.Type == Statics.Items.Types.Armour)
+        {
+            var index = _diceService.Roll_1dn(Statics.Items.Armours.All.Count) - 1;
+            item.Name = Statics.Items.Armours.All[index];
+        }
+        else if (item.Type == Statics.Items.Types.Trinket)
+        {
+            var index = _diceService.Roll_1dn(Statics.Items.Trinkets.All.Count) - 1;
+            item.Name = Statics.Items.Trinkets.All[index];
         }
         else
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    private void SetLevel(Item item)
+    {
+        var roll = _diceService.Roll_d20();
+        item.Level = 1 + roll / 20;
+
+        if (item.Type == Statics.Items.Types.Trinket)
+        {
+            ((Trinket)item).IsPermanent = roll >= 60;
+        }
+    }
+
+    private void SetStats(Item item)
+    {
+        var rollTimes = _diceService.Roll_1dn(5 + item.Level);
+
+        for (int i = 0; i < rollTimes; i++)
         {
             if (item.Type == Statics.Items.Types.Weapon)
             {
-                var index = _dice.Roll_1dn(Statics.Items.Weapons.All.Count) - 1;
-                item.Name = Statics.Items.Weapons.All[index];
+                // flat bonus
+                item.Feats.Combat += _diceService.Roll_1dn(2 + item.Level);
+                item.Feats.CombatEff += _diceService.Roll_1dn(2 + item.Level);
+                // taint notaint bonus
+                if (item.HasTaint)
+                {
+                    item.Feats.Abstract += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.AbstractEff += _diceService.Roll_1dn(3 + item.Level);
+                    item.Stats.Accretion += _diceService.Roll_1dn(3 + item.Level);
+                    item.Stats.Resist -= _diceService.Roll_1dn(2 + item.Level);
+                }
+                else
+                {
+                    item.Feats.Psionic += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.PsionicEff += _diceService.Roll_1dn(3 + item.Level);
+                    item.Stats.Resist += _diceService.Roll_1dn(2 + item.Level);
+                }
+            }
+            else if (item.Type == Statics.Items.Types.Trinket)
+            {
+                // flat bonus
+                item.Value += _diceService.Roll_d20();
+                // taint notaint bonus
+                if (item.HasTaint)
+                {
+                    item.Feats.Abstract += _diceService.Roll_1dn(2 + item.Level);
+                    item.Feats.AbstractEff += _diceService.Roll_1dn(2 + item.Level);
+                    item.Stats.Accretion += _diceService.Roll_1dn(2 + item.Level);
+                    item.Stats.Resist -= _diceService.Roll_1dn(2 + item.Level);
+                }
+                else
+                {
+                    item.Feats.Crafting += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.CraftingEff += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.Medicine += _diceService.Roll_1dn(2 + item.Level);
+                    item.Feats.MedicineEff += _diceService.Roll_1dn(2 + item.Level);
+                }
             }
             else if (item.Type == Statics.Items.Types.Shield)
             {
-                var index = _dice.Roll_1dn(Statics.Items.Shields.All.Count) - 1;
-                item.Name = Statics.Items.Shields.All[index];
+                // flat bonus
+                item.Stats.Defense += _diceService.Roll_1dn(3 + item.Level);
+                item.Stats.Resist += _diceService.Roll_1dn(3 + item.Level);
+                // taint notaint bonus
+                if (item.HasTaint)
+                {
+                    item.Feats.Abstract += _diceService.Roll_1dn(2 + item.Level);
+                    item.Feats.AbstractEff += _diceService.Roll_1dn(2 + item.Level);
+                    item.Stats.Accretion += _diceService.Roll_1dn(2 + item.Level);
+                    item.Stats.Resist -= _diceService.Roll_1dn(2 + item.Level);
+                }
+                else
+                {
+                    item.Feats.Psionic += _diceService.Roll_1dn(2 + item.Level);
+                    item.Feats.PsionicEff += _diceService.Roll_1dn(2 + item.Level);
+                    item.Stats.Resist += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.CombatEff += _diceService.Roll_1dn(2 + item.Level);
+                }
             }
             else if (item.Type == Statics.Items.Types.Armour)
             {
-                var index = _dice.Roll_1dn(Statics.Items.Armours.All.Count) - 1;
-                item.Name = Statics.Items.Armours.All[index];
+                // flat bonus
+                item.Stats.Defense += _diceService.Roll_1dn(3 + item.Level);
+                item.Stats.Endurance += _diceService.Roll_1dn(5 + item.Level);
+                // taint notaint bonus
+                if (item.HasTaint)
+                {
+                    item.Feats.Abstract += _diceService.Roll_1dn(2 + item.Level);
+                    item.Feats.AbstractEff += _diceService.Roll_1dn(2 + item.Level);
+                    item.Stats.Accretion += _diceService.Roll_1dn(2 + item.Level);
+                    item.Stats.Resist -= _diceService.Roll_1dn(2 + item.Level);
+                }
+                else
+                {
+                    item.Feats.Psionic += _diceService.Roll_1dn(2 + item.Level);
+                    item.Feats.PsionicEff += _diceService.Roll_1dn(2 + item.Level);
+                    item.Stats.Resist += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.CombatEff += _diceService.Roll_1dn(2 + item.Level);
+                }
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            var statNr = _diceService.Roll_1dn(Statics.Stats.All.Count); // accounts for the nr of stats
+            switch (statNr)
+            {
+                case 1:
+                    item.Stats.Defense += _diceService.Roll_1dn(2 + item.Level);
+                    break;
+                case 2:
+                    item.Stats.Resist += _diceService.Roll_1dn(2 + item.Level);
+                    break;
+                case 3:
+                    item.Stats.Actions += _diceService.Roll_1dn(2 + item.Level);
+                    break;
+                case 4:
+                    item.Stats.Endurance += _diceService.Roll_1dn(5 + item.Level);
+                    break;
+                case 5:
+                    item.Stats.Accretion += _diceService.Roll_1dn(10 + item.Level);
+                    break;
+                default:
+                    throw new NotImplementedException();
             }
         }
     }
 
-    private void SetLevel(Item? item, Trinket? trinket)
+    private void SetFeats(Item item)
     {
-        Validators.ValidateTrinketOrItemNotNull(item, trinket);
+        var rollTimes = _diceService.Roll_1dn(5 + item.Level);
 
-        var roll = _dice.Roll_d20_rr();
-
-        if (item is null)
+        for (int i = 0; i < rollTimes; i++)
         {
-            trinket!.Level = roll;
-            trinket.IsPermanent = roll >= 60;
-        } 
-        else
-        {
-            item.Level = roll;
+            var featNr = _diceService.Roll_1dn(Statics.Feats.All.Count); // accounts for the nr of stats
+            switch (featNr)
+            {
+                case 1:
+                    item.Feats.Combat += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.CombatEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                case 2:
+                    item.Feats.Strength += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.StrengthEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                case 3:
+                    item.Feats.Tactics += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.TacticsEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                case 4:
+                    item.Feats.Athletics += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.AthleticsEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                case 5:
+                    item.Feats.Survival += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.SurvivalEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                case 6:
+                    item.Feats.Social += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.SocialEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                case 7:
+                    item.Feats.Abstract += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.AbstractEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                case 8:
+                    item.Feats.Psionic += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.PsionicEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                case 9:
+                    item.Feats.Crafting += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.CraftingEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                case 10:
+                    item.Feats.Medicine += _diceService.Roll_1dn(3 + item.Level);
+                    item.Feats.MedicineEff += _diceService.Roll_1dn(3 + item.Level);
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
         }
     }
     #endregion

@@ -40,6 +40,72 @@ body {
 }
 
 .text-white {
-    color: #fff
+    color: #fff;
 }
 
+.text-green {
+    color: forestgreen;
+}
+
+.text-red {
+    color: darkred;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.secondary-darkred {
+    color: #8b00006e;
+}
+
+.secondary-darkyellow {
+    color: #797720;
+}
+
+.secondary-darkgreen {
+    color: #008b386e;
+}
+
+.item {
+    width: 40px;
+    height: 40px;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.item:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.item-1 {
+    border: 2px solid gray;
+}
+
+.item-2 {
+    border: 2px solid green;
+}
+
+.item-3 {
+    border: 2px solid lime;
+}
+
+.item-4 {
+    border: 2px solid yellow;
+}
+
+.item-5 {
+    border: 2px solid orange;
+}
+
+.item-6 {
+    border: 2px solid purple;
+}
+
+.selected {
+    border: 3px solid white;
+}
+li {
+    margin-bottom: 2px
+}
