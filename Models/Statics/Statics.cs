@@ -32,19 +32,6 @@ public static class Statics
         public const string Actions = "Actions";
         public const string Endurance = "Endurance";
         public const string Accretion = "Accretion";
-
-        public static readonly List<string> All =
-        [
-            Defense,
-            Resist,
-            Actions,
-            Endurance,
-            Accretion
-        ];
-    }
-
-    public static class Feats
-    {
         public const string Combat = "Combat";
         public const string Strength = "Strength";
         public const string Tactics = "Tactics";
@@ -58,6 +45,11 @@ public static class Statics
 
         public static readonly List<string> All =
         [
+            Defense,
+            Resist,
+            Actions,
+            Endurance,
+            Accretion,
             Combat,
             Strength,
             Tactics,
@@ -159,13 +151,13 @@ public static class Statics
         public const string Human = "Human";
         public static class Humans
         {
-            // stats
+            // states
             public const int Defense        = 1;
             public const int Resist         = 1;
             public const int Actions        = 1;
             public const int Endurance      = 15;
             public const int Accretion      = 5;
-            // feats
+            // rolls and effects
             public const int Combat         = 1;
             public const int CombatEff      = 5;
             public const int Strength       = 1;
@@ -191,13 +183,13 @@ public static class Statics
         public const string Elf = "Elf";
         public static class Elfs
         {
-            // stats
+            // states
             public const int Defense        = 1;
             public const int Resist         = 1;
             public const int Actions        = 1;
             public const int Endurance      = 10;
             public const int Accretion      = 10;
-            // feats
+            // rolls and effects
             public const int Combat         = 1;
             public const int CombatEff      = 3;
             public const int Strength       = 2;
@@ -223,13 +215,13 @@ public static class Statics
         public const string Dwarf = "Dwarf";
         public static class Dwarfs
         {
-            // stats
+            // states
             public const int Defense        = 3;
             public const int Resist         = 3;
             public const int Actions        = 1;
             public const int Endurance      = 20;
             public const int Accretion      = 1;
-            // feats
+            // rolls and effects
             public const int Combat         = 2;
             public const int CombatEff      = 5;
             public const int Strength       = 1;
@@ -265,13 +257,13 @@ public static class Statics
         public const string Danarian = "Danarian";
         public static class Danarians
         {
-            // stats
+            // states
             public const int Defense        = 2;
             public const int Resist         = 0;
             public const int Actions        = 0;
             public const int Endurance      = 3;
             public const int Accretion      = 0;
-            // feats
+            // rolls and effects
             public const int Combat         = 1;
             public const int CombatEff      = 1;
             public const int Strength       = 0;
@@ -297,13 +289,13 @@ public static class Statics
         public const string Highborn = "Highborn";
         public static class Highborns
         {
-            // stats
+            // states
             public const int Defense        = 0;
             public const int Resist         = 0;
             public const int Actions        = 0;
             public const int Endurance      = 1;
             public const int Accretion      = 10;
-            // feats
+            // rolls and effects
             public const int Combat         = 2;
             public const int CombatEff      = 2;
             public const int Strength       = 2;
@@ -329,13 +321,13 @@ public static class Statics
         public const string Undermountain = "Undermountain";
         public static class Undermountains
         {
-            // stats
+            // states
             public const int Defense        = 5;
             public const int Resist         = 5;
             public const int Actions        = 0;
             public const int Endurance      = 5;
             public const int Accretion      = 0;
-            // feats
+            // rolls and effects
             public const int Combat         = 3;
             public const int CombatEff      = 3;
             public const int Strength       = 3;
@@ -371,13 +363,13 @@ public static class Statics
         public const string Warring = "Warring";
         public static class Warrings
         {
-            // stats
+            // states
             public const int Defense        = 5;
             public const int Resist         = 0;
             public const int Actions        = 1;
             public const int Endurance      = 15;
             public const int Accretion      = 0;
-            // feats
+            // rolls and effects
             public const int Combat         = 5;
             public const int CombatEff      = 5;
             public const int Strength       = 4;
@@ -403,13 +395,13 @@ public static class Statics
         public const string Sorcery = "Sorcery";
         public static class Sorcerys
         {
-            // stats
+            // states
             public const int Defense        = 0;
             public const int Resist         = 5;
             public const int Actions        = 0;
             public const int Endurance      = 5;
             public const int Accretion      = 15;
-            // feats
+            // rolls and effects
             public const int Combat         = 1;
             public const int CombatEff      = 1;
             public const int Strength       = -1;
@@ -435,13 +427,13 @@ public static class Statics
         public const string Tracking = "Tracking";
         public static class Trackings
         {
-            // stats
+            // states
             public const int Defense        = 2;
             public const int Resist         = 2;
             public const int Actions        = 0;
             public const int Endurance      = 10;
             public const int Accretion      = 5;
-            // feats
+            // rolls and effects
             public const int Combat         = 2;
             public const int CombatEff      = 2;
             public const int Strength       = 3;

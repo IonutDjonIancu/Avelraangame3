@@ -1,6 +1,6 @@
 ﻿@model CharacterDuel
 
-@* Townhall/Duel *@
+@* Townhall/DuelOf *@
 
 <div class="row">
     <div class="col-8">
@@ -21,24 +21,30 @@
 </div>
 
 <div class="container mt-3 footer-border">
-    <div id="challengeBtn">
-        <button onclick="fightNpc()" class="btn btn-sm btn-outline-secondary mt-3">Fight NPC</button>
+    <div class="row mt-3" id="battlequeue"> 
+        battlequeue shown here
+    </div>
+    <div class="row mt-3" id="resultboard">
+        resultboard shown here
+    </div>
+    <div class="row mt-3" id="battleboard"> 
+        @* Character *@
+        <div class="col-6" id="characterArea">
+            <div class="float-end">
+                <img class="rounded-3 m-2 pointer item-@Model.Character.Details.Entitylevel" src="@Model.Character.Details.Portrait" width="60" height="80" title="@Model.Character.Details.Name" />
+            </div>
+        </div>
+        @* Npc *@
+        <div class="col-6" id="npcArea">
+            <div>
+                <img class="rounded-3 m-2 pointer item-@Model.Npc.Details.Entitylevel" src="@Model.Npc.Details.Portrait" width="60" height="80" title="@Model.Npc.Details.Name" />
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    const fightNpc = () => {
-
-        var characterId = localStorage.getItem("characterId");
-        var sessionId = localStorage.getItem("sessionId");
-
-        if (!characterId || !sessionId) {
-            return;
-        }
-
-        window.location.href = "/townhall/duelOf?characterId=" + characterId + "&sessionId=" + sessionId;
-    }
-
+   
     const hideLoading = () => {
         $(document).ready(() => {
             $("#spinner").hide(500);

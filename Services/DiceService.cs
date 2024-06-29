@@ -29,7 +29,7 @@ public interface IDiceService
     /// <returns></returns>
     int Roll_mdn(int m, int n);
 
-    double Roll_vs_effort(CharacterVm charVm, string craft, int effort, ISnapshot snapshot);
+    double Roll_vs_effort(Character character, string craft, int effort);
 }
 
 public class DiceService : IDiceService
@@ -45,14 +45,14 @@ public class DiceService : IDiceService
     /// <param name="snapshot"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public double Roll_vs_effort(CharacterVm charVm, string feat, int effort, ISnapshot snapshot)
+    public double Roll_vs_effort(Character character, string feat, int effort)
     {
-        if (!Statics.Feats.All.Contains(feat))
-            throw new Exception("No such craft found to roll.");
+        if (!Statics.Stats.All.Contains(feat))
+            throw new Exception("No such stat found to roll.");
 
-        Validators.ValidateAgainstNull(charVm, "CharacterVm cannot be null.");
+        Validators.ValidateAgainstNull(character, "Character cannot be null.");
 
-        var charRoll = RollFeat(charVm, feat, snapshot);
+        var charRoll = RollStats(character, feat);
         var effortRoll = Roll_1dn(effort);
         var result = charRoll - effortRoll;
 
@@ -116,9 +116,8 @@ public class DiceService : IDiceService
     }
 
     #region private methods
-    private int RollFeat(CharacterVm charVm, string craft, ISnapshot snapshot)
+    private int RollStats(Character character, string craft)
     {
-        var character = snapshot.Characters.Find(s => s.Identity.Id == charVm.Identity.Id)!;
         var roll = Roll_d20();
 
         UpgradeEntityLevel(roll, character);
@@ -126,17 +125,17 @@ public class DiceService : IDiceService
 
         return craft switch
         {
-            Statics.Feats.Combat => Roll_d20() + charVm.Actuals.Feats.Combat,
-            Statics.Feats.Strength => Roll_d20() + charVm.Actuals.Feats.Strength,
-            Statics.Feats.Tactics => Roll_d20() + charVm.Actuals.Feats.Tactics,
-            Statics.Feats.Athletics => Roll_d20() + charVm.Actuals.Feats.Athletics,
-            Statics.Feats.Survival => Roll_d20() + charVm.Actuals.Feats.Survival,
-            Statics.Feats.Social => Roll_d20() + charVm.Actuals.Feats.Social,
-            Statics.Feats.Abstract => Roll_d20() + charVm.Actuals.Feats.Abstract,
-            Statics.Feats.Psionic => Roll_d20() + charVm.Actuals.Feats.Psionic,
-            Statics.Feats.Crafting => Roll_d20() + charVm.Actuals.Feats.Crafting,
-            Statics.Feats.Medicine => Roll_d20() + charVm.Actuals.Feats.Medicine,
-            _ => throw new Exception("Wrong craft provided.")
+            Statics.Stats.Combat    => Roll_d20() + character.Actuals.Combat,
+            Statics.Stats.Strength  => Roll_d20() + character.Actuals.Strength,
+            Statics.Stats.Tactics   => Roll_d20() + character.Actuals.Tactics,
+            Statics.Stats.Athletics => Roll_d20() + character.Actuals.Athletics,
+            Statics.Stats.Survival  => Roll_d20() + character.Actuals.Survival,
+            Statics.Stats.Social    => Roll_d20() + character.Actuals.Social,
+            Statics.Stats.Abstract  => Roll_d20() + character.Actuals.Abstract,
+            Statics.Stats.Psionic   => Roll_d20() + character.Actuals.Psionic,
+            Statics.Stats.Crafting  => Roll_d20() + character.Actuals.Crafting,
+            Statics.Stats.Medicine  => Roll_d20() + character.Actuals.Medicine,
+            _ => throw new Exception("Wrong stat provided.")
         };
     }
 

@@ -2,12 +2,13 @@
 
 namespace Models;
 
-public class CharacterBase
+public class Character
 {
+    public CharacterIdentity Identity { get; set; } = new();
     public CharacterDetails Details { get; set; } = new();
     public CharacterStats Stats { get; set; } = new();
-    public CharacterFeats Feats { get; set; } = new();
-    public CharacterActuals Actuals { get; set; } = new();
+    public CharacterStats Actuals { get; set; } = new();
+    public CharacterStats Fights { get; set; } = new();
 
     [MaxLength(4)]
     public List<Item> Inventory { get; set; } = [];
@@ -19,22 +20,16 @@ public class CharacterBase
     // TODO: add special skills
 }
 
-public class Character : CharacterBase
+public class CharacterDuel
 {
-    public CharacterIdentity Identity { get; set; } = new();
+    public Character Character { get; set; }
+    public Character Npc { get; set; }
+    public string Resultboard { get; set; }
+    public List<string> Battlequeue { get; set; }
+    public int RoundNr { get; set; }
 }
 
-public class CharacterVm : CharacterBase
-{
-    public CharacterIdentityVm Identity { get; set; } = new();
-}
-
-public class CharacterNpc : CharacterBase
-{
-    public CharacterIdentity Identity { get; set; } = new();
-}
-
-public class CharactersVm
+public class Characters
 {
     public List<string> CharactersPortraits { get; set; }
 }
@@ -48,12 +43,6 @@ public class CharacterIdentity
 public class CharacterIdentityVm
 {
     public Guid Id { get; set; }
-}
-
-public class CharacterActuals
-{
-    public CharacterStats Stats { get; set; } = new();
-    public CharacterFeats Feats { get; set; } = new();
 }
 
 public class CharacterDetails
@@ -77,15 +66,14 @@ public class CharacterDetails
 
 public class CharacterStats
 {
+    // states
     public int Defense { get; set; }
     public int Resist { get; set; }
     public int Actions { get; set; }
     public int Endurance { get; set; }
     public int Accretion { get; set; }
-}
 
-public class CharacterFeats
-{
+    // rolls
     public int Combat { get; set; }
     public int Strength { get; set; }
     public int Tactics { get; set; }
@@ -97,6 +85,7 @@ public class CharacterFeats
     public int Crafting { get; set; }
     public int Medicine { get; set; }
 
+    // effects
     public int CombatEff { get; set; }
     public int StrengthEff { get; set; }
     public int TacticsEff { get; set; }

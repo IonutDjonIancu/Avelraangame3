@@ -20,7 +20,7 @@ internal class Validators
     #endregion
 
     #region npcs
-    internal static Character ValidateCharacterOnNpcGenerate(CharacterIdentity identity, ISnapshot snapshot) 
+    internal static Character ValidateCharacterOnDuel(CharacterIdentity identity, ISnapshot snapshot) 
     {
         var character = ValidateCharacterExists(identity.Id, identity.SessionId, snapshot);
 
@@ -60,6 +60,8 @@ internal class Validators
 
         if (snapshot.CharactersImported.Contains(character.Identity.Id))
             throw new Exception("Character already imported and has an active session.");
+        if (snapshot.Characters.Find(s => s.Identity.Id == character.Identity.Id)!.Details.IsLocked)
+            throw new Exception("Unable to import: character is currently locked.");
         if (character.Details.IsNpc)
             throw new Exception("Cannot play an NPC character.");
         if (character.Details.IsLocked)
@@ -111,24 +113,16 @@ internal class Validators
         ValidateString(levelup.Attribute, "Attribute missing or invalid for levelup.");
         var character = ValidateCharacterExists(levelup.CharacterId, levelup.SessionId, snapshot);
 
-        if (!Statics.Stats.All.Union(Statics.Feats.All).Contains(levelup.Attribute))
-            throw new Exception("Unable to find attribute in list of stats and crafts.");
+        if (!Statics.Stats.All.Contains(levelup.Attribute))
+            throw new Exception("Unable to find attribute in list of stats.");
 
         if (character.Details.Levelup == 0)
             throw new Exception("No lvl up points to distribute.");
 
         int value;
 
-        if (Statics.Stats.All.Contains(levelup.Attribute))
-        {
-            var stat = typeof(CharacterStats).GetProperty(levelup.Attribute)!;
-            value = (int)stat.GetValue(character.Stats)!;
-        }
-        else
-        {
-            var craft = typeof(CharacterFeats).GetProperty(levelup.Attribute)!;
-            value = (int)craft.GetValue(character.Feats)!;
-        }
+        var stat = typeof(CharacterStats).GetProperty(levelup.Attribute)!;
+        value = (int)stat.GetValue(character.Stats)!;
 
         if (value <= 0 && character.Details.Levelup < 1)
             throw new Exception("Not enough points to distribute.");
@@ -139,7 +133,7 @@ internal class Validators
         return character;
     }
 
-    internal static (Item, Character) ValidateSellItemAndReturn(EquipItem equipItem, ISnapshot snapshot)
+    internal static (Item, CharacterIdentity) ValidateSellItemAndReturn(EquipItem equipItem, ISnapshot snapshot)
     {
         ValidateAgainstNull(equipItem, "Equip item cannot be null.");
         ValidateAgainstNull(snapshot, "Snapshot cannot be null.");
@@ -159,7 +153,7 @@ internal class Validators
         if (snapshot.ItemsSold.Contains(item.Id))
             throw new Exception("This item has already been sold.");
 
-        return (item, character);
+        return (item, character.Identity);
     }
 
     internal static (Item, Character) ValidateUnequipItemAndReturn(EquipItem equipItem, ISnapshot snapshot)
