@@ -56,15 +56,16 @@ public class TownhallController : Controller
         }
     }
 
-    // GET: Character/Error?info=infoToDisplay
-    public IActionResult Error(string info)
-    {
-        return Content($"<<< click back to return\n\n\n{info}");
-    }
     #endregion
 
     #region requests
-    
 
+    #endregion
+
+    #region private methods
+    private ContentResult Error(string info)
+    {
+        return Content($"<<< click back to return\n\n\n{info}");
+    }
     #endregion
 }

@@ -19,18 +19,19 @@ internal class Validators
     }
     #endregion
 
-    #region npcs
+    #region townhall
     internal static Character ValidateCharacterOnDuel(CharacterIdentity identity, ISnapshot snapshot) 
     {
         var character = ValidateCharacterExists(identity.Id, identity.SessionId, snapshot);
 
-        if (character.Details.BattleboardId != Guid.Empty)
-        {
-            var npc = snapshot.Npcs.First(s => s.Details.BattleboardId == character.Details.BattleboardId) ?? throw new Exception("Npc not found for duel.");
-        }
+        if (character.Details.BattleboardId != Guid.Empty
+            && !snapshot.Duels.Exists(s => s.Id == character.Details.BattleboardId))
+            throw new Exception("Unable to find battleboard duel for character.");
 
+        character.Details.IsLocked = snapshot.Duels.Exists(s => s.Id == character.Details.BattleboardId);
+        
         if (!character.Details.IsAlive)
-            throw new Exception("Unable to generate an NPC for a dead character.");
+            throw new Exception("Your character is dead.");
 
         return character;
     }
@@ -46,28 +47,21 @@ internal class Validators
         if (character.Details.IsLocked)
             throw new Exception("Unable to export: character is locked.");
 
+        if (!character.Details.IsAlive)
+            throw new Exception("Unable to export: character is dead.");
+
         return character;
     }
 
-
-    internal static void ValidateOnImportCharacter(ImportCharacter import, ISnapshot snapshot)
+    internal static void ValidateOnImportCharacter(ImportCharacter import)
     {
         ValidateAgainstNull(import, "Import object is either missing or invalid.");
         ValidateString(import.CharacterString, "Import character string cannot be null.");
         var decryptString = EncryptionService.DecryptString(import.CharacterString);
 
         var character = JsonConvert.DeserializeObject<Character>(decryptString) ?? throw new Exception("Unable to properly deserialize character.");
-
-        if (snapshot.CharactersImported.Contains(character.Identity.Id))
-            throw new Exception("Character already imported and has an active session.");
-        if (snapshot.Characters.Find(s => s.Identity.Id == character.Identity.Id)!.Details.IsLocked)
-            throw new Exception("Unable to import: character is currently locked.");
         if (character.Details.IsNpc)
             throw new Exception("Cannot play an NPC character.");
-        if (character.Details.IsLocked)
-            throw new Exception("Unable to import: character is locked.");
-        if (!character.Details.IsAlive)
-            throw new Exception("Unable to import: character is dead.");
     }
 
     internal static void ValidateOnGetCharacter(Guid id, Guid sessionId)
@@ -229,7 +223,7 @@ internal class Validators
     #region dice
     internal static void ValidateDiceMdNRoll(int m, int n)
     {
-        if (m >= n)
+        if (m > n)
             throw new Exception("Dice roll mdn cannot have m >= n.");
     }
 

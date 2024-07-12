@@ -20,15 +20,6 @@ public class Character
     // TODO: add special skills
 }
 
-public class CharacterDuel
-{
-    public Character Character { get; set; }
-    public Character Npc { get; set; }
-    public string Resultboard { get; set; }
-    public List<string> Battlequeue { get; set; }
-    public int RoundNr { get; set; }
-}
-
 public class Characters
 {
     public List<string> CharactersPortraits { get; set; }
@@ -60,6 +51,7 @@ public class CharacterDetails
     public bool IsAlive { get; set; }
     public bool IsLocked { get; set; }
     public bool IsNpc { get; set; }
+
     public Guid BattleboardId { get; set; }
     public string BattleboardType { get; set; }
 }

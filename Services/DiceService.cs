@@ -40,19 +40,19 @@ public class DiceService : IDiceService
     /// return a percentage of the result
     /// </summary>
     /// <param name="charVm"></param>
-    /// <param name="feat"></param>
+    /// <param name="stat"></param>
     /// <param name="effort"></param>
     /// <param name="snapshot"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public double Roll_vs_effort(Character character, string feat, int effort)
+    public double Roll_vs_effort(Character character, string stat, int effort)
     {
-        if (!Statics.Stats.All.Contains(feat))
+        if (!Statics.Stats.All.Contains(stat))
             throw new Exception("No such stat found to roll.");
 
         Validators.ValidateAgainstNull(character, "Character cannot be null.");
 
-        var charRoll = RollStats(character, feat);
+        var charRoll = RollStats(character, stat);
         var effortRoll = Roll_1dn(effort);
         var result = charRoll - effortRoll;
 
@@ -166,7 +166,7 @@ public class DiceService : IDiceService
     private static void LevelUp(int roll, Character character)
     {
         var result = (int)(roll / 20);
-        character.Details.Levelup = result * 10 * character.Details.Entitylevel;
+        character.Details.Levelup += result * 10 * character.Details.Entitylevel;
     }
     #endregion
 }

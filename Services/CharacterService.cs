@@ -122,26 +122,22 @@ public class CharacterService : ICharacterService
     {
         var character = Validators.ValidateOnExportCharacter(identity.Id, identity.SessionId, _snapshot);
 
-        _snapshot.CharactersImported.Remove(character.Identity.Id);
-
         return EncryptionService.EncryptString(JsonConvert.SerializeObject(character));
     }
 
     public ImportCharacterResponse ImportCharacter(ImportCharacter import)
     {
-        Validators.ValidateOnImportCharacter(import, _snapshot);
+        Validators.ValidateOnImportCharacter(import);
         var decryptString = EncryptionService.DecryptString(import.CharacterString);
 
         var character = JsonConvert.DeserializeObject<Character>(decryptString)!;
 
-        _snapshot.CharactersImported.Add(character.Identity.Id);
-
         var oldChar = _snapshot.Characters.FirstOrDefault(s => s.Identity.Id == character.Identity.Id);
 
-        if (oldChar != null)
-            _snapshot.Characters.Remove(oldChar);
-        
-        _snapshot.Characters.Add(character);
+        if (oldChar is null)
+        {
+            _snapshot.Characters.Add(character);
+        }
 
         return new ImportCharacterResponse
         {
@@ -170,9 +166,9 @@ public class CharacterService : ICharacterService
 
         _snapshot.Characters.Add(character);
 
-        var characterEncr = EncryptionService.EncryptString(JsonConvert.SerializeObject(character));
+        var characterString = EncryptionService.EncryptString(JsonConvert.SerializeObject(character));
 
-        return characterEncr;
+        return characterString;
     }
 
     public Characters GetAllAliveCharacters()
@@ -228,33 +224,33 @@ public class CharacterService : ICharacterService
     private static void CalculateActuals(Character character)
     {
         // states
-        character.Actuals.Defense      += character.Stats.Defense      + character.Inventory.Select(s => s.Stats.Defense).Sum()      + character.Regalia.Select(s => s.Stats.Defense).Sum();
-        character.Actuals.Resist       += character.Stats.Resist       + character.Inventory.Select(s => s.Stats.Resist).Sum()       + character.Regalia.Select(s => s.Stats.Resist).Sum();
-        character.Actuals.Actions      += character.Stats.Actions      + character.Inventory.Select(s => s.Stats.Actions).Sum()      + character.Regalia.Select(s => s.Stats.Actions).Sum();
-        character.Actuals.Endurance    += character.Stats.Endurance    + character.Inventory.Select(s => s.Stats.Endurance).Sum()    + character.Regalia.Select(s => s.Stats.Endurance).Sum();
-        character.Actuals.Accretion    += character.Stats.Accretion    + character.Inventory.Select(s => s.Stats.Accretion).Sum()    + character.Regalia.Select(s => s.Stats.Accretion).Sum();
+        character.Actuals.Defense      = character.Stats.Defense      + character.Inventory.Select(s => s.Stats.Defense).Sum()      + character.Regalia.Select(s => s.Stats.Defense).Sum();
+        character.Actuals.Resist       = character.Stats.Resist       + character.Inventory.Select(s => s.Stats.Resist).Sum()       + character.Regalia.Select(s => s.Stats.Resist).Sum();
+        character.Actuals.Actions      = character.Stats.Actions      + character.Inventory.Select(s => s.Stats.Actions).Sum()      + character.Regalia.Select(s => s.Stats.Actions).Sum();
+        character.Actuals.Endurance    = character.Stats.Endurance    + character.Inventory.Select(s => s.Stats.Endurance).Sum()    + character.Regalia.Select(s => s.Stats.Endurance).Sum();
+        character.Actuals.Accretion    = character.Stats.Accretion    + character.Inventory.Select(s => s.Stats.Accretion).Sum()    + character.Regalia.Select(s => s.Stats.Accretion).Sum();
         // rolls
-        character.Actuals.Combat       += character.Stats.Combat       + character.Inventory.Select(s => s.Stats.Combat).Sum()       + character.Regalia.Select(s => s.Stats.Combat).Sum();
-        character.Actuals.Strength     += character.Stats.Strength     + character.Inventory.Select(s => s.Stats.Strength).Sum()     + character.Regalia.Select(s => s.Stats.Strength).Sum();
-        character.Actuals.Tactics      += character.Stats.Tactics      + character.Inventory.Select(s => s.Stats.Tactics).Sum()      + character.Regalia.Select(s => s.Stats.Tactics).Sum();
-        character.Actuals.Athletics    += character.Stats.Athletics    + character.Inventory.Select(s => s.Stats.Athletics).Sum()    + character.Regalia.Select(s => s.Stats.Athletics).Sum();
-        character.Actuals.Survival     += character.Stats.Survival     + character.Inventory.Select(s => s.Stats.Survival).Sum()     + character.Regalia.Select(s => s.Stats.Survival).Sum();
-        character.Actuals.Social       += character.Stats.Social       + character.Inventory.Select(s => s.Stats.Social).Sum()       + character.Regalia.Select(s => s.Stats.Social).Sum();
-        character.Actuals.Abstract     += character.Stats.Abstract     + character.Inventory.Select(s => s.Stats.Abstract).Sum()     + character.Regalia.Select(s => s.Stats.Abstract).Sum();
-        character.Actuals.Psionic      += character.Stats.Psionic      + character.Inventory.Select(s => s.Stats.Psionic).Sum()      + character.Regalia.Select(s => s.Stats.Psionic).Sum();
-        character.Actuals.Crafting     += character.Stats.Crafting     + character.Inventory.Select(s => s.Stats.Crafting).Sum()     + character.Regalia.Select(s => s.Stats.Crafting).Sum();
-        character.Actuals.Medicine     += character.Stats.Medicine     + character.Inventory.Select(s => s.Stats.Medicine).Sum()     + character.Regalia.Select(s => s.Stats.Medicine).Sum();
-        // effects                                                                                                                                                
-        character.Actuals.CombatEff    += character.Stats.CombatEff    + character.Inventory.Select(s => s.Stats.CombatEff).Sum()    + character.Regalia.Select(s => s.Stats.CombatEff).Sum();
-        character.Actuals.StrengthEff  += character.Stats.StrengthEff  + character.Inventory.Select(s => s.Stats.StrengthEff).Sum()  + character.Regalia.Select(s => s.Stats.StrengthEff).Sum();
-        character.Actuals.TacticsEff   += character.Stats.TacticsEff   + character.Inventory.Select(s => s.Stats.TacticsEff).Sum()   + character.Regalia.Select(s => s.Stats.TacticsEff).Sum();
-        character.Actuals.AthleticsEff += character.Stats.AthleticsEff + character.Inventory.Select(s => s.Stats.AthleticsEff).Sum() + character.Regalia.Select(s => s.Stats.AthleticsEff).Sum();
-        character.Actuals.SurvivalEff  += character.Stats.SurvivalEff  + character.Inventory.Select(s => s.Stats.SurvivalEff).Sum()  + character.Regalia.Select(s => s.Stats.SurvivalEff).Sum();
-        character.Actuals.SocialEff    += character.Stats.SocialEff    + character.Inventory.Select(s => s.Stats.SocialEff).Sum()    + character.Regalia.Select(s => s.Stats.SocialEff).Sum();
-        character.Actuals.AbstractEff  += character.Stats.AbstractEff  + character.Inventory.Select(s => s.Stats.AbstractEff).Sum()  + character.Regalia.Select(s => s.Stats.AbstractEff).Sum();
-        character.Actuals.PsionicEff   += character.Stats.PsionicEff   + character.Inventory.Select(s => s.Stats.PsionicEff).Sum()   + character.Regalia.Select(s => s.Stats.PsionicEff).Sum();
-        character.Actuals.CraftingEff  += character.Stats.CraftingEff  + character.Inventory.Select(s => s.Stats.CraftingEff).Sum()  + character.Regalia.Select(s => s.Stats.CraftingEff).Sum();
-        character.Actuals.MedicineEff  += character.Stats.MedicineEff  + character.Inventory.Select(s => s.Stats.MedicineEff).Sum()  + character.Regalia.Select(s => s.Stats.MedicineEff).Sum();
+        character.Actuals.Combat       = character.Stats.Combat       + character.Inventory.Select(s => s.Stats.Combat).Sum()       + character.Regalia.Select(s => s.Stats.Combat).Sum();
+        character.Actuals.Strength     = character.Stats.Strength     + character.Inventory.Select(s => s.Stats.Strength).Sum()     + character.Regalia.Select(s => s.Stats.Strength).Sum();
+        character.Actuals.Tactics      = character.Stats.Tactics      + character.Inventory.Select(s => s.Stats.Tactics).Sum()      + character.Regalia.Select(s => s.Stats.Tactics).Sum();
+        character.Actuals.Athletics    = character.Stats.Athletics    + character.Inventory.Select(s => s.Stats.Athletics).Sum()    + character.Regalia.Select(s => s.Stats.Athletics).Sum();
+        character.Actuals.Survival     = character.Stats.Survival     + character.Inventory.Select(s => s.Stats.Survival).Sum()     + character.Regalia.Select(s => s.Stats.Survival).Sum();
+        character.Actuals.Social       = character.Stats.Social       + character.Inventory.Select(s => s.Stats.Social).Sum()       + character.Regalia.Select(s => s.Stats.Social).Sum();
+        character.Actuals.Abstract     = character.Stats.Abstract     + character.Inventory.Select(s => s.Stats.Abstract).Sum()     + character.Regalia.Select(s => s.Stats.Abstract).Sum();
+        character.Actuals.Psionic      = character.Stats.Psionic      + character.Inventory.Select(s => s.Stats.Psionic).Sum()      + character.Regalia.Select(s => s.Stats.Psionic).Sum();
+        character.Actuals.Crafting     = character.Stats.Crafting     + character.Inventory.Select(s => s.Stats.Crafting).Sum()     + character.Regalia.Select(s => s.Stats.Crafting).Sum();
+        character.Actuals.Medicine     = character.Stats.Medicine     + character.Inventory.Select(s => s.Stats.Medicine).Sum()     + character.Regalia.Select(s => s.Stats.Medicine).Sum();
+        // effects                                                                                                                                               
+        character.Actuals.CombatEff    = character.Stats.CombatEff    + character.Inventory.Select(s => s.Stats.CombatEff).Sum()    + character.Regalia.Select(s => s.Stats.CombatEff).Sum();
+        character.Actuals.StrengthEff  = character.Stats.StrengthEff  + character.Inventory.Select(s => s.Stats.StrengthEff).Sum()  + character.Regalia.Select(s => s.Stats.StrengthEff).Sum();
+        character.Actuals.TacticsEff   = character.Stats.TacticsEff   + character.Inventory.Select(s => s.Stats.TacticsEff).Sum()   + character.Regalia.Select(s => s.Stats.TacticsEff).Sum();
+        character.Actuals.AthleticsEff = character.Stats.AthleticsEff + character.Inventory.Select(s => s.Stats.AthleticsEff).Sum() + character.Regalia.Select(s => s.Stats.AthleticsEff).Sum();
+        character.Actuals.SurvivalEff  = character.Stats.SurvivalEff  + character.Inventory.Select(s => s.Stats.SurvivalEff).Sum()  + character.Regalia.Select(s => s.Stats.SurvivalEff).Sum();
+        character.Actuals.SocialEff    = character.Stats.SocialEff    + character.Inventory.Select(s => s.Stats.SocialEff).Sum()    + character.Regalia.Select(s => s.Stats.SocialEff).Sum();
+        character.Actuals.AbstractEff  = character.Stats.AbstractEff  + character.Inventory.Select(s => s.Stats.AbstractEff).Sum()  + character.Regalia.Select(s => s.Stats.AbstractEff).Sum();
+        character.Actuals.PsionicEff   = character.Stats.PsionicEff   + character.Inventory.Select(s => s.Stats.PsionicEff).Sum()   + character.Regalia.Select(s => s.Stats.PsionicEff).Sum();
+        character.Actuals.CraftingEff  = character.Stats.CraftingEff  + character.Inventory.Select(s => s.Stats.CraftingEff).Sum()  + character.Regalia.Select(s => s.Stats.CraftingEff).Sum();
+        character.Actuals.MedicineEff  = character.Stats.MedicineEff  + character.Inventory.Select(s => s.Stats.MedicineEff).Sum()  + character.Regalia.Select(s => s.Stats.MedicineEff).Sum();
     }
 
     private static void SetStats(CreateCharacter create, Character character)

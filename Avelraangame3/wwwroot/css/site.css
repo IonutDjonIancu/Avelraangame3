@@ -47,6 +47,30 @@ body {
     color: forestgreen;
 }
 
+.text-100 {
+    color: #215e21;
+}
+
+.text-100-m {
+    color: #2b2ba7;
+}
+
+.text-50 {
+    color: #6a6e26;
+}
+
+.text-50-m {
+    color: #1e1e70;
+}
+
+.text-25 {
+    color: #6e2626;
+}
+
+.text-25-m {
+    color: #1c1c3c;
+}
+
 .text-red {
     color: darkred;
 }
@@ -106,6 +130,22 @@ body {
 .selected {
     border: 3px solid white;
 }
+
+.selected-character1 {
+    border: 2px solid #7b8a8b;
+    border-radius: 5px;
+}
+
+.selected-character2 {
+    border: 2px solid navajowhite;
+    border-radius: 5px;
+}
+
+.resultboard {
+    color: #7b8a8b;
+    background-color: black;
+}
+
 li {
     margin-bottom: 2px
 }
