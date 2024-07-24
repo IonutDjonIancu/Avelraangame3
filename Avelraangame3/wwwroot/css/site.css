@@ -146,6 +146,10 @@ body {
     background-color: black;
 }
 
+.alive-False {
+    opacity: 0.1;
+}
+
 li {
     margin-bottom: 2px
 }

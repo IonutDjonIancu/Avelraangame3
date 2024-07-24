@@ -17,6 +17,41 @@ internal class Validators
         if (string.IsNullOrWhiteSpace(str))
             throw new Exception(message);
     }
+
+    internal static void ValidateGuid(Guid guid, string message)
+    {
+        if (guid == Guid.Empty)
+            throw new Exception(message);
+    }
+    #endregion
+
+    #region actions
+    internal static void ValidateOnActionOffense(CharacterActions action, ISnapshot snapshot)
+    {
+        ValidateAgainstNull(action, "Action object cannot be null.");
+        ValidateGuid(action.SourceId, "Action initiator cannot be null.");
+        ValidateGuid(action.TargetId, "Target cannot be null.");
+        ValidateGuid(action.BoardId, "Board id cannot be null.");
+        ValidateString(action.BoardType, "Board type cannot be null.");
+        ValidateString(action.ActionType, "Action type cannot be null.");
+
+        if (!Statics.Battleboards.Types.All.Contains(action.BoardType))
+            throw new Exception("Wrong board type provided.");
+
+        if (!Statics.Battleboards.ActionTypes.All.Contains(action.ActionType))
+            throw new Exception("Wrong action type provided.");
+
+        if (!snapshot.Battleboards.Exists(s => s.Id == action.BoardId))
+            throw new Exception("No battleboard found with provided id.");
+
+        var sourceCharacter = ValidateCharacterExists(action.SourceId, action.SessionId, snapshot);
+        if (sourceCharacter.Identity.SessionId != action.SessionId)
+            throw new Exception("You cannot control that character.");
+        if (sourceCharacter.Fights.Actions <= 0)
+            throw new Exception("This character has no more actions this round.");
+
+        var _ = snapshot.Characters.First(s => s.Identity.Id == action.TargetId) ?? throw new Exception("Target character not found.");
+    }
     #endregion
 
     #region townhall
@@ -25,10 +60,10 @@ internal class Validators
         var character = ValidateCharacterExists(identity.Id, identity.SessionId, snapshot);
 
         if (character.Details.BattleboardId != Guid.Empty
-            && !snapshot.Duels.Exists(s => s.Id == character.Details.BattleboardId))
+            && !snapshot.Battleboards.Exists(s => s.Id == character.Details.BattleboardId))
             throw new Exception("Unable to find battleboard duel for character.");
 
-        character.Details.IsLocked = snapshot.Duels.Exists(s => s.Id == character.Details.BattleboardId);
+        character.Details.IsLocked = snapshot.Battleboards.Exists(s => s.Id == character.Details.BattleboardId);
         
         if (!character.Details.IsAlive)
             throw new Exception("Your character is dead.");
@@ -93,6 +128,9 @@ internal class Validators
     {
         var character = snapshot.Characters.FirstOrDefault(s => s.Identity.Id == characterId) ?? throw new Exception("Character not found.");
 
+        if (character.Details.IsNpc)
+            return character;
+
         if (character.Identity.SessionId != sessionId)
             throw new Exception("Wrong session id.");
 
@@ -133,7 +171,7 @@ internal class Validators
         ValidateAgainstNull(snapshot, "Snapshot cannot be null.");
         ValidateCharacterExists(equipItem.CharacterId, equipItem.SessionId, snapshot);
 
-        var character = snapshot.Characters.Find(s => s.Identity.Id == equipItem.CharacterId)!;
+        var character = snapshot.Characters.First(s => s.Identity.Id == equipItem.CharacterId)!;
 
         if (character.Details.IsLocked)
             throw new Exception("Character is locked.");
@@ -156,7 +194,7 @@ internal class Validators
         ValidateAgainstNull(snapshot, "Snapshot cannot be null.");
         ValidateCharacterExists(equipItem.CharacterId, equipItem.SessionId, snapshot);
 
-        var character = snapshot.Characters.Find(s => s.Identity.Id == equipItem.CharacterId)!;
+        var character = snapshot.Characters.First(s => s.Identity.Id == equipItem.CharacterId)!;
         
         if (character.Details.IsLocked)
             throw new Exception("Character is locked.");
@@ -176,7 +214,7 @@ internal class Validators
         ValidateAgainstNull(snapshot, "Snapshot cannot be null.");
         ValidateCharacterExists(equipItem.CharacterId, equipItem.SessionId, snapshot);
 
-        var character = snapshot.Characters.Find(s => s.Identity.Id == equipItem.CharacterId)!;
+        var character = snapshot.Characters.First(s => s.Identity.Id == equipItem.CharacterId)!;
 
         if (character.Details.IsLocked)
             throw new Exception("Character is locked.");

@@ -6,11 +6,10 @@
     <div class="col-8">
         <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
             <button type="button" class="btn btn-outline-secondary">Duel</button>
-            <button type="button" class="btn btn-outline-dark">Tournament</button>
+            <button type="button" class="btn btn-outline-dark">Tourney</button>
             <button type="button" class="btn btn-outline-dark">Quest</button>
             <button type="button" class="btn btn-outline-dark">Tavern</button>
             <button type="button" class="btn btn-outline-dark">Market</button>
-            <button type="button" class="btn btn-outline-dark">Mercs</button>
         </div>
     </div>
     <div class="col-4">
@@ -36,30 +35,31 @@
         </div>
     </div>
     <div class="row mt-3" id="resultboard">
-        <input class="rounded-3 text-center resultboard" value="@Model.Resultboard"/>
+        <input class="rounded-3 text-center resultboard" value="@Model.Result"/>
     </div>
     <div class="mt-3" id="actions">
         <div class="dropdown d-flex justify-content-center">
             @* offensive actions *@
             <button class="btn btn-sm btn-outline-dark dropdown-toggle me-1" type="button" id="offensives" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: black;">
-                Offense
+                Offensive
             </button>
             <ul class="dropdown-menu resultboard" aria-labelledby="offensives">
-                <li><button onclick="attack()" class="dropdown-item primary-green" title="Try to attack target">Attack</button></li>
-                <li><button class="dropdown-item primary-green" title="Try to spellcast the target">Arcane</button></li>
-                <li><button class="dropdown-item primary-green" title="Try to wrestle the target">Wrestle</button></li>
+                <li onclick="runAction('Attack')" class="dropdown-item primary-green pointer" title="COM - attacks the target going using melee or ranged attacks">Attack</li>
+                <li onclick="runAction('Wrestle')" class="dropdown-item primary-green pointer" title="STR - approaches the target using an attack then wrestles it to the ground, possibly dealing more massive damage">Wrestle</li>
+                <li onclick="runAction('Charge')" class="dropdown-item primary-green pointer" title="TAC - orders the men around to charge at the best possible moment, increasing their combat effects if the charge succeeds">Charge</li>
             </ul>
             @* defensive actions *@
             <button class="btn btn-sm btn-outline-dark dropdown-toggle me-1" type="button" id="defensives" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: black;">
-                Defense
+                Defensive
             </button>
             <ul class="dropdown-menu resultboard" aria-labelledby="defensives">
-                <li><button onclick="attack()" class="dropdown-item primary-green" title="Try to attack target">Attack</button></li>
-                <li><button class="dropdown-item primary-green" title="Try to spellcast the target">Arcane</button></li>
-                <li><button class="dropdown-item primary-green" title="Try to wrestle the target">Wrestle</button></li>
+                <li onclick="runAction('Brace')" class="dropdown-item primary-green pointer" title="COM - braces itself for the next attacks, slightly increasing your combat rolls">Brace</li>
+                <li onclick="runAction('Staunch')" class="dropdown-item primary-green pointer" title="STR - fixes his legs on the ground remaining immovable at the next attacks, slightly increasing your combat effects">Staunch</li>
+                <li onclick="runAction('Hold')" class="dropdown-item primary-green pointer" title="TAC - shouts order to hold the line, slightly increasing your troops' endurance">Hold</li>
             </ul>
             @* other actions *@
             <button type="button" class="btn btn-sm btn-outline-dark me-1">Let Ai act</button>
+            <button type="button" class="btn btn-sm btn-outline-dark me-1">Pass turn</button>
             <button type="button" class="btn btn-sm btn-outline-dark me-1">End round</button>
             <button onclick="hideActions()" title="hide actions" type="button" class="btn btn-sm btn-outline-dark actions secondary-darkred">&#10008;</button>
         </div>
@@ -72,14 +72,18 @@
                 {
                     <div onclick="charSelect('@character.Identity.Id')" id="card-@character.Identity.Id" class="d-flex flex-column bd-highlight mb-3 pointer character">
                         <div class="align-self-center">
-                            <img class="rounded-3 m-2 item-@character.Details.Entitylevel" src="@character.Details.Portrait" width="60" height="80" title="@character.Details.Name" />
+                            <img class="rounded-3 m-2 item-@character.Details.Entitylevel alive-@character.Details.IsAlive" 
+                                src="@character.Details.Portrait" 
+                                width="60" 
+                                height="80" 
+                                title="@character.Details.Name" />
                         </div>
                         <div>
                             <div class="px-2 text-center" style="font-size: small">
-                                <span title="endurance" class="text-100">@character.Fights.Endurance</span> | <span title="actions">@character.Actuals.Actions</span> &#9830; <span title="defense">@character.Actuals.Defense</span>
+                                <span title="endurance" class="text-100">@character.Fights.Endurance</span> | <span title="defense">@character.Fights.Defense</span> &#9830; <span title="actions">@character.Fights.Actions</span>
                             </div>
                             <div class="px-2 text-center" style="font-size: small">
-                                <span title="accretion" class="text-100-m">@character.Fights.Accretion</span> | <span title="resist">@character.Actuals.Resist</span> &#9824; <span style="font-size:x-small" title="specialization">@character.Details.Spec.Substring(0, 3)</span>
+                                <span title="accretion" class="text-100-m">@character.Fights.Accretion</span> | <span title="resist">@character.Fights.Resist</span> &#9824; <span style="font-size:x-small" title="specialization">@character.Details.Spec.Substring(0, 3)</span>
                             </div>
                         </div>
                     </div>
@@ -93,14 +97,18 @@
                 {
                     <div onclick="charSelect('@npc.Identity.Id')" id="card-@npc.Identity.Id" class="d-flex flex-column bd-highlight mb-3 pointer character">
                         <div class="align-self-center">
-                            <img class="rounded-3 m-2 item-@npc.Details.Entitylevel" src="@npc.Details.Portrait" width="60" height="80" title="@npc.Details.Name" />
+                            <img class="rounded-3 m-2 item-@npc.Details.Entitylevel alive-@npc.Details.IsAlive" 
+                                src="@npc.Details.Portrait" 
+                                width="60" 
+                                height="80" 
+                                title="@npc.Details.Name" />
                         </div>
                         <div>
                             <div class="px-2 text-center" style="font-size: small">
-                                <span title="endurance" class="text-100">@npc.Fights.Endurance</span> | <span title="actions">@npc.Actuals.Actions</span> &#9830; <span title="defense">@npc.Actuals.Defense</span>
+                                <span title="endurance" class="text-100">@npc.Fights.Endurance</span> | <span title="defense">@npc.Fights.Defense</span> &#9830; <span title="actions">@npc.Fights.Actions</span>
                             </div>
                             <div class="px-2 text-center" style="font-size: small">
-                                <span title="accretion" class="text-100-m">@npc.Fights.Accretion</span> | <span title="resist">@npc.Actuals.Resist</span> &#9824; <span style="font-size:x-small" title="specialization">@npc.Details.Spec.Substring(0, 3)</span>
+                                <span title="accretion" class="text-100-m">@npc.Fights.Accretion</span> | <span title="resist">@npc.Fights.Resist</span> &#9824; <span style="font-size:x-small" title="specialization">@npc.Details.Spec.Substring(0, 3)</span>
                             </div>
                         </div>
                     </div>
@@ -112,8 +120,35 @@
 
 <script>
    
-    const attack = () => {
-        location.reload();
+    const runAction = (actionType) => {
+
+        const char1 = localStorage.getItem("selectedChar1");
+        const sessionId = localStorage.getItem("sessionId");
+        const char2 = localStorage.getItem("selectedChar2");
+
+        const data = JSON.stringify({
+            sourceId: char1,
+            sessionId: sessionId,
+            targetId: char2,
+            boardId: '@Model.Id',
+            boardType: '@Model.Type',
+            actionType: actionType
+        })
+
+        $("#spinner").show();
+
+        $.ajax({
+            type: 'PUT',
+            url: '@Url.Action("RunAction", "Actions")',
+            contentType: "application/json",
+            data: data,
+            success: function (response) {
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                window.location.href = "/actions/error?info=" + xhr.responseText;
+            }
+        });
     }
 
     const charSelect = (id) => {
@@ -136,6 +171,8 @@
             $("#card-" + id).addClass("selected-character1");
             localStorage.setItem(selectedChar1, id);
         }
+
+        $("#actions").show();
     }
 
     const hideActions = () => {

@@ -8,7 +8,7 @@ public class Battleboard
     public List<Character> GoodGuys { get; set; } = [];
     public List<Character> BadGuys { get; set; } = [];
 
-    public string Resultboard { get; set; }
+    public string Result { get; set; }
 }
 
 public class Duel : Battleboard

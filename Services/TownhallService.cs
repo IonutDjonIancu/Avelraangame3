@@ -34,7 +34,7 @@ public class TownhallService : ITownhallService
     #region private methods
     private Duel GetDuel(Character character)
     {
-        return _snapshot.Duels.First(s => s.Id == character.Details.BattleboardId);
+        return (Duel)_snapshot.Battleboards.First(s => s.Id == character.Details.BattleboardId);
     }
 
     private Duel GenerateDuel(Character character)
@@ -71,78 +71,16 @@ public class TownhallService : ITownhallService
             },
         };
 
-        var npc2 = new Character
-        {
-            Identity = new CharacterIdentity
-            {
-                Id = Guid.NewGuid(),
-                SessionId = Guid.Empty, // session id represents the npc is owned by the Ai
-            },
-            Details = new CharacterDetails
-            {
-                IsAlive = true,
-                Race = "npc",
-                Culture = "npc",
-                IsHidden = false,
-                Entitylevel = 1,
-                IsLocked = true,
-                IsNpc = true,
-                Levelup = 0,
-                Name = $"npc_{DateTime.Now.Ticks.ToString()[..5]}",
-                Portrait = "https://i.pinimg.com/originals/a7/73/d6/a773d6556319fa93b90385e96da2a0d5.gif", // TODO: need to change this portrait to be dynamic
-                // Portrait = "https://i.pinimg.com/originals/51/a0/2d/51a02d38c57a32ab0035e2608f32ca82.gif", // TODO: need to change this portrait to be dynamic
-                Worth = 0,
-                BattleboardId = battleboardId,
-                BattleboardType = Statics.Battleboards.Types.Duel,
-            },
-        };
-
-        var npc3 = new Character
-        {
-            Identity = new CharacterIdentity
-            {
-                Id = Guid.NewGuid(),
-                SessionId = Guid.Empty, // session id represents the npc is owned by the Ai
-            },
-            Details = new CharacterDetails
-            {
-                IsAlive = true,
-                Race = "npc",
-                Culture = "npc",
-                IsHidden = false,
-                Entitylevel = 1,
-                IsLocked = true,
-                IsNpc = true,
-                Levelup = 0,
-                Name = $"npc_{DateTime.Now.Ticks.ToString()[..5]}",
-                Portrait = "https://i.pinimg.com/originals/a7/73/d6/a773d6556319fa93b90385e96da2a0d5.gif", // TODO: need to change this portrait to be dynamic
-                // Portrait = "https://i.pinimg.com/originals/51/a0/2d/51a02d38c57a32ab0035e2608f32ca82.gif", // TODO: need to change this portrait to be dynamic
-                Worth = 0,
-                BattleboardId = battleboardId,
-                BattleboardType = Statics.Battleboards.Types.Duel,
-            },
-        };
-
         SetNpcSpec(npc);
-        SetNpcSpec(npc2);
-        SetNpcSpec(npc3);
 
         SetNpcWealth(npc);
-        SetNpcWealth(npc2);
-        SetNpcWealth(npc3);
         
         SetNpcActuals(character, npc);
-        SetNpcActuals(character, npc2);
-        SetNpcActuals(character, npc3);
 
         SetFights(character);
         SetFights(npc);
-        SetFights(npc2);
-        SetFights(npc3);
 
-        _snapshot.Npcs.Add(npc);
-        _snapshot.Npcs.Add(npc2);
-        _snapshot.Npcs.Add(npc3);
+        _snapshot.Characters.Add(npc);
 
         var duel = new Duel
         {
@@ -154,15 +92,14 @@ public class TownhallService : ITownhallService
             BadGuys = 
             [
                 npc,
-                npc2,
-                npc3,
             ],
-            RoundNr = 1
+            RoundNr = 1,
+            Type = Statics.Battleboards.Types.Duel
         };
 
         PrepareForDuel(duel);
 
-        _snapshot.Duels.Add(duel);
+        _snapshot.Battleboards.Add(duel);
 
         return duel;
     }
@@ -174,48 +111,31 @@ public class TownhallService : ITownhallService
         var character = duel.GoodGuys.First();
         var npc = duel.BadGuys.First();
 
-        var charRoll = (int)(character.Actuals.TacticsEff * _diceService.Roll_vs_effort(character, Statics.Stats.Tactics, effort));
-        var npcRoll = (int)(npc.Actuals.TacticsEff * _diceService.Roll_vs_effort(npc, Statics.Stats.Tactics, effort));
+        var charRoll = (int)(character.Actuals.TacticsEff * _diceService.Roll_effort_dice(character, Statics.Stats.Tactics, effort));
+        var npcRoll = (int)(npc.Actuals.TacticsEff * _diceService.Roll_effort_dice(npc, Statics.Stats.Tactics, effort));
 
         if (charRoll > npcRoll)
         {
             npc.Fights.Endurance -= charRoll - npcRoll;
             npc.Fights.Accretion -= charRoll - npcRoll;
 
-            duel.Resultboard = "Tactical advantage.";
+            duel.Result = "Tactical advantage.";
         }
         else if (charRoll < npcRoll)
         {
             character.Fights.Endurance -= npcRoll - charRoll;
             character.Fights.Accretion -= npcRoll - charRoll;
 
-            duel.Resultboard = "Tactical disadvantage.";
+            duel.Result = "Tactical disadvantage.";
         }
         else
         {
-            duel.Resultboard = "Tactical draw.";
+            duel.Result = "Tactical draw.";
         }
 
-        SetBattlequeue(duel);
+        duel.Battlequeue = duel.GoodGuys.Union(duel.BadGuys).OrderByDescending(s => s.Actuals.Actions).Select(s => s.Identity.Id).ToList();
     }
-
-    private static void SetBattlequeue(Duel duel)
-    {
-        var combatants = duel.GoodGuys.Union(duel.BadGuys).OrderByDescending(s => s.Actuals.Actions).ToList();
-
-        while (combatants.Sum(s => s.Fights.Actions) > 0)
-        {
-            foreach (var combatant in combatants)
-            {
-                if (combatant.Fights.Actions > 0)
-                {
-                    combatant.Fights.Actions -= 1;
-                    duel.Battlequeue.Add(combatant.Identity.Id);
-                }
-            }
-        }
-    }
-
+    
     private void SetNpcSpec(Character npc)
     {
         var roll = _diceService.Roll_1dn(3);
@@ -243,6 +163,29 @@ public class TownhallService : ITownhallService
 
     private static void SetFights(Character character)
     {
+        // stats
+        character.Fights.Combat     = character.Actuals.Combat;
+        character.Fights.Strength   = character.Actuals.Strength;
+        character.Fights.Tactics    = character.Actuals.Tactics;    
+        character.Fights.Athletics  = character.Actuals.Athletics;  
+        character.Fights.Survival   = character.Actuals.Survival;   
+        character.Fights.Social     = character.Actuals.Social;     
+        character.Fights.Abstract   = character.Actuals.Abstract;   
+        character.Fights.Psionic    = character.Actuals.Psionic;    
+        character.Fights.Crafting   = character.Actuals.Crafting;   
+        character.Fights.Medicine   = character.Actuals.Medicine;   
+        // effects
+        character.Fights.CombatEff      = character.Actuals.CombatEff;
+        character.Fights.StrengthEff    = character.Actuals.StrengthEff;
+        character.Fights.TacticsEff     = character.Actuals.TacticsEff;    
+        character.Fights.AthleticsEff   = character.Actuals.AthleticsEff;  
+        character.Fights.SurvivalEff    = character.Actuals.SurvivalEff;   
+        character.Fights.SocialEff      = character.Actuals.SocialEff;     
+        character.Fights.AbstractEff    = character.Actuals.AbstractEff;   
+        character.Fights.PsionicEff     = character.Actuals.PsionicEff;    
+        character.Fights.CraftingEff    = character.Actuals.CraftingEff;   
+        character.Fights.MedicineEff    = character.Actuals.MedicineEff;   
+        // attributes
         character.Fights.Defense   = character.Actuals.Defense;
         character.Fights.Resist    = character.Actuals.Resist;
         character.Fights.Actions   = character.Actuals.Actions;

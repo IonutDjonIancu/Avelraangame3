@@ -29,15 +29,8 @@ public interface IDiceService
     /// <returns></returns>
     int Roll_mdn(int m, int n);
 
-    double Roll_vs_effort(Character character, string craft, int effort);
-}
-
-public class DiceService : IDiceService
-{
-    static readonly Random random = new();
-
     /// <summary>
-    /// return a percentage of the result
+    /// Returns a percentage of the result for rolling against effort.
     /// </summary>
     /// <param name="charVm"></param>
     /// <param name="stat"></param>
@@ -45,45 +38,44 @@ public class DiceService : IDiceService
     /// <param name="snapshot"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public double Roll_vs_effort(Character character, string stat, int effort)
+    double Roll_effort_dice(Character character, string stat, int effort);
+
+    double Roll_game_dice(Character character1, string stat1, Character character2, string stat2);
+}
+
+public class DiceService : IDiceService
+{
+    static readonly Random random = new();
+
+    public double Roll_game_dice(Character character1, string stat1, Character character2, string stat2)
+    {
+        if (!Statics.Stats.All.Contains(stat1))
+            throw new Exception($"No such stat found to roll: {stat1}");
+        if (!Statics.Stats.All.Contains(stat2))
+            throw new Exception($"No such stat found to roll: {stat2}");
+        Validators.ValidateAgainstNull(character1, "Character cannot be null.");
+        Validators.ValidateAgainstNull(character2, "Character cannot be null.");
+
+        var char1Roll = RollStats(character1, stat1, true);
+        var char2Roll = RollStats(character2, stat2, false);
+
+        var result = char1Roll - char2Roll;
+
+        return GetPercentageForEffect(result);
+    }
+    
+    public double Roll_effort_dice(Character character, string stat, int effort)
     {
         if (!Statics.Stats.All.Contains(stat))
             throw new Exception("No such stat found to roll.");
 
         Validators.ValidateAgainstNull(character, "Character cannot be null.");
 
-        var charRoll = RollStats(character, stat);
+        var charRoll = RollStats(character, stat, true);
         var effortRoll = Roll_1dn(effort);
         var result = charRoll - effortRoll;
 
-        if (result <= 0)
-        {
-            return 0.00;
-        }
-        else if (result <= 4)
-        {
-            return 0.1;
-        }
-        else if (result <= 8)
-        {
-            return 0.25;
-        }
-        else if (result <= 12)
-        {
-            return 0.5;
-        }
-        else if (result <= 16)
-        {
-            return 0.75;
-        }
-        else if (result <= 20)
-        {
-            return 1;
-        }
-        else
-        {
-            return result * 5 / 100; // kept like this for dice faces reminder of old rules
-        }
+        return GetPercentageForEffect(result);
     }
 
     public int Roll_1dn(int n)
@@ -116,14 +108,17 @@ public class DiceService : IDiceService
     }
 
     #region private methods
-    private int RollStats(Character character, string craft)
+    private int RollStats(Character character, string stat, bool isLevelup)
     {
         var roll = Roll_d20();
 
-        UpgradeEntityLevel(roll, character);
-        LevelUp(roll, character);
+        if (isLevelup)
+        {
+            UpgradeEntityLevel(roll, character);
+            LevelUp(roll, character);
+        }
 
-        return craft switch
+        return stat switch
         {
             Statics.Stats.Combat    => Roll_d20() + character.Actuals.Combat,
             Statics.Stats.Strength  => Roll_d20() + character.Actuals.Strength,
@@ -137,6 +132,38 @@ public class DiceService : IDiceService
             Statics.Stats.Medicine  => Roll_d20() + character.Actuals.Medicine,
             _ => throw new Exception("Wrong stat provided.")
         };
+    }
+
+    private static double GetPercentageForEffect(int result)
+    {
+        if (result <= 0)
+        {
+            return 0.00;
+        }
+        else if (result <= 4)
+        {
+            return 0.1;
+        }
+        else if (result <= 8)
+        {
+            return 0.25;
+        }
+        else if (result <= 12)
+        {
+            return 0.5;
+        }
+        else if (result <= 16)
+        {
+            return 0.75;
+        }
+        else if (result <= 20)
+        {
+            return 1;
+        }
+        else
+        {
+            return result * 5 / 100; // kept like this for dice faces reminder of old rules
+        }
     }
 
     private static void UpgradeEntityLevel(int roll, Character character)

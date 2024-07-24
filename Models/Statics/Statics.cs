@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Models;
+﻿namespace Models;
 
 public static class Statics
 {
@@ -9,13 +7,41 @@ public static class Statics
         public static class Types
         {
             public const string Duel = "Duel";
+            public const string Tourney = "Tourney";
+            public const string Quest = "Quest";
+            public const string Tavern = "Tavern";
+            public const string Market = "Market";
 
             public static readonly List<string> All =
             [
-                Duel
+                Duel, Tourney, Quest, Tavern, Market
             ];
         }
 
+        public static class ActionTypes
+        {
+            public const string Attack = "Attack";
+            public const string Brace = "Brace";
+            public const string Force = "Force";
+            public const string Prepare = "Prepare";
+            public const string Wrestle = "Wrestle";
+            public const string Staunch = "Staunch";
+            public const string Lift = "Lift";
+            public const string Destroy = "Destroy";
+            public const string Charge = "Charge";
+            public const string Hold = "Hold";
+            public const string Formation = "Formation";
+            public const string Inline = "Inline";
+            
+            public static readonly List<string> All =
+            [
+                Attack, Brace, Force, Prepare, // combat
+                Wrestle, Staunch, Lift, Destroy, // strength
+                Charge, Hold, Formation, Inline, // tactics
+
+
+            ];
+        }
     }
 
     public static class EffortLevels

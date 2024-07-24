@@ -6,14 +6,10 @@ namespace Avelraangame3.Controllers;
 
 public class TownhallController : Controller
 {
-    private readonly ICharacterService _characterService;
     private readonly ITownhallService _townhallService;
 
-    public TownhallController(
-        ICharacterService characterService,
-        ITownhallService townhallService)
+    public TownhallController(ITownhallService townhallService)
     {
-        _characterService = characterService;
         _townhallService = townhallService;
     }   
 
@@ -57,7 +53,6 @@ public class TownhallController : Controller
     }
 
     #endregion
-
     #region requests
 
     #endregion

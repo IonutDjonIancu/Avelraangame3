@@ -66,7 +66,7 @@ public class CharacterService : ICharacterService
 
         var character = GetCharacter(identity);
 
-        var roll = _dice.Roll_vs_effort(character, Statics.Stats.Social, Statics.EffortLevels.Easy); // TODO: remove the hardcoded difficulty
+        var roll = _dice.Roll_effort_dice(character, Statics.Stats.Social, Statics.EffortLevels.Easy); // TODO: remove the hardcoded difficulty
 
         if (item.Type == Statics.Items.Types.Trinket)
         {

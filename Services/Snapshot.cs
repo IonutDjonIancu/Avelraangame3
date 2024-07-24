@@ -4,20 +4,18 @@ namespace Services;
 
 public interface ISnapshot
 {
-    List<Character> Characters { get; set; }
-    List<Character> Npcs { get; set; }
+    HashSet<Character> Characters { get; set; }
 
-    List<Duel> Duels { get; set; }
+    List<Battleboard> Battleboards { get; set; }
 
     HashSet<Guid> ItemsSold { get; set; }
 }
 
 public class Snapshot : ISnapshot
 {
-    public List<Character> Characters { get; set; } = [];
-    public List<Character> Npcs { get; set; } = [];
+    public HashSet<Character> Characters { get; set; } = [];
 
-    public List<Duel> Duels { get; set; } = [];
+    public List<Battleboard> Battleboards { get; set; } = [];
 
     public HashSet<Guid> ItemsSold { get; set; } = [];
 }
