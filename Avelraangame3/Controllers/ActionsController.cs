@@ -19,11 +19,11 @@ public class ActionsController : Controller
     #region requests
     // PUT: Actions/RunAction
     [HttpPut]
-    public IActionResult RunAction([FromBody] CharacterActions offense)
+    public IActionResult RunAction([FromBody] CharacterActions actions)
     {
         try
         {
-            _actionService.RunCharacterActions(offense);
+            _actionService.RunActionLogic(actions);
 
             return Ok();
         }

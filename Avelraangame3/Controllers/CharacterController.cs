@@ -38,7 +38,11 @@ public class CharacterController(ICharacterService characterService) : Controlle
     {
         try
         {
-            var character = _characterService.GetCharacter(Guid.Parse(characterId), Guid.Parse(sessionId));
+            var character = _characterService.GetCharacter(new CharacterIdentity
+            {
+                Id = Guid.Parse(characterId),
+                SessionId = Guid.Parse(sessionId)
+            });
 
             return View(character);
         }
@@ -62,7 +66,11 @@ public class CharacterController(ICharacterService characterService) : Controlle
     {
         try
         {
-            var character = _characterService.GetCharacter(Guid.Parse(characterId), Guid.Parse(sessionId));
+            var character = _characterService.GetCharacter(new CharacterIdentity
+            {
+                Id = Guid.Parse(characterId),
+                SessionId = Guid.Parse(sessionId)
+            });
 
             return Ok(character);
         }

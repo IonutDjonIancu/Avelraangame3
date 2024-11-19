@@ -10,6 +10,6 @@ public class TestController(
 
     public IActionResult Roll20()
     {
-        return Ok(_diceService.Roll_d20());
+        return Ok(_diceService.Rolld20());
     }
 }

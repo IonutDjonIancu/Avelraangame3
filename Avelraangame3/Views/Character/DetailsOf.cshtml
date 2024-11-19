@@ -25,7 +25,7 @@
                 @if(Model.Details.IsLocked)
                 {
                     <li>
-                        <span class="text-red">character locked (@Model.Details.BattleboardType)</span>
+                        <span class="text-red">character locked (@Model.Details.BoardType)</span>
                     </li>
                 }
                 <li>
@@ -105,32 +105,32 @@
                 <li>
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Combat')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     combat: 
-                    <span class="text-muted">@Model.Actuals.Combat</span> |
-                    <span>@Model.Actuals.CombatEff</span> 
+                    <span class="text-muted">@Model.Actuals.Melee</span> |
+                    <span>@Model.Actuals.Melee</span>
                 </li>
                 <li>
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Strength')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     strength: 
                     <span class="text-muted">@Model.Actuals.Strength</span> |
-                    <span>@Model.Actuals.StrengthEff</span>
+                    <span>@Model.Actuals.Strength</span>
                 </li>
                 <li>
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Tactics')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     tactics: 
                     <span class="text-muted">@Model.Actuals.Tactics</span> |
-                    <span>@Model.Actuals.TacticsEff</span>
+                    <span>@Model.Actuals.Tactics</span>
                 </li>
                 <li>
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Athletics')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     athletics: 
-                    <span class="text-muted">@Model.Actuals.Athletics</span> |
-                    <span>@Model.Actuals.AthleticsEff</span>
+                    <span class="text-muted">@Model.Actuals.Agility</span> |
+                    <span>@Model.Actuals.Agility</span>
                 </li>
                  <li>
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Survival')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     survival: 
                     <span class="text-muted">@Model.Actuals.Survival</span> |
-                    <span>@Model.Actuals.SurvivalEff</span>
+                    <span>@Model.Actuals.Survival</span>
                 </li>
             </ul>
         </div>
@@ -141,31 +141,31 @@
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Social')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     social: 
                     <span class="text-muted">@Model.Actuals.Social</span> |
-                    <span>@Model.Actuals.SocialEff</span>
+                    <span>@Model.Actuals.Social</span>
                 </li>
                 <li>
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Abstract')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     abstract: 
                     <span class="text-muted">@Model.Actuals.Abstract</span> |
-                    <span>@Model.Actuals.AbstractEff</span>
+                    <span>@Model.Actuals.Abstract</span>
                 </li>
                 <li>
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Psionic')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     psionic: 
-                    <span class="text-muted">@Model.Actuals.Psionic</span> |
-                    <span>@Model.Actuals.PsionicEff</span>
+                    <span class="text-muted">@Model.Actuals.Psionics</span> |
+                    <span>@Model.Actuals.Psionics</span>
                 </li>
                 <li>
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Crafting')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     crafting: 
                     <span class="text-muted">@Model.Actuals.Crafting</span> |
-                    <span>@Model.Actuals.CraftingEff</span>
+                    <span>@Model.Actuals.Crafting</span>
                 </li>
                  <li>
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Medicine')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     medicine: 
-                    <span class="text-muted">@Model.Actuals.Medicine</span> |
-                    <span>@Model.Actuals.MedicineEff</span>
+                    <span class="text-muted">@Model.Actuals.Aid</span> |
+                    <span>@Model.Actuals.Aid</span>
                 </li>
             </ul>
         </div>
@@ -206,16 +206,16 @@ ACT @item.Stats.Actions
 END @item.Stats.Endurance
 ACC @item.Stats.Accretion
 *** rolls and effects ***
-COM @item.Stats.Combat | @item.Stats.CombatEff
-STR @item.Stats.Strength | @item.Stats.StrengthEff
-TAC @item.Stats.Tactics | @item.Stats.TacticsEff
-ATH @item.Stats.Athletics | @item.Stats.AthleticsEff
-SUR @item.Stats.Survival | @item.Stats.SurvivalEff
-SOC @item.Stats.Social | @item.Stats.SocialEff
-ABS @item.Stats.Abstract | @item.Stats.AbstractEff
-PSI @item.Stats.Psionic | @item.Stats.PsionicEff
-CRA @item.Stats.Crafting | @item.Stats.CraftingEff
-MED @item.Stats.Medicine | @item.Stats.MedicineEff" />
+COM @item.Stats.Melee | @item.Stats.Melee
+STR @item.Stats.Strength | @item.Stats.Strength
+TAC @item.Stats.Tactics | @item.Stats.Tactics
+ATH @item.Stats.Agility | @item.Stats.Agility
+SUR @item.Stats.Survival | @item.Stats.Survival
+SOC @item.Stats.Social | @item.Stats.Social
+ABS @item.Stats.Abstract | @item.Stats.Abstract
+PSI @item.Stats.Psionics | @item.Stats.Psionics
+CRA @item.Stats.Crafting | @item.Stats.Crafting
+MED @item.Stats.Aid | @item.Stats.Aid" />
             }
         </div>
         @* Regalia *@
@@ -242,16 +242,7 @@ ACT @trinket.Stats.Actions
 END @trinket.Stats.Endurance
 ACC @trinket.Stats.Accretion
 *** rolls and effects ***
-COM @trinket.Stats.Combat | @trinket.Stats.CombatEff
-STR @trinket.Stats.Strength | @trinket.Stats.StrengthEff
-TAC @trinket.Stats.Tactics | @trinket.Stats.TacticsEff
-ATH @trinket.Stats.Athletics | @trinket.Stats.AthleticsEff
-SUR @trinket.Stats.Survival | @trinket.Stats.SurvivalEff
-SOC @trinket.Stats.Social | @trinket.Stats.SocialEff
-ABS @trinket.Stats.Abstract | @trinket.Stats.AbstractEff
-PSI @trinket.Stats.Psionic | @trinket.Stats.PsionicEff
-CRA @trinket.Stats.Crafting | @trinket.Stats.CraftingEff
-MED @trinket.Stats.Medicine | @trinket.Stats.MedicineEff" />
+COM @trinket.Stats.Melee | @trinket.Stats.Melee" />
             }
         </div>
         @* Supplies *@
@@ -266,60 +257,42 @@ MED @trinket.Stats.Medicine | @trinket.Stats.MedicineEff" />
                     onclick="equipUnequipItem('@item.Id', 'equip', 'inventory')"
                     title="@item.Name
 
-*** details ***
-@(item.HasTaint ? "tainted" : "untainted")
-@item.Type.ToLower()
-level @item.Level
-value @item.Value
-*** stats ***
-DEF @item.Stats.Defense
-RES @item.Stats.Resist
-ACT @item.Stats.Actions
-END @item.Stats.Endurance
-ACC @item.Stats.Accretion
-*** rolls and effects ***
-COM @item.Stats.Combat | @item.Stats.CombatEff
-STR @item.Stats.Strength | @item.Stats.StrengthEff
-TAC @item.Stats.Tactics | @item.Stats.TacticsEff
-ATH @item.Stats.Athletics | @item.Stats.AthleticsEff
-SUR @item.Stats.Survival | @item.Stats.SurvivalEff
-SOC @item.Stats.Social | @item.Stats.SocialEff
-ABS @item.Stats.Abstract | @item.Stats.AbstractEff
-PSI @item.Stats.Psionic | @item.Stats.PsionicEff
-CRA @item.Stats.Crafting | @item.Stats.CraftingEff
-MED @item.Stats.Medicine | @item.Stats.MedicineEff" />
+                *** details ***
+                @(item.HasTaint ? "tainted" : "untainted")
+                @item.Type.ToLower()
+                level @item.Level
+                value @item.Value
+                *** stats ***
+                DEF @item.Stats.Defense
+                RES @item.Stats.Resist
+                ACT @item.Stats.Actions
+                END @item.Stats.Endurance
+                ACC @item.Stats.Accretion
+                *** rolls and effects ***
+                COM @item.Stats.Melee   | @item.Stats.Melee" />
             }
-            @foreach (var trinket in Model.Supplies.Regalia)
+            @foreach (var trinkets in Model.Supplies.Regalia)
             {
-                <img src="@trinket.Icon"
-                     class="rounded-2 item item-@trinket.Level"
-                     id="@trinket.Id"
-                     onclick="equipUnequipItem('@trinket.Id', 'equip', 'regalia')"
-                     title="@trinket.Name
+                <img src="@trinkets.Icon"
+                     class="rounded-2 item item-@trinkets.Level"
+                     id="@trinkets.Id"
+                     onclick="equipUnequipItem('@trinkets.Id', 'equip', 'regalia')"
+                     title="@trinkets.Name
 
 *** details ***
-@(trinket.HasTaint ? "tainted" : "untainted")
-@(trinket.IsPermanent ? "can be consumed" : "can only be worn")
-@trinket.Type.ToLower()
-level @trinket.Level
-value @trinket.Value
+@(trinkets.HasTaint ? "tainted" : "untainted")
+@(trinkets.IsPermanent ? "can be consumed" : "can only be worn")
+@trinkets.Type.ToLower()
+level @trinkets.Level
+value @trinkets.Value
 *** stats ***
-DEF @trinket.Stats.Defense
-RES @trinket.Stats.Resist
-ACT @trinket.Stats.Actions
-END @trinket.Stats.Endurance
-ACC @trinket.Stats.Accretion
+DEF @trinkets.Stats.Defense
+RES @trinkets.Stats.Resist
+ACT @trinkets.Stats.Actions
+END @trinkets.Stats.Endurance
+ACC @trinkets.Stats.Accretion
 *** feats ***
-COM @trinket.Stats.Combat | @trinket.Stats.CombatEff
-STR @trinket.Stats.Strength | @trinket.Stats.StrengthEff
-TAC @trinket.Stats.Tactics | @trinket.Stats.TacticsEff
-ATH @trinket.Stats.Athletics | @trinket.Stats.AthleticsEff
-SUR @trinket.Stats.Survival | @trinket.Stats.SurvivalEff
-SOC @trinket.Stats.Social | @trinket.Stats.SocialEff
-ABS @trinket.Stats.Abstract | @trinket.Stats.AbstractEff
-PSI @trinket.Stats.Psionic | @trinket.Stats.PsionicEff
-CRA @trinket.Stats.Crafting | @trinket.Stats.CraftingEff
-MED @trinket.Stats.Medicine | @trinket.Stats.MedicineEff" />
+COM @trinkets.Stats.Melee | @trinkets.Stats.Melee" />
             }
         </div>
     </div>

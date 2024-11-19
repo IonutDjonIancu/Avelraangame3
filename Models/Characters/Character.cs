@@ -17,7 +17,7 @@ public class Character
 
     public CharacterSupplies Supplies { get; set; } = new();
 
-    // TODO: add special skills
+    public List<string> SpecialSkills { get; set; } = [];
 }
 
 public class Characters
@@ -52,42 +52,35 @@ public class CharacterDetails
     public bool IsLocked { get; set; }
     public bool IsNpc { get; set; }
 
-    public Guid BattleboardId { get; set; }
-    public string BattleboardType { get; set; }
+    public Guid BoardId { get; set; }
+    public string BoardType { get; set; }
 }
 
 public class CharacterStats
 {
-    // states
+    // main
+    public int Strength { get; set; }
+    public int Constitution { get; set; }
+    public int Agility { get; set; }
+    public int Willpower { get; set; }
+    public int Abstract { get; set; }
+    // skills
+    public int Melee { get; set; }
+    public int Arcane { get; set; }
+    public int Psionics { get; set; }
+    public int Social { get; set; }
+    public int Hide { get; set; }
+    public int Survival { get; set; }
+    public int Tactics { get; set; }
+    public int Aid { get; set; }
+    public int Crafting { get; set; }
+    public int Spot { get; set; }
+    // assets
     public int Defense { get; set; }
     public int Resist { get; set; }
     public int Actions { get; set; }
     public int Endurance { get; set; }
     public int Accretion { get; set; }
-
-    // rolls
-    public int Combat { get; set; }
-    public int Strength { get; set; }
-    public int Tactics { get; set; }
-    public int Athletics { get; set; }
-    public int Survival { get; set; }
-    public int Social { get; set; }
-    public int Abstract { get; set; }
-    public int Psionic { get; set; }
-    public int Crafting { get; set; }
-    public int Medicine { get; set; }
-
-    // effects
-    public int CombatEff { get; set; }
-    public int StrengthEff { get; set; }
-    public int TacticsEff { get; set; }
-    public int AthleticsEff { get; set; }
-    public int SurvivalEff { get; set; }
-    public int SocialEff { get; set; }
-    public int AbstractEff { get; set; }
-    public int PsionicEff { get; set; }
-    public int CraftingEff { get; set; }
-    public int MedicineEff { get; set; }
 }
 
 public class CharacterSupplies

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Services;
 
-internal class Validators
+internal class Validators // TODO: to remove
 {
     #region general
     internal static void ValidateAgainstNull(object obj, string message)
@@ -26,31 +26,32 @@ internal class Validators
     #endregion
 
     #region actions
-    internal static void ValidateOnActionOffense(CharacterActions action, ISnapshot snapshot)
+    internal static (Character source, Character target, Board board) ValidateOnActionLogic(CharacterActions actions, ISnapshot snapshot)
     {
-        ValidateAgainstNull(action, "Action object cannot be null.");
-        ValidateGuid(action.SourceId, "Action initiator cannot be null.");
-        ValidateGuid(action.TargetId, "Target cannot be null.");
-        ValidateGuid(action.BoardId, "Board id cannot be null.");
-        ValidateString(action.BoardType, "Board type cannot be null.");
-        ValidateString(action.ActionType, "Action type cannot be null.");
+        ValidateAgainstNull(actions, "Action object cannot be null.");
+        ValidateGuid(actions.SourceId, "Action initiator cannot be null.");
+        ValidateGuid(actions.TargetId, "Target cannot be null.");
+        ValidateGuid(actions.BoardId, "Board id cannot be null.");
+        ValidateString(actions.BoardType, "Board type cannot be null.");
+        ValidateString(actions.ActionType, "Action type cannot be null.");
 
-        if (!Statics.Battleboards.Types.All.Contains(action.BoardType))
+        if (!Statics.Boards.Types.All.Contains(actions.BoardType))
             throw new Exception("Wrong board type provided.");
 
-        if (!Statics.Battleboards.ActionTypes.All.Contains(action.ActionType))
+        if (!Statics.Boards.ActionTypes.All.Contains(actions.ActionType))
             throw new Exception("Wrong action type provided.");
 
-        if (!snapshot.Battleboards.Exists(s => s.Id == action.BoardId))
-            throw new Exception("No battleboard found with provided id.");
+        var board = snapshot.Boards.Find(s => s.Id == actions.BoardId) ?? throw new Exception("No battleboard found with provided id.");
 
-        var sourceCharacter = ValidateCharacterExists(action.SourceId, action.SessionId, snapshot);
-        if (sourceCharacter.Identity.SessionId != action.SessionId)
+        var source = ValidateCharacterExists(actions.SourceId, actions.SessionId, snapshot);
+        if (source.Identity.SessionId != actions.SessionId)
             throw new Exception("You cannot control that character.");
-        if (sourceCharacter.Fights.Actions <= 0)
+        if (source.Fights.Actions <= 0)
             throw new Exception("This character has no more actions this round.");
 
-        var _ = snapshot.Characters.First(s => s.Identity.Id == action.TargetId) ?? throw new Exception("Target character not found.");
+        var target = snapshot.Characters.First(s => s.Identity.Id == actions.TargetId) ?? throw new Exception("Target character not found.");
+
+        return (source, target, board);
     }
     #endregion
 
@@ -59,11 +60,11 @@ internal class Validators
     {
         var character = ValidateCharacterExists(identity.Id, identity.SessionId, snapshot);
 
-        if (character.Details.BattleboardId != Guid.Empty
-            && !snapshot.Battleboards.Exists(s => s.Id == character.Details.BattleboardId))
+        if (character.Details.BoardId != Guid.Empty
+            && !snapshot.Boards.Exists(s => s.Id == character.Details.BoardId))
             throw new Exception("Unable to find battleboard duel for character.");
 
-        character.Details.IsLocked = snapshot.Battleboards.Exists(s => s.Id == character.Details.BattleboardId);
+        character.Details.IsLocked = snapshot.Boards.Exists(s => s.Id == character.Details.BoardId);
         
         if (!character.Details.IsAlive)
             throw new Exception("Your character is dead.");
@@ -142,10 +143,10 @@ internal class Validators
     internal static Character ValidateLevelupAndReturn(CharacterLevelup levelup, ISnapshot snapshot)
     {
         ValidateAgainstNull(levelup, "Level up cannot be null.");
-        ValidateString(levelup.Attribute, "Attribute missing or invalid for levelup.");
+        ValidateString(levelup.Stat, "Attribute missing or invalid for levelup.");
         var character = ValidateCharacterExists(levelup.CharacterId, levelup.SessionId, snapshot);
 
-        if (!Statics.Stats.All.Contains(levelup.Attribute))
+        if (!Statics.Stats.All.Contains(levelup.Stat))
             throw new Exception("Unable to find attribute in list of stats.");
 
         if (character.Details.Levelup == 0)
@@ -153,7 +154,11 @@ internal class Validators
 
         int value;
 
-        var stat = typeof(CharacterStats).GetProperty(levelup.Attribute)!;
+        var stat = typeof(CharacterStats).GetProperty(levelup.Stat)!;
+
+        if (stat.Name == Statics.Stats.Endurance || stat.Name == Statics.Stats.Accretion)
+            return character;
+
         value = (int)stat.GetValue(character.Stats)!;
 
         if (value <= 0 && character.Details.Levelup < 1)

@@ -35,31 +35,29 @@
         </div>
     </div>
     <div class="row mt-3" id="resultboard">
-        <input class="rounded-3 text-center resultboard" value="@Model.Result"/>
+        <input class="rounded-3 text-center resultboard" value="@Model.Message"/>
     </div>
     <div class="mt-3" id="actions">
         <div class="dropdown d-flex justify-content-center">
-            @* offensive actions *@
+            @* proficiencies *@
             <button class="btn btn-sm btn-outline-dark dropdown-toggle me-1" type="button" id="offensives" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: black;">
-                Offensive
+                Proficiency
             </button>
             <ul class="dropdown-menu resultboard" aria-labelledby="offensives">
-                <li onclick="runAction('Attack')" class="dropdown-item primary-green pointer" title="COM - attacks the target going using melee or ranged attacks">Attack</li>
-                <li onclick="runAction('Wrestle')" class="dropdown-item primary-green pointer" title="STR - approaches the target using an attack then wrestles it to the ground, possibly dealing more massive damage">Wrestle</li>
-                <li onclick="runAction('Charge')" class="dropdown-item primary-green pointer" title="TAC - orders the men around to charge at the best possible moment, increasing their combat effects if the charge succeeds">Charge</li>
+                <li class="dropdown-item primary-green pointer" title="Deal double damage to foe">Overwhelm</li>
+                <li class="dropdown-item primary-green pointer" title="Increase self combat effect">Brace</li>
+                <li class="dropdown-item primary-green pointer" title="Adds to roll vs effort">Force</li>
+                <li class="dropdown-item primary-green pointer" title="Increase a friend's combat effect">Prepare</li>
             </ul>
-            @* defensive actions *@
-            <button class="btn btn-sm btn-outline-dark dropdown-toggle me-1" type="button" id="defensives" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: black;">
-                Defensive
-            </button>
-            <ul class="dropdown-menu resultboard" aria-labelledby="defensives">
-                <li onclick="runAction('Brace')" class="dropdown-item primary-green pointer" title="COM - braces itself for the next attacks, slightly increasing your combat rolls">Brace</li>
-                <li onclick="runAction('Staunch')" class="dropdown-item primary-green pointer" title="STR - fixes his legs on the ground remaining immovable at the next attacks, slightly increasing your combat effects">Staunch</li>
-                <li onclick="runAction('Hold')" class="dropdown-item primary-green pointer" title="TAC - shouts order to hold the line, slightly increasing your troops' endurance">Hold</li>
-            </ul>
+            @* main actions *@
+            <div class="btn-group btn-group-sm me-1" role="group" aria-label="Basic example">
+                <button onclick="runAction('Attack')" type="button" class="btn btn-sm btn-outline-dark">Attack</button>
+                <button onclick="runAction('Cast')" type="button" class="btn btn-sm btn-outline-dark">Cast</button>
+                <button onclick="runAction('Mend')" type="button" class="btn btn-sm btn-outline-dark">Mend</button>
+                <button onclick="runAction('Rest')" type="button" class="btn btn-sm btn-outline-dark">Rest</button>
+            </div>
             @* other actions *@
             <button type="button" class="btn btn-sm btn-outline-dark me-1">Let Ai act</button>
-            <button type="button" class="btn btn-sm btn-outline-dark me-1">Pass turn</button>
             <button type="button" class="btn btn-sm btn-outline-dark me-1">End round</button>
             <button onclick="hideActions()" title="hide actions" type="button" class="btn btn-sm btn-outline-dark actions secondary-darkred">&#10008;</button>
         </div>

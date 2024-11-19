@@ -4,7 +4,7 @@ namespace Services;
 
 public interface IActionService
 {
-    void RunCharacterActions(CharacterActions action);
+    void RunActionLogic(CharacterActions actions);
 }
 
 public class ActionService : IActionService
@@ -20,83 +20,86 @@ public class ActionService : IActionService
         _dice = dice;
     }
 
-    public void RunCharacterActions(CharacterActions action)
+    public void RunActionLogic(CharacterActions actions)
     {
-        Validators.ValidateOnActionOffense(action, _snapshot);
+        var (source, target, board) = Validators.ValidateOnActionLogic(actions, _snapshot);
 
-        var board = _snapshot.Battleboards.Find(s => s.Id == action.BoardId)!;
-
-        switch (action.ActionType)
+        switch (actions.ActionType)
         {
-            case Statics.Battleboards.ActionTypes.Attack:
-                RunAttack(action, board);
+            case Statics.Boards.ActionTypes.Attack:
+                //RunAttackLogic(source, target, board);
+                break;
+            case Statics.Boards.ActionTypes.Cast:
+                // todo
+                break;
+            case Statics.Boards.ActionTypes.Mend:
+                // todo
+                break;
+            case Statics.Boards.ActionTypes.Rest:
+                // todo
                 break;
             default:
                 break;
         }
-
-
-
-
-
     }
 
-    #region private methods
-    private void RunAttack(CharacterActions action, Battleboard board) 
-    { 
-        var allGuys = board.GoodGuys.Union(board.BadGuys);
+    #region private methods 
+    //private void RunAttackLogic(Character source, Character target, Board board)
+    //{
+    //    if (source.Identity.Id == target.Identity.Id)
+    //    {
+    //        board.Message = "Cannot attack yourself.";
+    //        return;
+    //    }
 
-        var source = allGuys.First(s => s.Identity.Id == action.SourceId);
-        var target = allGuys.First(s => s.Identity.Id == action.TargetId);
+    //    if (board.GoodGuys.Any(s => s.Identity.Id == source.Identity.Id) && board.GoodGuys.Any(s => s.Identity.Id == target.Identity.Id)
+    //        || board.BadGuys.Any(s => s.Identity.Id == source.Identity.Id) && board.BadGuys.Any(s => s.Identity.Id == target.Identity.Id))
+    //    {
+    //        board.Message = "Cannot attack your own men.";
+    //        return;
+    //    }
 
-        if (target.Fights.Endurance <= 0)
-        {
-            board.Result = "Your target is already dead.";
-            return;
-        }
-        
-        // reduce actions for source
-        source.Fights.Actions -= 1;
+    //    source.Fights.Actions -= 1;
 
-        var result = 0.0;
+    //    var targetStat = "";
 
-        if (target.Details.Spec == Statics.Specs.Warring // for melee classes
-            || target.Details.Spec == Statics.Specs.Tracking)
-        {
-            result = _dice.Roll_game_dice(source, Statics.Stats.Combat, target, Statics.Stats.Combat);
-        }
-        else if (target.Details.Spec == Statics.Specs.Sorcery) // for spellcasting classes
-        {
-            if (target.Fights.Accretion <= 0)
-                target.Fights.Endurance -= 2;
+    //    if (target.Stats.Melee > target.Stats.Abstract && target.Stats.Melee > target.Stats.Psionics)
+    //    {
+    //        targetStat = Statics.Stats.Melee;
+    //    }
+    //    else if (target.Stats.Abstract > target.Stats.Psionics)
+    //    {
+    //        targetStat = Statics.Stats.Abstract;
+    //        target.Fights.Accretion -= (int)(target.Fights.Abstract * 0.1);
+    //    }
+    //    else
+    //    {
+    //        targetStat = Statics.Stats.Psionics;
+    //        target.Fights.Accretion -= (int)(target.Fights.Psionics * 0.1);
+    //    }
 
-            result = _dice.Roll_game_dice(source, Statics.Stats.Combat, target, Statics.Stats.Abstract);
-            target.Fights.Accretion -= 2;
-        }
-        else
-        {
-            throw new NotImplementedException();
-        }
+    //    var sourceRoll = 1; // TODO: change this to actual dice roll
 
-        if (result <= 0)
-        {
-            board.Result = $"{source.Details.Name} missed.";
-            return;
-        }
+    //    if (targetStat == Statics.Stats.Melee)
+    //    {
+    //        target.Fights.Endurance -= (int)(sourceRoll * source.Fights.Melee);
+    //    }
+    //    else if (targetStat == Statics.Stats.Abstract)
+    //    {
 
-        var effect = (int)(result * source.Fights.CombatEff);
-        target.Fights.Endurance -= effect;
+    //        var result = (int)(sourceRoll * source.Fights.AbstractEff);
+    //        result -= result * target.Fights.Resist / 100;
 
-        if (target.Fights.Endurance <= 0)
-        {
-            target.Details.IsAlive = false;
-            board.Result = $"{target.Details.Name} is mortally wounded and falls to the ground.";
-        }
-        else
-        {
-            board.Result = $"{target.Details.Name} was hit for {effect} damage.";
-        }
-    }
+    //        target.Fights.Endurance -= result;
+    //    }
+    //    else
+    //    {
+    //        var result = (int)(sourceRoll * source.Fights.PsionicEff);
+    //        result -= result * target.Fights.Resist / 100;
+
+    //        target.Fights.Endurance -= result;
+    //    }
+    //}
 
     #endregion
 }
