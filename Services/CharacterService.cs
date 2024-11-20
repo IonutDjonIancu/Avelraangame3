@@ -115,6 +115,11 @@ public class CharacterService : ICharacterService
 
         var character = JsonConvert.DeserializeObject<Character>(decryptString)!;
 
+        if (_snapshot.Characters.Any(s => s.Identity.Id == character.Identity.Id))
+        {
+            _snapshot.Characters.RemoveWhere(s => s.Identity.Id == character.Identity.Id);
+        }
+        
         _snapshot.Characters.Add(character);
 
         return new ImportCharacterResponse

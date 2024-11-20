@@ -48,7 +48,7 @@ public class CharacterController(ICharacterService characterService) : Controlle
         }
         catch (Exception ex)
         {
-            return Error(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
@@ -76,7 +76,7 @@ public class CharacterController(ICharacterService characterService) : Controlle
         }
         catch (Exception ex)
         {
-            return Error(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
     
@@ -92,7 +92,7 @@ public class CharacterController(ICharacterService characterService) : Controlle
         }
         catch (Exception ex)
         {
-            return Error(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
@@ -108,7 +108,7 @@ public class CharacterController(ICharacterService characterService) : Controlle
         }
         catch (Exception ex)
         {
-            return Error(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
@@ -141,7 +141,7 @@ public class CharacterController(ICharacterService characterService) : Controlle
         }
         catch (Exception ex)
         {
-            return Error(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
@@ -157,7 +157,7 @@ public class CharacterController(ICharacterService characterService) : Controlle
         }
         catch (Exception ex)
         {
-            return Error(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
@@ -173,7 +173,7 @@ public class CharacterController(ICharacterService characterService) : Controlle
         }
         catch (Exception ex)
         {
-            return Error(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
@@ -189,7 +189,7 @@ public class CharacterController(ICharacterService characterService) : Controlle
         }
         catch (Exception ex)
         {
-            return Error(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
     #endregion

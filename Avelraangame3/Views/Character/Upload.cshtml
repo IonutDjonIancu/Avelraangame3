@@ -3,7 +3,7 @@
 <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
     <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Upload">Upload</a>
     <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Create">Create</a>
-    <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Details">Details</a>
+    <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Details">Characters</a>
 </div>
 
 <div class="container mt-3 footer-border">
@@ -48,9 +48,9 @@
             data: JSON.stringify(data),
             success: function (response) {
                 $("#characterStringArea").val("")
-                
-                localStorage.setItem("characterId", response.characterId);
-                localStorage.setItem("sessionId", response.sessionId);
+                console.log(response);
+                localStorage.setItem("characterId", response.characterIdentity.id);
+                localStorage.setItem("sessionId", response.characterIdentity.sessionId);
                 
                 $('#importCharacterContainer').slideUp(200)
                 $('#importCharacterSuccessContainer').slideDown(400)

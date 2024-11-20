@@ -216,8 +216,8 @@ public static class Statics
             public const int Defense        = 1;
             public const int Resist         = 1;
             public const int Actions        = 1;
-            public const int Endurance      = 5;
-            public const int Accretion      = 2;
+            public const int Endurance      = 40;
+            public const int Accretion      = 10;
         }
 
         public const string Elf = "Elf";
@@ -244,8 +244,8 @@ public static class Statics
             public const int Defense        = 1;
             public const int Resist         = 1;
             public const int Actions        = 1;
-            public const int Endurance      = 3;
-            public const int Accretion      = 5;
+            public const int Endurance      = 30;
+            public const int Accretion      = 50;
         }
 
         public const string Dwarf = "Dwarf";
@@ -272,8 +272,8 @@ public static class Statics
             public const int Defense        = 3;
             public const int Resist         = 3;
             public const int Actions        = 1;
-            public const int Endurance      = 5;
-            public const int Accretion      = 1;
+            public const int Endurance      = 50;
+            public const int Accretion      = 10;
         }
 
         public static readonly List<string> All =
@@ -310,7 +310,7 @@ public static class Statics
             public const int Defense        = 2;
             public const int Resist         = 0;
             public const int Actions        = 0;
-            public const int Endurance      = 3;
+            public const int Endurance      = 5;
             public const int Accretion      = 0;
         }
 
@@ -338,7 +338,7 @@ public static class Statics
             public const int Defense        = 0;
             public const int Resist         = 3;
             public const int Actions        = 0;
-            public const int Endurance      = 1;
+            public const int Endurance      = 3;
             public const int Accretion      = 5;
         }
 
@@ -366,8 +366,8 @@ public static class Statics
             public const int Defense        = 5;
             public const int Resist         = 2;
             public const int Actions        = 0;
-            public const int Endurance      = 5;
-            public const int Accretion      = 0;
+            public const int Endurance      = 10;
+            public const int Accretion      = -10;
         }
 
         public static readonly List<string> All =
@@ -404,7 +404,7 @@ public static class Statics
             public const int Defense        = 5;
             public const int Resist         = 0;
             public const int Actions        = 1;
-            public const int Endurance      = 5;
+            public const int Endurance      = 10;
             public const int Accretion      = 0;
         }
 
@@ -432,8 +432,8 @@ public static class Statics
             public const int Defense        = 0;
             public const int Resist         = 5;
             public const int Actions        = 0;
-            public const int Endurance      = 5;
-            public const int Accretion      = 5;
+            public const int Endurance      = 3;
+            public const int Accretion      = 10;
         }
 
         public const string Tracking = "Tracking";
@@ -460,8 +460,8 @@ public static class Statics
             public const int Defense        = 2;
             public const int Resist         = 2;
             public const int Actions        = 0;
-            public const int Endurance      = 3;
-            public const int Accretion      = 3;
+            public const int Endurance      = 5;
+            public const int Accretion      = 5;
         }
 
         public static readonly List<string> All =

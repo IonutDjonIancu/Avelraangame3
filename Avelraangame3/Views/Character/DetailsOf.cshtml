@@ -6,7 +6,7 @@
         <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
             <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Upload">Upload</a>
             <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Create">Create</a>
-            <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Details">Details</a>
+            <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Details">Characters</a>
         </div>
     </div>
     <div class="col-4">
@@ -16,10 +16,15 @@
     </div>
 </div>
 
-@* Stats and feats *@
 <div class="container mt-3 footer-border">
-    <div class="row mt-3">
-        <div class="col-2">
+    <div class="row d-flex justify-content-between mt-3">
+        @* Portrait *@
+        <div class="col-1">
+            <p class="mb-0">Portrait</p>
+            <img class="rounded-3 mt-3 ms-4 pointer" src="@Model.Details.Portrait" width="60" height="80" title="this is how your character will look on the battleboard" />
+        </div>
+        @* Details *@
+        <div class="col-3">
             <p class="mb-0">Character</p>
             <ul>
                 @if(Model.Details.IsLocked)
@@ -63,109 +68,115 @@
                 </li>
             </ul>
         </div>
-        <div class="col-1">
-            <p class="mb-0">Portrait</p>
-            <img class="rounded-3 mt-3 ms-4 pointer" src="@Model.Details.Portrait" width="60" height="80" title="this is how your character will look on the battleboard"/>
-        </div>
-        @* States *@
+        @* Stats *@
         <div class="col-3">
             <p class="mb-0">Stats</p>
             <ul>
                 <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Defense')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    defense: 
-                    <span class="text-muted">@Model.Actuals.Defense</span> %
-                </li>
-                <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Resist')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    resist: 
-                    <span class="text-muted">@Model.Actuals.Resist</span> %
-                </li>
-                <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Actions')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    actions: 
-                    <span class="text-muted">@Model.Actuals.Actions</span>
-                </li>
-                <li>
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Endurance')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    endurance: 
+                    Endurance:
                     <span class="text-muted">@Model.Actuals.Endurance</span>
                 </li>
                 <li>
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Accretion')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    accretion: 
+                    Accretion:
                     <span class="text-muted">@Model.Actuals.Accretion</span>
                 </li>
-            </ul>
-        </div>
-        @* Rolls and effects *@
-        <div class="col-3">
-            <p class="mb-0">Rolls and effects</p>
-            <ul>
                 <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Combat')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    combat: 
-                    <span class="text-muted">@Model.Actuals.Melee</span> |
-                    <span>@Model.Actuals.Melee</span>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Defense')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Defense:
+                    <span class="text-muted">@Model.Actuals.Defense</span> %
+                </li>
+                <li>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Resist')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Resist :
+                    <span class="text-muted">@Model.Actuals.Resist</span> %
+                </li>
+                <li>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Actions')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Actions:
+                    <span class="text-muted">@Model.Actuals.Actions</span>
                 </li>
                 <li>
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Strength')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    strength: 
-                    <span class="text-muted">@Model.Actuals.Strength</span> |
-                    <span>@Model.Actuals.Strength</span>
+                    Strength:
+                    <span class="text-muted">@Model.Actuals.Strength</span>
                 </li>
                 <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Tactics')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    tactics: 
-                    <span class="text-muted">@Model.Actuals.Tactics</span> |
-                    <span>@Model.Actuals.Tactics</span>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Constitution')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Constitution:
+                    <span class="text-muted">@Model.Actuals.Constitution</span>
                 </li>
                 <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Athletics')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    athletics: 
-                    <span class="text-muted">@Model.Actuals.Agility</span> |
-                    <span>@Model.Actuals.Agility</span>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Agility')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Agility:
+                    <span class="text-muted">@Model.Actuals.Agility</span>
                 </li>
-                 <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Survival')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    survival: 
-                    <span class="text-muted">@Model.Actuals.Survival</span> |
-                    <span>@Model.Actuals.Survival</span>
-                </li>
-            </ul>
-        </div>
-        <div class="col-3">
-            <p class="mb-0">Rolls and effects (continued)</p>
-            <ul>
                 <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Social')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    social: 
-                    <span class="text-muted">@Model.Actuals.Social</span> |
-                    <span>@Model.Actuals.Social</span>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Willpower')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Willpower:
+                    <span class="text-muted">@Model.Actuals.Willpower</span>
                 </li>
                 <li>
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Abstract')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    abstract: 
-                    <span class="text-muted">@Model.Actuals.Abstract</span> |
-                    <span>@Model.Actuals.Abstract</span>
+                    Abstract:
+                    <span class="text-muted">@Model.Actuals.Abstract</span>
+                </li>
+            </ul>
+        </div>
+        @* Skills *@
+        <div class="col-3">
+            <p class="mb-0">Skills</p>
+            <ul>
+                <li>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Melee')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Melee:
+                    <span class="text-muted">@Model.Actuals.Melee</span>
                 </li>
                 <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Psionic')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    psionic: 
-                    <span class="text-muted">@Model.Actuals.Psionics</span> |
-                    <span>@Model.Actuals.Psionics</span>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Arcane')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Arcane:
+                    <span class="text-muted">@Model.Actuals.Arcane</span>
+                </li>
+                <li>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Psionics')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Psionics:
+                    <span class="text-muted">@Model.Actuals.Psionics</span>
+                </li>
+                <li>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Social')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Social:
+                    <span class="text-muted">@Model.Actuals.Social</span>
+                </li>
+                 <li>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Hide')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Hide:
+                    <span class="text-muted">@Model.Actuals.Hide</span>
+                </li>
+                <li>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Survival')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Survival:
+                    <span class="text-muted">@Model.Actuals.Survival</span>
+                </li>
+                <li>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Tactics')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Tactics:
+                    <span class="text-muted">@Model.Actuals.Tactics</span>
+                </li>
+                <li>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Aid')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Aid:
+                    <span class="text-muted">@Model.Actuals.Aid</span>
                 </li>
                 <li>
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Crafting')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    crafting: 
-                    <span class="text-muted">@Model.Actuals.Crafting</span> |
-                    <span>@Model.Actuals.Crafting</span>
+                    Crafting:
+                    <span class="text-muted">@Model.Actuals.Crafting</span>
                 </li>
                  <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Medicine')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    medicine: 
-                    <span class="text-muted">@Model.Actuals.Aid</span> |
-                    <span>@Model.Actuals.Aid</span>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Spot')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Spot:
+                    <span class="text-muted">@Model.Actuals.Spot</span>
                 </li>
             </ul>
         </div>
@@ -482,7 +493,7 @@ COM @trinkets.Stats.Melee | @trinkets.Stats.Melee" />
             data: JSON.stringify({
                 characterId: characterId,
                 sessionId: sessionId,
-                attribute: attr
+                stat: attr
             }),
             success: function (response) {
                 localStorage.setItem("character", JSON.stringify(response));
@@ -500,5 +511,6 @@ COM @trinkets.Stats.Melee | @trinkets.Stats.Melee" />
         });
     }
 
+    // run on load
     hideLoading();
 </script>
