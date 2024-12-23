@@ -53,10 +53,6 @@ public class CharacterController(ICharacterService characterService) : Controlle
     }
 
     // GET: Character/Error?info=infoToDisplay
-    public IActionResult Error(string info)
-    {
-        return Content($"<<< click back to return\n\n\n{info}");
-    }
     #endregion
 
     #region requests
@@ -80,6 +76,8 @@ public class CharacterController(ICharacterService characterService) : Controlle
         }
     }
     
+
+
     // POST: Character/CreateCharacter
     [HttpPost]
     public IActionResult CreateCharacter([FromBody] CreateCharacter createCharacter)
@@ -124,10 +122,9 @@ public class CharacterController(ICharacterService characterService) : Controlle
         }
         catch (Exception ex)
         {
-            return Error(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
-
 
     // PUT: Character/EquipItem
     [HttpPut]

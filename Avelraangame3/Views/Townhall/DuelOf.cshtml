@@ -6,8 +6,8 @@
     <div class="col-8">
         <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
             <button type="button" class="btn btn-outline-secondary">Duel</button>
-            <button type="button" class="btn btn-outline-dark">Tourney</button>
             <button type="button" class="btn btn-outline-dark">Quest</button>
+            <button type="button" class="btn btn-outline-dark">Tourney</button>
             <button type="button" class="btn btn-outline-dark">Tavern</button>
             <button type="button" class="btn btn-outline-dark">Market</button>
         </div>
@@ -144,7 +144,7 @@
                 location.reload();
             },
             error: function (xhr, status, error) {
-                window.location.href = "/actions/error?info=" + xhr.responseText;
+                window.location.href = "/home/error?info=" + xhr.responseText;
             }
         });
     }

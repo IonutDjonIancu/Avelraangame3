@@ -37,7 +37,7 @@ public class HomeController : Controller
     // GET: Home/Error?info=infoToDisplay
     public IActionResult Error(string info)
     {
-        return Content($"<<< click back to return\n\n\n{info}");
+        return Content($"<<< click the back button of the browser to return\n\n\n{info}");
     }
     #endregion
 }

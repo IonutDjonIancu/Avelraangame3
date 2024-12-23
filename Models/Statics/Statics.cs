@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Models;
+﻿namespace Models;
 
 public static class Statics
 {
@@ -38,14 +36,25 @@ public static class Statics
     {
         public const int Easy   = 20; // up to
         public const int Medium = 40; // up to
-        public const int Hard   = 80; // up to
+    }
+
+    public static class EffortLevelNames
+    {
+        public const string Easy = "Easy";
+        public const string Medium = "Medium";
+        public const string Core = "Core";
+
+        public static readonly List<string> All =
+        [
+            Easy, Medium, Core
+        ];
     }
 
     public static class Stats
     {
         // main
         public const string Strength        = "Strength";
-        public const string Constitution    = "Constitution ";
+        public const string Constitution    = "Constitution";
         public const string Agility         = "Agility";
         public const string Willpower       = "Willpower";
         public const string Abstract        = "Abstract";
@@ -95,10 +104,10 @@ public static class Statics
 
     public static class SpecialSkills
     {
-        public const string Overwhelm = "Overwhelm";
-        public const string Brace = "Brace";
-        public const string Force = "Force";
-        public const string Prepare = "Prepare";
+        public const string Overwhelm   = "Overwhelm";
+        public const string Brace       = "Brace";
+        public const string Force       = "Force";
+        public const string Prepare     = "Prepare";
 
         public static readonly List<string> All =
         [

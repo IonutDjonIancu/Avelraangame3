@@ -66,6 +66,9 @@
                 <li>
                     worth: <span class="text-muted">@Model.Details.Worth</span>
                 </li>
+                <li>
+                    renown: <span class="text-muted">@Model.Details.Renown</span>
+                </li>
             </ul>
         </div>
         @* Stats *@
@@ -204,7 +207,6 @@
                     id="@item.Id"
                     onclick="equipUnequipItem('@item.Id', 'unequip', 'inventory')"
                     title="@item.Name
-
 *** details ***
 @(item.HasTaint ? "tainted" : "untainted")
 @item.Type.ToLower()
@@ -212,21 +214,26 @@ level @item.Level
 value @item.Value
 *** stats ***
 DEF @item.Stats.Defense
-RES @item.Stats.Resist
+RES @item.Stats.Resist 
 ACT @item.Stats.Actions
 END @item.Stats.Endurance
 ACC @item.Stats.Accretion
-*** rolls and effects ***
-COM @item.Stats.Melee | @item.Stats.Melee
-STR @item.Stats.Strength | @item.Stats.Strength
-TAC @item.Stats.Tactics | @item.Stats.Tactics
-ATH @item.Stats.Agility | @item.Stats.Agility
-SUR @item.Stats.Survival | @item.Stats.Survival
-SOC @item.Stats.Social | @item.Stats.Social
-ABS @item.Stats.Abstract | @item.Stats.Abstract
-PSI @item.Stats.Psionics | @item.Stats.Psionics
-CRA @item.Stats.Crafting | @item.Stats.Crafting
-MED @item.Stats.Aid | @item.Stats.Aid" />
+STR @item.Stats.Strength
+CNS @item.Stats.Constitution
+AGL @item.Stats.Agility
+WIL @item.Stats.Willpower
+ABS @item.Stats.Abstract
+*** skills ***
+MEL @item.Stats.Melee
+ARC @item.Stats.Arcane 
+PSI @item.Stats.Psionics
+SOC @item.Stats.Social
+HID @item.Stats.Hide
+SUR @item.Stats.Survival
+TAC @item.Stats.Tactics
+AID @item.Stats.Aid 
+CRA @item.Stats.Crafting
+SPO @item.Stats.Spot " />
             }
         </div>
         @* Regalia *@
@@ -239,7 +246,6 @@ MED @item.Stats.Aid | @item.Stats.Aid" />
                         id="@trinket.Id"
                         onclick="equipUnequipItem('@trinket.Id', 'unequip', 'regalia')"
                         title="@trinket.Name
-
 *** details ***
 @(trinket.HasTaint ? "tainted" : "untainted")
 @(trinket.IsPermanent ? "can be consumed" : "can only be worn")
@@ -252,58 +258,100 @@ RES @trinket.Stats.Resist
 ACT @trinket.Stats.Actions
 END @trinket.Stats.Endurance
 ACC @trinket.Stats.Accretion
-*** rolls and effects ***
-COM @trinket.Stats.Melee | @trinket.Stats.Melee" />
+STR @trinket.Stats.Strength
+CNS @trinket.Stats.Constitution
+AGL @trinket.Stats.Agility
+WIL @trinket.Stats.Willpower
+ABS @trinket.Stats.Abstract
+*** skills ***
+MEL @trinket.Stats.Melee
+ARC @trinket.Stats.Arcane
+PSI @trinket.Stats.Psionics
+SOC @trinket.Stats.Social
+HID @trinket.Stats.Hide
+SUR @trinket.Stats.Survival
+TAC @trinket.Stats.Tactics
+AID @trinket.Stats.Aid
+CRA @trinket.Stats.Crafting
+SPO @trinket.Stats.Spot " />
             }
         </div>
         @* Supplies *@
         <div class="col-6">
             <p class="mb-2">Supplies</p>
-            @foreach (var item in Model.Supplies.Items)
+            @foreach (var suppliesItem in Model.Supplies.Items)
             {
                 <img 
-                    src="@item.Icon" 
-                    class="rounded-2 item item-@item.Level"
-                    id="@item.Id"
-                    onclick="equipUnequipItem('@item.Id', 'equip', 'inventory')"
-                    title="@item.Name
-
-                *** details ***
-                @(item.HasTaint ? "tainted" : "untainted")
-                @item.Type.ToLower()
-                level @item.Level
-                value @item.Value
-                *** stats ***
-                DEF @item.Stats.Defense
-                RES @item.Stats.Resist
-                ACT @item.Stats.Actions
-                END @item.Stats.Endurance
-                ACC @item.Stats.Accretion
-                *** rolls and effects ***
-                COM @item.Stats.Melee   | @item.Stats.Melee" />
-            }
-            @foreach (var trinkets in Model.Supplies.Regalia)
-            {
-                <img src="@trinkets.Icon"
-                     class="rounded-2 item item-@trinkets.Level"
-                     id="@trinkets.Id"
-                     onclick="equipUnequipItem('@trinkets.Id', 'equip', 'regalia')"
-                     title="@trinkets.Name
+                    src="@suppliesItem.Icon" 
+                    class="rounded-2 item item-@suppliesItem.Level"
+                    id="@suppliesItem.Id"
+                    onclick="equipUnequipItem('@suppliesItem.Id', 'equip', 'inventory')"
+                    title="@suppliesItem.Name
 
 *** details ***
-@(trinkets.HasTaint ? "tainted" : "untainted")
-@(trinkets.IsPermanent ? "can be consumed" : "can only be worn")
-@trinkets.Type.ToLower()
-level @trinkets.Level
-value @trinkets.Value
+@(suppliesItem.HasTaint ? "tainted" : "untainted")
+@suppliesItem.Type.ToLower()
+level @suppliesItem.Level
+value @suppliesItem.Value
 *** stats ***
-DEF @trinkets.Stats.Defense
-RES @trinkets.Stats.Resist
-ACT @trinkets.Stats.Actions
-END @trinkets.Stats.Endurance
-ACC @trinkets.Stats.Accretion
-*** feats ***
-COM @trinkets.Stats.Melee | @trinkets.Stats.Melee" />
+DEF @suppliesItem.Stats.Defense
+RES @suppliesItem.Stats.Resist
+ACT @suppliesItem.Stats.Actions
+END @suppliesItem.Stats.Endurance
+ACC @suppliesItem.Stats.Accretion
+STR @suppliesItem.Stats.Strength
+CNS @suppliesItem.Stats.Constitution
+AGL @suppliesItem.Stats.Agility
+WIL @suppliesItem.Stats.Willpower
+ABS @suppliesItem.Stats.Abstract
+*** skills ***
+MEL @suppliesItem.Stats.Melee
+ARC @suppliesItem.Stats.Arcane
+PSI @suppliesItem.Stats.Psionics
+SOC @suppliesItem.Stats.Social
+HID @suppliesItem.Stats.Hide
+SUR @suppliesItem.Stats.Survival
+TAC @suppliesItem.Stats.Tactics
+AID @suppliesItem.Stats.Aid
+CRA @suppliesItem.Stats.Crafting
+SPO @suppliesItem.Stats.Spot " />
+            }
+            @foreach (var suppliesTrinket in Model.Supplies.Regalia)
+            {
+                <img src="@suppliesTrinket.Icon"
+                     class="rounded-2 item item-@suppliesTrinket.Level"
+                     id="@suppliesTrinket.Id"
+                     onclick="equipUnequipItem('@suppliesTrinket.Id', 'equip', 'regalia')"
+                     title="@suppliesTrinket.Name
+
+*** details ***
+@(suppliesTrinket.HasTaint ? "tainted" : "untainted")
+@(suppliesTrinket.IsPermanent ? "can be consumed" : "can only be worn")
+@suppliesTrinket.Type.ToLower()
+level @suppliesTrinket.Level
+value @suppliesTrinket.Value
+*** stats ***
+DEF @suppliesTrinket.Stats.Defense
+RES @suppliesTrinket.Stats.Resist
+ACT @suppliesTrinket.Stats.Actions
+END @suppliesTrinket.Stats.Endurance
+ACC @suppliesTrinket.Stats.Accretion
+STR @suppliesTrinket.Stats.Strength
+CNS @suppliesTrinket.Stats.Constitution
+AGL @suppliesTrinket.Stats.Agility
+WIL @suppliesTrinket.Stats.Willpower
+ABS @suppliesTrinket.Stats.Abstract
+*** skills ***
+MEL @suppliesTrinket.Stats.Melee
+ARC @suppliesTrinket.Stats.Arcane
+PSI @suppliesTrinket.Stats.Psionics
+SOC @suppliesTrinket.Stats.Social
+HID @suppliesTrinket.Stats.Hide
+SUR @suppliesTrinket.Stats.Survival
+TAC @suppliesTrinket.Stats.Tactics
+AID @suppliesTrinket.Stats.Aid
+CRA @suppliesTrinket.Stats.Crafting
+SPO @suppliesTrinket.Stats.Spot " />
             }
         </div>
     </div>

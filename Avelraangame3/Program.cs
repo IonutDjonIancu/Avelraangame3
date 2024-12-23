@@ -8,6 +8,7 @@ builder.Services.AddSingleton<IValidatorService, ValidatorService>();
 builder.Services.AddSingleton<IDiceService, DiceService>();
 
 builder.Services.AddTransient<IItemService, ItemService>();
+builder.Services.AddTransient<INpcService, NpcService>();
 builder.Services.AddTransient<ICharacterService, CharacterService>();
 builder.Services.AddTransient<ITownhallService, TownhallService>();
 builder.Services.AddTransient<IActionService, ActionService>();

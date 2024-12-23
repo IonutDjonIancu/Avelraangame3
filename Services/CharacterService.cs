@@ -12,6 +12,8 @@ public interface ICharacterService
     /// <returns></returns>
     Character GetCharacter(CharacterIdentity identity);
     Characters GetAllAliveCharacters();
+    Characters GetAllLockedCharacters();
+    Characters GetAllDuelistCharacters();
 
     string CreateCharacter(CreateCharacter create);
     string ExportCharacter(CharacterIdentity identity);
@@ -22,6 +24,8 @@ public interface ICharacterService
     Character SellItem(EquipItem equipItem);
     Character BuyItem(EquipItem equipItem);
     Character Levelup(CharacterLevelup levelup);
+
+    void SetCharacterFights(Character character);
 }
 
 public class CharacterService : ICharacterService
@@ -79,11 +83,39 @@ public class CharacterService : ICharacterService
         };
     }
 
+    public Characters GetAllLockedCharacters()
+    {
+        return new Characters
+        {
+            CharactersPortraits = _snapshot.Characters
+                .Where(s => s.Details.IsAlive 
+                            && !s.Details.IsNpc 
+                            && s.Details.IsLocked)
+                .Select(s => s.Details.Portrait)
+                .ToList(),
+        };
+    }
+
+    public Characters GetAllDuelistCharacters()
+    {
+        return new Characters
+        {
+            CharactersPortraits = _snapshot.Characters
+                .Where(s => s.Details.IsAlive
+                            && !s.Details.IsNpc
+                            && s.Details.IsLocked
+                            && s.Details.BoardType == Statics.Boards.Types.Duel)
+                .Select(s => s.Details.Portrait)
+                .ToList(),
+        };
+    }
+
     public Character GetCharacter(CharacterIdentity identity)
     {
         var character = _validator.ValidateOnGetCharacter(identity);
 
         CalculateActuals(character);
+        SetWorth(character);
 
         if (character.Actuals.Defense > 90)
             character.Actuals.Defense = 90; // capped at 90 %
@@ -119,7 +151,7 @@ public class CharacterService : ICharacterService
         {
             _snapshot.Characters.RemoveWhere(s => s.Identity.Id == character.Identity.Id);
         }
-        
+
         _snapshot.Characters.Add(character);
 
         return new ImportCharacterResponse
@@ -168,12 +200,12 @@ public class CharacterService : ICharacterService
     {
         var (item, character) = _validator.ValidateSellItem(equipItem);
 
-        if (_snapshot.ItemsSold.Count >= 1000)
+        if (_snapshot.ItemsSold.Count >= 10000)
             _snapshot.ItemsSold.Remove(_snapshot.ItemsSold.First());
 
         _snapshot.ItemsSold.Add(item.Id);
 
-        var isRollVsEffortSuccess = _dice.RollVsEffort(character, Statics.Stats.Social, _dice.Rolld20NoReroll(), true, false);
+        var (isRollVsEffortSuccess, _) = _dice.RollVsEffort(character, Statics.Stats.Social, _dice.Rolld20NoReroll(), true, false);
 
         character.Details.Wealth += isRollVsEffortSuccess ? item.Value + (int)(item.Value * 0.25) : item.Value;
         
@@ -206,7 +238,7 @@ public class CharacterService : ICharacterService
 
             _snapshot.Market.Remove(item);
 
-            var isRollVsEffortSuccess = _dice.RollVsEffort(character, Statics.Stats.Social, _dice.Rolld20NoReroll(), true, false);
+            var (isRollVsEffortSuccess, _) = _dice.RollVsEffort(character, Statics.Stats.Social, _dice.Rolld20NoReroll(), true, false);
 
             character.Details.Wealth -= isRollVsEffortSuccess ? item.Value - (int)(item.Value * 0.25) : item.Value;
 
@@ -236,6 +268,33 @@ public class CharacterService : ICharacterService
         character.Details.Levelup -= valueToAdd;
 
         return GetCharacter(character.Identity);
+    }
+
+    public void SetCharacterFights(Character character)
+    {
+        // main
+        character.Fights.Strength = character.Actuals.Strength;
+        character.Fights.Constitution = character.Actuals.Constitution;
+        character.Fights.Agility = character.Actuals.Agility;
+        character.Fights.Willpower = character.Actuals.Willpower;
+        character.Fights.Abstract = character.Actuals.Abstract;
+        // skills
+        character.Fights.Melee = character.Actuals.Melee;
+        character.Fights.Arcane = character.Actuals.Arcane;
+        character.Fights.Psionics = character.Actuals.Psionics;
+        character.Fights.Social = character.Actuals.Social;
+        character.Fights.Hide = character.Actuals.Hide;
+        character.Fights.Survival = character.Actuals.Survival;
+        character.Fights.Tactics = character.Actuals.Tactics;
+        character.Fights.Aid = character.Actuals.Aid;
+        character.Fights.Crafting = character.Actuals.Crafting;
+        character.Fights.Spot = character.Actuals.Spot;
+        // assets
+        character.Fights.Defense = character.Actuals.Defense;
+        character.Fights.Resist = character.Actuals.Resist;
+        character.Fights.Actions = character.Actuals.Actions;
+        character.Fights.Endurance = character.Actuals.Endurance;
+        character.Fights.Accretion = character.Actuals.Accretion;
     }
 
     #region private methods
@@ -537,6 +596,7 @@ public class CharacterService : ICharacterService
         character.Details.Wealth = 10;
         character.Details.BoardId = Guid.Empty;
         character.Details.BoardType = string.Empty;
+        character.Details.Renown = 0;
     }
 
     private void SetInventory(Character character)
@@ -549,8 +609,8 @@ public class CharacterService : ICharacterService
 
     private void SetWorth(Character character)
     {
-        character.Details.Worth = _dice.Rolld20NoReroll() +
-            character.Stats.Strength +
+        character.Details.Worth = _dice.Roll1dN(5) +
+            (character.Stats.Strength +
             character.Stats.Constitution +
             character.Stats.Agility +
             character.Stats.Willpower +
@@ -569,8 +629,9 @@ public class CharacterService : ICharacterService
             character.Stats.Resist +
             character.Stats.Actions +
             character.Stats.Endurance +
-            character.Stats.Accretion +
+            character.Stats.Accretion)/10 +
             (int)(character.Details.Wealth * 0.1);
     }
+
     #endregion
 }

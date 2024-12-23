@@ -1,15 +1,15 @@
-﻿@model Duel
+﻿@model Characters
 
 @* Townhall/Duel *@
 
 <div class="row">
     <div class="col-8">
         <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-            <button type="button" class="btn btn-outline-secondary">Duel</button>
-            <button type="button" class="btn btn-outline-dark">Tourney</button>
-            <button type="button" class="btn btn-outline-dark">Quest</button>
-            <button type="button" class="btn btn-outline-dark">Tavern</button>
-            <button type="button" class="btn btn-outline-dark">Market</button>
+            <button type="button" class="btn btn-secondary">Duel</button>
+            <button type="button" class="btn btn-outline-secondary">Quest</button>
+            <button type="button" class="btn btn-outline-secondary">Tourney</button>
+            <button type="button" class="btn btn-outline-secondary">Tavern</button>
+            <button type="button" class="btn btn-outline-secondary">Market</button>
         </div>
     </div>
     <div class="col-4">
@@ -21,12 +21,28 @@
 
 <div class="container mt-3 footer-border">
     <div id="challengeBtn">
-        <button onclick="fightNpc()" class="btn btn-sm btn-outline-secondary mt-3">Fight NPC</button>
+        <button onclick="fightNpc('Easy')" class="btn btn-sm btn-outline-secondary mt-3">Challenge NPC easy</button>
+        <button onclick="fightNpc('Medium')" class="btn btn-sm btn-outline-secondary mt-3">Challenge NPC medium</button>
+        <button onclick="fightNpc('Core')" class="btn btn-sm btn-outline-secondary mt-3">Challenge NPC core</button>
+    </div>
+</div>
+
+<div class="container mt-3 footer-border">
+    <div class="row mt-3" id="battlequeue">
+        <div class="col col-12 d-flex justify-content-start">
+            @foreach (var characterPortrait in Model.CharactersPortraits) 
+            {
+                <img class="rounded-3 m-1"
+                     src="@characterPortrait"
+                     width="60"
+                     height="80" />
+            }
+        </div>
     </div>
 </div>
 
 <script>
-    const fightNpc = () => {
+    const fightNpc = (difficulty) => {
 
         var characterId = localStorage.getItem("characterId");
         var sessionId = localStorage.getItem("sessionId");
@@ -35,7 +51,7 @@
             return;
         }
 
-        window.location.href = "/townhall/duelOf?characterId=" + characterId + "&sessionId=" + sessionId;
+        window.location.href = "/townhall/duelOf?characterId=" + characterId + "&sessionId=" + sessionId + "&effortLevelName=" + difficulty;
     }
 
     const hideLoading = () => {

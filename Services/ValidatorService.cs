@@ -1,5 +1,6 @@
 ﻿using Models;
 using Newtonsoft.Json;
+using static Models.Statics;
 
 namespace Services;
 
@@ -23,6 +24,11 @@ public interface IValidatorService
     (Item, Character) ValidateSellItem(EquipItem equipItem);
     (Item, Character) ValidateBuyItem(EquipItem equipItem);
     Character ValidateLevelupAndReturn(CharacterLevelup levelup);
+    #endregion
+
+    #region board
+    Board ValidateCharacterOnGetBoard(CharacterIdentity identity);
+    Character ValidateCharacterOnJoiningBoard(CharacterIdentity identity);
     #endregion
 }
 
@@ -289,4 +295,38 @@ public class ValidatorService : IValidatorService
 
     #endregion
 
+    #region townhall
+    public Board ValidateCharacterOnGetBoard(CharacterIdentity identity)
+    {
+        var character = ValidateCharacterExists(identity);
+        var board = _snapshot.Boards.Find(s => s.Id == character.Details.BoardId);
+
+        if (character.Details.BoardId != Guid.Empty
+            || board is null)
+            throw new Exception("Unable to find board for character.");
+
+        character.Details.IsLocked = true;
+
+        if (!character.Details.IsAlive)
+            throw new Exception("Your character is dead.");
+
+        return board;
+    }
+
+    public Character ValidateCharacterOnJoiningBoard(CharacterIdentity identity)
+    {
+        var character = ValidateCharacterExists(identity);
+
+        if (character.Details.BoardId != Guid.Empty)
+            throw new Exception("Character is already present on a board.");
+
+        if (!character.Details.IsAlive)
+            throw new Exception("Character is dead and cannot join a board.");
+
+        if (character.Details.IsLocked)
+            throw new Exception("Character is locked.");
+
+        return character;
+    }
+    #endregion
 }

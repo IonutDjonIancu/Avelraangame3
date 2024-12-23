@@ -40,8 +40,8 @@ public interface IDiceService
     /// </summary>
     /// <param name="character"></param>
     /// <param name="stat"></param>
-    /// <param name="effort"></param>
-    bool RollVsEffort(Character character, string skill, int effort, bool canLevelup, bool isFight);
+    /// <param name="effortLevel"></param>
+    (bool, int) RollVsEffort(Character character, string skill, int effortLevel, bool canLevelup, bool isFight);
 
     // TODO: implement rollAttack, rollRest, rollCast, rollMend
 }
@@ -57,18 +57,18 @@ public class DiceService : IDiceService
         _validator = validator; 
     }
 
-    public bool RollVsEffort(Character character, string skill, int effort, bool canLevelup, bool isFight)
+    public (bool, int) RollVsEffort(Character character, string skill, int effortLevel, bool canLevelup, bool isFight)
     {
         if (!Statics.Stats.All.Contains(skill))
             throw new Exception("No such skill found to roll.");
 
         _validator.ValidateAgainstNull(character, "Character cannot be null.");
-        _validator.ValidatePostiveNumber(effort, "Effort level cannot be 0 or smaller.");
+        _validator.ValidatePostiveNumber(effortLevel, "Effort level cannot be 0 or smaller.");
         _validator.ValidateString(skill, "Skill string is missing or invalid.");
 
         var charRoll = RollStat(character, skill, canLevelup, isFight);
 
-        return charRoll > effort;
+        return (charRoll > effortLevel, charRoll);
     }
 
     public int Roll1d4()
@@ -110,7 +110,7 @@ public class DiceService : IDiceService
     {
         var roll = Rolld20();
 
-        if (canLevelup)
+        if (canLevelup && roll >= 20)
         {
             UpgradeEntityLevel(roll, character);
             LevelUp(character);

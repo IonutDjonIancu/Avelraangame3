@@ -7,10 +7,14 @@ namespace Avelraangame3.Controllers;
 public class TownhallController : Controller
 {
     private readonly ITownhallService _townhallService;
+    private readonly ICharacterService _characterService;
 
-    public TownhallController(ITownhallService townhallService)
+    public TownhallController(
+        ITownhallService townhallService,
+        ICharacterService characterService)
     {
         _townhallService = townhallService;
+        _characterService = characterService;
     }   
 
     #region views
@@ -23,44 +27,39 @@ public class TownhallController : Controller
         }
         catch (Exception ex)
         {
-            return Error(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
     // GET: Townhall/Duel
     public IActionResult Duel()
     {
-        return View();
+        var characters = _characterService.GetAllDuelistCharacters();
+
+        return View(characters);
     }
 
     // GET: Townhall/DuelOf?characterId=string&sessionId=string
-    public IActionResult DuelOf(Guid characterId, Guid sessionId)
+    public IActionResult DuelOf(Guid characterId, Guid sessionId, string effortLevelName)
     {
         try
         {
-            var characterDuel = _townhallService.GetOrGenerateDuel(new CharacterIdentity
+            var characterDuel = _townhallService.GenerateDuelVsNpc(new CharacterIdentity
             {
                 Id = characterId,
                 SessionId = sessionId
-            });
+            }, effortLevelName);
 
             return View(characterDuel);
         }
         catch (Exception ex)
         {
-            return Error(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
     #endregion
     #region requests
 
-    #endregion
-
-    #region private methods
-    private ContentResult Error(string info)
-    {
-        return Content($"<<< click back to return\n\n\n{info}");
-    }
     #endregion
 }

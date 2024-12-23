@@ -25,6 +25,11 @@ public class Characters
     public List<string> CharactersPortraits { get; set; }
 }
 
+public class CharactersView
+{
+
+}
+
 public class CharacterIdentity
 {
     public Guid Id { get; set; }
@@ -54,6 +59,11 @@ public class CharacterDetails
 
     public Guid BoardId { get; set; }
     public string BoardType { get; set; }
+
+    /// <summary>
+    /// Used to count how many CoreRules fights the character has won.
+    /// </summary>
+    public int Renown { get; set; } 
 }
 
 public class CharacterStats
