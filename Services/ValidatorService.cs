@@ -1,6 +1,5 @@
 ﻿using Models;
 using Newtonsoft.Json;
-using static Models.Statics;
 
 namespace Services;
 
@@ -10,24 +9,33 @@ public interface IValidatorService
     void ValidateAgainstNull(object obj, string message);
     void ValidateString(string str, string message);
     void ValidateGuid(Guid guid, string message);
+    void ValidateGuid(string guid, string message);
+    #endregion
+
+    #region dice
     void ValidatePostiveNumber(int number, string message);
+    void ValidateGreaterNumber(int number1, int number2, string message = "");
     #endregion
 
     #region player
     void ValidateOnCreatePlayer(string playerName);
+    void ValidatePlayerExists(Guid playerId);
     #endregion
 
     #region character
+    void ValidateOnGetCharacters(Guid playerId);
     void ValidateOnCreateCharacter(CreateCharacter character);
     Character ValidateCharacterExists(CharacterIdentity identity);
-    Character ValidateOnExportCharacter(CharacterIdentity identity);
     Character ValidateOnGetCharacter(CharacterIdentity identity);
-    void ValidateOnImportCharacter(ImportCharacter import);
     (Item, Character) ValidateEquipItem(EquipItem equipItem);
     (Item, Character) ValidateUnequipItem(EquipItem equipItem);
     (Item, Character) ValidateSellItem(EquipItem equipItem);
     (Item, Character) ValidateBuyItem(EquipItem equipItem);
     Character ValidateLevelupAndReturn(CharacterLevelup levelup);
+    #endregion
+
+    #region npc
+    void ValidateListOfCharacters(List<Character> characters);    
     #endregion
 
     #region board
@@ -46,10 +54,10 @@ public class ValidatorService : IValidatorService
     }
 
     #region general
-    public void ValidateAgainstNull(object obj, string message)
+    public void ValidateAgainstNull(object obj, string message = "")
     {
         if (obj is null)
-            throw new Exception(message);
+            throw new Exception(string.IsNullOrWhiteSpace(message) ? "Null object passed." : message);
     }
 
     public void ValidateString(string str, string message)
@@ -58,10 +66,15 @@ public class ValidatorService : IValidatorService
             throw new Exception(message);
     }
 
-    public void ValidateGuid(Guid guid, string message)
+    public void ValidateGuid(Guid guid, string message = "")
     {
         if (guid == Guid.Empty)
-            throw new Exception(message);
+            throw new Exception(string.IsNullOrWhiteSpace(message) ? "Invalid guid." : message);
+    }
+
+    public void ValidateGuid(string guid, string message = "")
+    {
+        Guid.Parse(guid);
     }
 
     public void ValidatePostiveNumber(int number, string message)
@@ -69,9 +82,26 @@ public class ValidatorService : IValidatorService
         if (number <= 0)
             throw new Exception(message);
     }
+
+    public void ValidateGreaterNumber(int number1, int number2, string message = "")
+    {
+        ValidatePostiveNumber(number1, $"Input number:{number1} cannot be negative.");
+        ValidatePostiveNumber(number2, $"Input number:{number2} cannot be negative.");
+
+        if (number1 <= number2)
+            throw new Exception(string.IsNullOrWhiteSpace(message) ? $"First number: {number1} cannot be equal or smaller than second number: {number2}" : message);
+    }
     #endregion
 
     #region player
+    public void ValidatePlayerExists(Guid playerId)
+    {
+        ValidateGuid(playerId);
+
+        if (!_snapshot.Players.Any(s => s.Id == playerId))
+            throw new Exception($"Invalid player id: {playerId}");
+    }
+
     public void ValidateOnCreatePlayer(string playerName)
     {
         ValidateString(playerName, "Player name cannot be empty.");
@@ -90,54 +120,9 @@ public class ValidatorService : IValidatorService
     {
         ValidateAgainstNull(identity, "Identity object cannot be null.");
         ValidateGuid(identity.Id, "Id is either missing or invalid.");
-        ValidateGuid(identity.SessionId, "Session id is either missing or invalid.");
+        ValidateGuid(identity.PlayerId, "Session id is either missing or invalid.");
 
         return ValidateCharacterExists(identity);
-    }
-
-    public Character ValidateOnExportCharacter(CharacterIdentity identity)
-    {
-        var character = ValidateCharacterExists(identity);
-
-        if (character.Details.IsLocked)
-            throw new Exception("Unable to export: character is locked.");
-
-        if (!character.Details.IsAlive)
-            throw new Exception("Unable to export: character is dead.");
-
-        return character;
-    }
-
-    public void ValidateOnImportCharacter(ImportCharacter import)
-    {
-        ValidateAgainstNull(import, "Import object is either missing or invalid.");
-        ValidateString(import.CharacterString, "Import character string cannot be null or empty.");
-
-        var decryptString = EncryptionService.DecryptString(import.CharacterString);
-
-        var character = JsonConvert.DeserializeObject<Character>(decryptString) ?? throw new Exception("Unable to properly deserialize character.");
-
-        ValidateAgainstNull(character, "Character is null after string decryption.");
-
-        if (character.Details.IsNpc)
-            throw new Exception("Cannot play an NPC character.");
-
-        Character existingCharacter = null;
-
-        try
-        {
-            existingCharacter = ValidateCharacterExists(character.Identity);
-        }
-        catch (Exception)
-        {
-            // do nothing in case character does not exist
-        }
-
-        if (existingCharacter is not null)
-        {
-            if (existingCharacter.Details.IsLocked)
-                throw new Exception("Unable to import character, current character is locked.");
-        }
     }
 
     public (Item, Character) ValidateEquipItem(EquipItem equipItem)
@@ -146,7 +131,7 @@ public class ValidatorService : IValidatorService
         var character = ValidateCharacterExists(new CharacterIdentity
         {
             Id = equipItem.CharacterId,
-            SessionId = equipItem.SessionId,
+            PlayerId = equipItem.SessionId,
         });
 
         if (character.Details.IsLocked)
@@ -186,7 +171,7 @@ public class ValidatorService : IValidatorService
         var character = ValidateCharacterExists(new CharacterIdentity
         {
             Id = equipItem.CharacterId,
-            SessionId = equipItem.SessionId,
+            PlayerId = equipItem.SessionId,
         });
 
         if (character.Details.IsLocked)
@@ -207,7 +192,7 @@ public class ValidatorService : IValidatorService
         var character = ValidateCharacterExists(new CharacterIdentity
         {
             Id = equipItem.CharacterId,
-            SessionId = equipItem.SessionId,
+            PlayerId = equipItem.SessionId,
         });
 
         if (character.Details.IsLocked)
@@ -231,7 +216,7 @@ public class ValidatorService : IValidatorService
         var character = ValidateCharacterExists(new CharacterIdentity
         {
             Id = itemToBuy.CharacterId,
-            SessionId = itemToBuy.SessionId,
+            PlayerId = itemToBuy.SessionId,
         });
 
         if (character.Details.IsLocked)
@@ -256,7 +241,7 @@ public class ValidatorService : IValidatorService
         var character = ValidateCharacterExists(new CharacterIdentity
         {
             Id = levelup.CharacterId,
-            SessionId = levelup.SessionId,
+            PlayerId = levelup.PlayerId,
         });
 
         if (character.Details.IsLocked)
@@ -280,37 +265,59 @@ public class ValidatorService : IValidatorService
     public Character ValidateCharacterExists(CharacterIdentity identity)
     {
         ValidateAgainstNull(identity, "Identity cannot be null.");
+        ValidateGuid(identity.Id);
+        ValidateGuid(identity.PlayerId);
+        ValidatePlayerExists(identity.PlayerId);
 
-        var character = _snapshot.Characters.FirstOrDefault(s => s.Identity.Id == identity.Id) ?? throw new Exception("Character not found.");
+        var character = _snapshot.Players.First(s => s.Id == identity.PlayerId).Characters.FirstOrDefault(s => s.Identity.Id == identity.Id) ?? throw new Exception("Character not found.");
 
         if (character.Details.IsNpc)
             return character;
 
-        if (character.Identity.SessionId != identity.SessionId)
-            throw new Exception("Wrong session id.");
-
         return character;
     }
 
-    public void ValidateOnCreateCharacter(CreateCharacter character)
+    public void ValidateOnGetCharacters(Guid playerId)
     {
-        ValidateAgainstNull(character, "Create character is either missing or invalid.");
-        ValidateString(character.Name, "Name cannot be empty.");
-        ValidateString(character.Portrait, "Portrait URL cannot be empty.");
-        ValidateString(character.Race, "Race cannot be empty.");
-        ValidateString(character.Culture, "Culture cannot be empty.");
-        ValidateString(character.Spec, "Spec cannot be empty.");
+        ValidateGuid(playerId);
 
-        if (character.Name.Length > 30)
+        if (!_snapshot.Players.Any(s => s.Id == playerId))
+            throw new Exception("Player not found.");
+    }
+
+    public void ValidateOnCreateCharacter(CreateCharacter create)
+    {
+        ValidateAgainstNull(create, "Create character is either missing or invalid.");
+        ValidatePlayerExists(create.PlayerId);
+        ValidateString(create.Name, "Name cannot be empty.");
+        ValidateString(create.Portrait, "Portrait URL cannot be empty.");
+        ValidateString(create.Race, "Race cannot be empty.");
+        ValidateString(create.Culture, "Culture cannot be empty.");
+        ValidateString(create.Spec, "Spec cannot be empty.");
+
+        if (_snapshot.Players.First(s => s.Id == create.PlayerId).Characters.Where(s => s.Details.IsAlive).ToList().Count >= 10)
+            throw new Exception("You can only have a maximum of 10 alive characters at any time.");
+
+        if (create.Name.Length > 30)
             throw new Exception("Name too long, 30 characters max.");
-        if (!Statics.Races.All.Contains(character.Race))
+        if (!Statics.Races.All.Contains(create.Race))
             throw new Exception("Race not found.");
-        if (!Statics.Cultures.All.Contains(character.Culture))
+        if (!Statics.Cultures.All.Contains(create.Culture))
             throw new Exception("Culture not found.");
-        if (!Statics.Specs.All.Contains(character.Spec))
+        if (!Statics.Specs.All.Contains(create.Spec))
             throw new Exception("Specialization not found.");
     }
 
+    #endregion
+
+    #region npc
+    public void ValidateListOfCharacters(List<Character> characters)
+    {
+        ValidateAgainstNull(characters);
+
+        if (characters.Count == 0)
+            throw new Exception("List of characters on generate npc cannot be empty.");
+    }
     #endregion
 
     #region townhall

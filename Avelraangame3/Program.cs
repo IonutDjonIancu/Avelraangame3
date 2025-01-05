@@ -1,3 +1,4 @@
+using Models;
 using Services;
 
 var builder = WebApplication.CreateBuilder(args);

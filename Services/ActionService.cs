@@ -22,7 +22,7 @@ public class ActionService : IActionService
 
     public void RunActionLogic(CharacterActions actions)
     {
-        var (source, target, board) = Validators.ValidateOnActionLogic(actions, _snapshot);
+        //var (source, target, board) = Validators.ValidateOnActionLogic(actions, _snapshot);
 
         switch (actions.ActionType)
         {

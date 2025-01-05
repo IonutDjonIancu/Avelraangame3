@@ -83,7 +83,7 @@ public class DiceService : IDiceService
 
     public int RollMdN(int m, int n)
     {
-        Validators.ValidateDiceMdNRoll(m, n);
+        _validator.ValidateGreaterNumber(m, n);
 
         return random.Next(m, n + 1);
     }

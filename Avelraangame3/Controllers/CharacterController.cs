@@ -4,49 +4,55 @@ using Services;
 
 namespace Avelraangame3.Controllers;
 
+[Route("Character")]
 public class CharacterController : Controller
 {
+    private readonly IValidatorService _validatorService;
     private readonly ICharacterService _characterService;
 
-    public CharacterController(ICharacterService characterService)
+    public CharacterController(
+        IValidatorService validatorService,
+        ICharacterService characterService)
     {
+        _validatorService = validatorService;
         _characterService = characterService;
     }
 
     #region views
     // GET: Character/Index
+    [HttpGet("")]
     public IActionResult Index()
     {
         return View();
     }
 
-    // GET: Character/Upload
-    public IActionResult Upload()
-    {
-        return View();
-    }
-
     // GET: Character/Create
+    [HttpGet("Create")]
     public IActionResult Create()
     {
         return View();
     }
 
-    // GET: Character/Details/5
+    // GET: Character/Details
+    [HttpGet("Details")]
     public IActionResult Details()
     {
         return View();
     }
 
-    // GET: Character/DetailsOf?characterId=string&sessionId=string
-    public IActionResult DetailsOf(string characterId, string sessionId)
+    // GET: Character//DetailsOf/123/456
+    [HttpGet("DetailsOf/{playerId}/{characterId}")]
+    public IActionResult DetailsOf(string playerId, string characterId)
     {
         try
         {
+            _validatorService.ValidateGuid(playerId, "Player id is in wrong format.");
+            _validatorService.ValidateGuid(characterId, "Character id is in wrong format.");
+
             var character = _characterService.GetCharacter(new CharacterIdentity
             {
                 Id = Guid.Parse(characterId),
-                SessionId = Guid.Parse(sessionId)
+                PlayerId = Guid.Parse(playerId)
             });
 
             return View(character);
@@ -56,21 +62,22 @@ public class CharacterController : Controller
             return BadRequest(ex.Message);
         }
     }
-
-    // GET: Character/Error?info=infoToDisplay
     #endregion
 
     #region requests
-    // GET: Character/GetCharacter
-    [HttpGet]
-    public IActionResult GetCharacter(string characterId, string sessionId)
+    // GET: Character//Character/123/456
+    [HttpGet("GetCharacter/{playerId}/{characterId}")]
+    public IActionResult GetCharacter(string playerId, string characterId)
     {
         try
         {
+            _validatorService.ValidateGuid(playerId, "Player id is in wrong format.");
+            _validatorService.ValidateGuid(characterId, "Character id is in wrong format.");
+
             var character = _characterService.GetCharacter(new CharacterIdentity
             {
                 Id = Guid.Parse(characterId),
-                SessionId = Guid.Parse(sessionId)
+                PlayerId = Guid.Parse(playerId)
             });
 
             return Ok(character);
@@ -80,50 +87,70 @@ public class CharacterController : Controller
             return BadRequest(ex.Message);
         }
     }
-    
 
+    // GET: Character/GetAllAliveCharacters/123
+    [HttpGet("GetAllAliveCharacters/{playerId}")]
+    public IActionResult GetAllAliveCharacters(string playerId)
+    {
+        try
+        {
+            _validatorService.ValidateGuid(playerId, "Player id is in wrong format.");
+
+            var character = _characterService.GetAllAliveCharacters(Guid.Parse(playerId));
+
+            return Ok(character);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    // GET: Character/GetAllLockedCharacters/123
+    [HttpGet("GetAllLockedCharacters/{playerId}")]
+    public IActionResult GetAllLockedCharacters(string playerId)
+    {
+        try
+        {
+            _validatorService.ValidateGuid(playerId, "Player id is in wrong format.");
+
+            var character = _characterService.GetAllLockedCharacters(Guid.Parse(playerId));
+
+            return Ok(character);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    // GET: Character/GetAllDuelistCharacters/123
+    [HttpGet("GetAllDuelistCharacters/{playerId}")]
+    public IActionResult GetAllDuelistCharacters(string playerId)
+    {
+        try
+        {
+            _validatorService.ValidateGuid(playerId, "Player id is in wrong format.");
+
+            var character = _characterService.GetAllDuelistCharacters(Guid.Parse(playerId));
+
+            return Ok(character);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 
     // POST: Character/CreateCharacter
     [HttpPost]
-    public IActionResult CreateCharacter([FromBody] CreateCharacter createCharacter)
+    public IActionResult CreateCharacter([FromBody] CreateCharacter create)
     {
         try
         {
-            var characterString = _characterService.CreateCharacter(createCharacter);
+            _characterService.CreateCharacter(create);
 
-            return Ok(characterString);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
-    // POST: Character/ImportCharacter
-    [HttpPost]
-    public IActionResult ImportCharacter([FromBody] ImportCharacter characterString)
-    {
-        try
-        {
-            var characterResponse = _characterService.ImportCharacter(characterString);
-
-            return Ok(characterResponse);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
-    // PUT: Character/ExportCharacter
-    [HttpPut]
-    public IActionResult ExportCharacter([FromBody] CharacterIdentity identity)
-    {
-        try
-        {
-            var characterResponse = _characterService.ExportCharacter(identity);
-
-            return Ok(characterResponse);
+            return Ok();
         }
         catch (Exception ex)
         {

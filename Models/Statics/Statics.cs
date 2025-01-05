@@ -35,18 +35,18 @@ public static class Statics
     public static class EffortLevels
     {
         public const int Easy   = 20; // up to
-        public const int Medium = 40; // up to
+        public const int Normal = 40; // up to
     }
 
     public static class EffortLevelNames
     {
         public const string Easy = "Easy";
-        public const string Medium = "Medium";
+        public const string Normal = "Medium";
         public const string Core = "Core";
 
         public static readonly List<string> All =
         [
-            Easy, Medium, Core
+            Easy, Normal, Core
         ];
     }
 

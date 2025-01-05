@@ -2,7 +2,7 @@
 
 public class CreateCharacter
 {
-    public string PlayerName { get; set; }
+    public Guid PlayerId { get; set; }
     public string Name { get; set; }
     public string Portrait { get; set; }
     public string Race { get; set; }

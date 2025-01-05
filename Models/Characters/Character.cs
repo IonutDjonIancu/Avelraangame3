@@ -35,7 +35,7 @@ public class CharacterVm
 public class CharacterIdentity
 {
     public Guid Id { get; set; }
-    public Guid SessionId { get; set; }
+    public Guid PlayerId { get; set; }
 }
 
 public class CharacterIdentityVm

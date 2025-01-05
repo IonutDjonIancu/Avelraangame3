@@ -3,7 +3,8 @@
 public interface ISnapshot
 {
     HashSet<Player> Players { get; set; }
-
+    HashSet<Character> Npcs { get; set; }
+    
     List<Board> Boards { get; set; }
 
     HashSet<Guid> ItemsSold { get; set; }
@@ -14,6 +15,7 @@ public interface ISnapshot
 public class Snapshot : ISnapshot
 {
     public HashSet<Player> Players { get; set; } = [];
+    public HashSet<Character> Npcs { get; set; } = [];
 
     public List<Board> Boards { get; set; } = [];
 

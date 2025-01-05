@@ -6,15 +6,15 @@ namespace Avelraangame3.Controllers;
 
 public class TownhallController : Controller
 {
-    private readonly ITownhallService _townhallService;
     private readonly ICharacterService _characterService;
+    private readonly INpcService _npcService;
 
     public TownhallController(
-        ITownhallService townhallService,
-        ICharacterService characterService)
+        ICharacterService characterService,
+        INpcService npcService)
     {
-        _townhallService = townhallService;
         _characterService = characterService;
+        _npcService = npcService;
     }   
 
     #region views
@@ -27,39 +27,37 @@ public class TownhallController : Controller
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return Error(ex.Message);
         }
     }
 
-    // GET: Townhall/Duel
-    public IActionResult Duel()
-    {
-        var characters = _characterService.GetAllDuelistCharacters();
-
-        return View(characters);
-    }
-
-    // GET: Townhall/DuelOf?characterId=string&sessionId=string
-    public IActionResult DuelOf(Guid characterId, Guid sessionId, string effortLevelName)
+    // GET: Townhall/Duel?characterId=string&sessionId=string
+    public IActionResult Duel(string characterId, string sessionId)
     {
         try
         {
-            var characterDuel = _townhallService.GenerateDuelVsNpc(new CharacterIdentity
+            var character = _characterService.GetCharacter(new CharacterIdentity
             {
-                Id = characterId,
-                SessionId = sessionId
-            }, effortLevelName);
+                Id = Guid.Parse(characterId),
+                PlayerId = Guid.Parse(sessionId)
+            });
 
-            return View(characterDuel);
+            return View(character);
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return Error(ex.Message);
         }
     }
 
+    // GET: Character/Error?info=infoToDisplay
+    public IActionResult Error(string info)
+    {
+        return Content($"<<< click back to return\n\n\n{info}");
+    }
     #endregion
-    #region requests
 
+    #region requests
+    
     #endregion
 }

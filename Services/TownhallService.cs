@@ -53,16 +53,7 @@ public class TownhallService : ITownhallService
         character.Details.BoardId = boardId;
         character.Details.BoardType = Statics.Boards.Types.Duel;
 
-        Character npc;
-
-        if (effortLevelName == Statics.EffortLevelNames.Core)
-        {
-            npc = _npcService.GenerateNpc(effortLevelName, [character]);
-        }
-        else
-        {
-            npc = _npcService.GenerateNpc(effortLevelName);
-        }
+        var npc = _npcService.GenerateNpc([character]);
 
         var duel = new Duel
         {
@@ -98,7 +89,7 @@ public class TownhallService : ITownhallService
     #region private methods
     private void PrepareForFight_nonCore(Board board)
     {
-        var effortLevelTop = board.EffortLevelName == Statics.EffortLevelNames.Easy ? Statics.EffortLevels.Easy : Statics.EffortLevels.Medium;
+        var effortLevelTop = board.EffortLevelName == Statics.EffortLevelNames.Easy ? Statics.EffortLevels.Easy : Statics.EffortLevels.Normal;
         var effortLevel = _diceService.Roll1dN(effortLevelTop);
         var effort = _diceService.Roll1dN(effortLevel);
 

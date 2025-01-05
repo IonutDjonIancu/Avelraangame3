@@ -11,13 +11,12 @@ public interface ICharacterService
     /// <param name="identity"></param>
     /// <returns></returns>
     Character GetCharacter(CharacterIdentity identity);
-    Characters GetAllAliveCharacters();
-    Characters GetAllLockedCharacters();
-    Characters GetAllDuelistCharacters();
+    Characters GetAllAliveCharacters(Guid playerId);
+    Characters GetAllLockedCharacters(Guid playerId);
+    Characters GetAllDuelistCharacters(Guid playerId);
 
-    string CreateCharacter(CreateCharacter create);
-    string ExportCharacter(CharacterIdentity identity);
-    ImportCharacterResponse ImportCharacter(ImportCharacter import);
+    void CreateCharacter(CreateCharacter create);
+    void DeleteCharacter(CharacterIdentity identity); 
 
     Character EquipItem(EquipItem equipItem);
     Character UnequipItem(EquipItem equipItem);
@@ -47,9 +46,8 @@ public class CharacterService : ICharacterService
         _dice = diceService;
     }
 
-    public string CreateCharacter(CreateCharacter create)
+    public void CreateCharacter(CreateCharacter create)
     {
-        // validate player
         _validator.ValidateOnCreateCharacter(create);
 
         var character = new Character
@@ -57,7 +55,7 @@ public class CharacterService : ICharacterService
             Identity = new CharacterIdentity
             {
                 Id = Guid.NewGuid(),
-                SessionId = Guid.NewGuid(),
+                PlayerId = create.PlayerId,
             },
         };
 
@@ -66,20 +64,26 @@ public class CharacterService : ICharacterService
         SetInventory(character);
         SetWorth(character);
 
-        _snapshot.Players.FirstOrDefault(s => s.Name == create.PlayerName)!.Characters.Add(character);
-
-        var characterString = EncryptionService.EncryptString(JsonConvert.SerializeObject(character));
-
-        return characterString;
+        _snapshot.Players.First(s => s.Id == create.PlayerId).Characters.Add(character);
     }
 
-    public Characters GetAllAliveCharacters(string playerName)
+    public void DeleteCharacter(CharacterIdentity identity)
     {
-        // validate
+        var character = _validator.ValidateCharacterExists(identity)!;
+
+        _snapshot.Players.First(s => s.Id == identity.PlayerId).Characters.Remove(character);
+    }
+
+    public Characters GetAllAliveCharacters(Guid playerId)
+    {
+        _validator.ValidateOnGetCharacters(playerId);
 
         var listOfCharacters = new Characters();
 
-        _snapshot.Players.FirstOrDefault(s => s.Name == playerName)!.Characters.ForEach(s =>
+        _snapshot.Players.FirstOrDefault(s => s.Id == playerId)!
+            .Characters
+            .Where(s => !s.Details.IsNpc && s.Details.IsAlive).ToList()
+            .ForEach(s =>
         {
             listOfCharacters.CharactersList.Add(new CharacterVm
             {
@@ -92,31 +96,48 @@ public class CharacterService : ICharacterService
         return listOfCharacters;
     }
 
-    public Characters GetAllLockedCharacters()
+    public Characters GetAllLockedCharacters(Guid playerId)
     {
-        return new Characters
-        {
-            CharactersPortraits = _snapshot.Characters
-                .Where(s => s.Details.IsAlive 
-                            && !s.Details.IsNpc 
-                            && s.Details.IsLocked)
-                .Select(s => s.Details.Portrait)
-                .ToList(),
-        };
+        _validator.ValidateOnGetCharacters(playerId);
+
+        var listOfCharacters = new Characters();
+
+        _snapshot.Players.FirstOrDefault(s => s.Id == playerId)!
+            .Characters
+            .Where(s => !s.Details.IsNpc && s.Details.IsAlive && s.Details.IsLocked).ToList()
+            .ForEach(s =>
+            {
+                listOfCharacters.CharactersList.Add(new CharacterVm
+                {
+                    Id = s.Identity.Id,
+                    Name = s.Details.Name,
+                    Portrait = s.Details.Portrait
+                });
+            });
+
+        return listOfCharacters;
     }
 
-    public Characters GetAllDuelistCharacters()
+    public Characters GetAllDuelistCharacters(Guid playerId)
     {
-        return new Characters
-        {
-            CharactersPortraits = _snapshot.Characters
-                .Where(s => s.Details.IsAlive
-                            && !s.Details.IsNpc
-                            && s.Details.IsLocked
-                            && s.Details.BoardType == Statics.Boards.Types.Duel)
-                .Select(s => s.Details.Portrait)
-                .ToList(),
-        };
+        _validator.ValidateOnGetCharacters(playerId);
+
+        var listOfCharacters = new Characters();
+
+        _snapshot.Players.FirstOrDefault(s => s.Id == playerId)!
+            .Characters
+            .Where(s => !s.Details.IsNpc && s.Details.BoardType == Statics.Boards.Types.Duel).ToList()
+            .ForEach(s =>
+            {
+                listOfCharacters.CharactersList.Add(new CharacterVm
+                {
+                    Id = s.Identity.Id,
+                    Name = s.Details.Name,
+                    Portrait = s.Details.Portrait
+                });
+            });
+
+        return listOfCharacters;
     }
 
     public Character GetCharacter(CharacterIdentity identity)
@@ -139,34 +160,6 @@ public class CharacterService : ICharacterService
             character.Fights.Resist = 100; // capped at 100 %
 
         return character;
-    }
-
-    public string ExportCharacter(CharacterIdentity identity)
-    {
-        var character = _validator.ValidateOnExportCharacter(identity);
-
-        return EncryptionService.EncryptString(JsonConvert.SerializeObject(character));
-    }
-
-    public ImportCharacterResponse ImportCharacter(ImportCharacter import)
-    {
-        _validator.ValidateOnImportCharacter(import);   
-
-        var decryptString = EncryptionService.DecryptString(import.CharacterString);
-
-        var character = JsonConvert.DeserializeObject<Character>(decryptString)!;
-
-        if (_snapshot.Characters.Any(s => s.Identity.Id == character.Identity.Id))
-        {
-            _snapshot.Characters.RemoveWhere(s => s.Identity.Id == character.Identity.Id);
-        }
-
-        _snapshot.Characters.Add(character);
-
-        return new ImportCharacterResponse
-        {
-            CharacterIdentity = character.Identity
-        };
     }
 
     public Character EquipItem(EquipItem equipItem)
@@ -282,28 +275,28 @@ public class CharacterService : ICharacterService
     public void SetCharacterFights(Character character)
     {
         // main
-        character.Fights.Strength = character.Actuals.Strength;
-        character.Fights.Constitution = character.Actuals.Constitution;
-        character.Fights.Agility = character.Actuals.Agility;
-        character.Fights.Willpower = character.Actuals.Willpower;
-        character.Fights.Abstract = character.Actuals.Abstract;
+        character.Fights.Strength       = character.Actuals.Strength;
+        character.Fights.Constitution   = character.Actuals.Constitution;
+        character.Fights.Agility        = character.Actuals.Agility;
+        character.Fights.Willpower      = character.Actuals.Willpower;
+        character.Fights.Abstract       = character.Actuals.Abstract;
         // skills
-        character.Fights.Melee = character.Actuals.Melee;
-        character.Fights.Arcane = character.Actuals.Arcane;
-        character.Fights.Psionics = character.Actuals.Psionics;
-        character.Fights.Social = character.Actuals.Social;
-        character.Fights.Hide = character.Actuals.Hide;
-        character.Fights.Survival = character.Actuals.Survival;
-        character.Fights.Tactics = character.Actuals.Tactics;
-        character.Fights.Aid = character.Actuals.Aid;
-        character.Fights.Crafting = character.Actuals.Crafting;
-        character.Fights.Spot = character.Actuals.Spot;
+        character.Fights.Melee          = character.Actuals.Melee;
+        character.Fights.Arcane         = character.Actuals.Arcane;
+        character.Fights.Psionics       = character.Actuals.Psionics;
+        character.Fights.Social         = character.Actuals.Social;
+        character.Fights.Hide           = character.Actuals.Hide;
+        character.Fights.Survival       = character.Actuals.Survival;
+        character.Fights.Tactics        = character.Actuals.Tactics;
+        character.Fights.Aid            = character.Actuals.Aid;
+        character.Fights.Crafting       = character.Actuals.Crafting;
+        character.Fights.Spot           = character.Actuals.Spot;
         // assets
-        character.Fights.Defense = character.Actuals.Defense;
-        character.Fights.Resist = character.Actuals.Resist;
-        character.Fights.Actions = character.Actuals.Actions;
-        character.Fights.Endurance = character.Actuals.Endurance;
-        character.Fights.Accretion = character.Actuals.Accretion;
+        character.Fights.Defense        = character.Actuals.Defense;
+        character.Fights.Resist         = character.Actuals.Resist;
+        character.Fights.Actions        = character.Actuals.Actions;
+        character.Fights.Endurance      = character.Actuals.Endurance;
+        character.Fights.Accretion      = character.Actuals.Accretion;
     }
 
     #region private methods
@@ -355,7 +348,7 @@ public class CharacterService : ICharacterService
             character.Stats.Tactics         += Statics.Races.Humans.Tactics;
             character.Stats.Aid             += Statics.Races.Humans.Aid;
             character.Stats.Crafting        += Statics.Races.Humans.Crafting;
-            character.Stats.Spot      += Statics.Races.Humans.Perception;
+            character.Stats.Spot            += Statics.Races.Humans.Perception;
             // assets                                        Humans
             character.Stats.Defense         += Statics.Races.Humans.Defense;
             character.Stats.Resist          += Statics.Races.Humans.Resist;
@@ -381,7 +374,7 @@ public class CharacterService : ICharacterService
             character.Stats.Tactics         += Statics.Races.Elfs.Tactics;
             character.Stats.Aid             += Statics.Races.Elfs.Aid;
             character.Stats.Crafting        += Statics.Races.Elfs.Crafting;
-            character.Stats.Spot      += Statics.Races.Elfs.Perception;
+            character.Stats.Spot            += Statics.Races.Elfs.Perception;
             // assets                                        Elfs
             character.Stats.Defense         += Statics.Races.Elfs.Defense;
             character.Stats.Resist          += Statics.Races.Elfs.Resist;
@@ -407,7 +400,7 @@ public class CharacterService : ICharacterService
             character.Stats.Tactics         += Statics.Races.Dwarfs.Tactics;
             character.Stats.Aid             += Statics.Races.Dwarfs.Aid;
             character.Stats.Crafting        += Statics.Races.Dwarfs.Crafting;
-            character.Stats.Spot      += Statics.Races.Dwarfs.Perception;
+            character.Stats.Spot            += Statics.Races.Dwarfs.Perception;
             // assets                                        Dwarfs
             character.Stats.Defense         += Statics.Races.Dwarfs.Defense;
             character.Stats.Resist          += Statics.Races.Dwarfs.Resist;
@@ -439,7 +432,7 @@ public class CharacterService : ICharacterService
             character.Stats.Tactics         += Statics.Cultures.Danarians.Tactics;
             character.Stats.Aid             += Statics.Cultures.Danarians.Aid;
             character.Stats.Crafting        += Statics.Cultures.Danarians.Crafting;
-            character.Stats.Spot      += Statics.Cultures.Danarians.Perception;
+            character.Stats.Spot            += Statics.Cultures.Danarians.Perception;
             // assets                                  Cultures.Danarians
             character.Stats.Defense         += Statics.Cultures.Danarians.Defense;
             character.Stats.Resist          += Statics.Cultures.Danarians.Resist;
@@ -465,7 +458,7 @@ public class CharacterService : ICharacterService
             character.Stats.Tactics         += Statics.Cultures.Highborns.Tactics;
             character.Stats.Aid             += Statics.Cultures.Highborns.Aid;
             character.Stats.Crafting        += Statics.Cultures.Highborns.Crafting;
-            character.Stats.Spot      += Statics.Cultures.Highborns.Perception;
+            character.Stats.Spot            += Statics.Cultures.Highborns.Perception;
             // assets                                  Cultures.Highborns
             character.Stats.Defense         += Statics.Cultures.Highborns.Defense;
             character.Stats.Resist          += Statics.Cultures.Highborns.Resist;
@@ -491,7 +484,7 @@ public class CharacterService : ICharacterService
             character.Stats.Tactics         += Statics.Cultures.Undermountains.Tactics;
             character.Stats.Aid             += Statics.Cultures.Undermountains.Aid;
             character.Stats.Crafting        += Statics.Cultures.Undermountains.Crafting;
-            character.Stats.Spot      += Statics.Cultures.Undermountains.Perception;
+            character.Stats.Spot            += Statics.Cultures.Undermountains.Perception;
             // assets                                  Cultures.Undermountains
             character.Stats.Defense         += Statics.Cultures.Undermountains.Defense;
             character.Stats.Resist          += Statics.Cultures.Undermountains.Resist;
@@ -523,7 +516,7 @@ public class CharacterService : ICharacterService
             character.Stats.Tactics         += Statics.Specs.Warrings.Tactics;
             character.Stats.Aid             += Statics.Specs.Warrings.Aid;
             character.Stats.Crafting        += Statics.Specs.Warrings.Crafting;
-            character.Stats.Spot      += Statics.Specs.Warrings.Perception;
+            character.Stats.Spot            += Statics.Specs.Warrings.Perception;
             // assets                                  Specs.Warrings
             character.Stats.Defense         += Statics.Specs.Warrings.Defense;
             character.Stats.Resist          += Statics.Specs.Warrings.Resist;
@@ -549,7 +542,7 @@ public class CharacterService : ICharacterService
             character.Stats.Tactics         += Statics.Specs.Sorcerys.Tactics;
             character.Stats.Aid             += Statics.Specs.Sorcerys.Aid;
             character.Stats.Crafting        += Statics.Specs.Sorcerys.Crafting;
-            character.Stats.Spot      += Statics.Specs.Sorcerys.Perception;
+            character.Stats.Spot            += Statics.Specs.Sorcerys.Perception;
             // assets                                  Specs.Sorcerys
             character.Stats.Defense         += Statics.Specs.Sorcerys.Defense;
             character.Stats.Resist          += Statics.Specs.Sorcerys.Resist;
@@ -575,7 +568,7 @@ public class CharacterService : ICharacterService
             character.Stats.Tactics         += Statics.Specs.Trackings.Tactics;
             character.Stats.Aid             += Statics.Specs.Trackings.Aid;
             character.Stats.Crafting        += Statics.Specs.Trackings.Crafting;
-            character.Stats.Spot      += Statics.Specs.Trackings.Perception;
+            character.Stats.Spot            += Statics.Specs.Trackings.Perception;
             // assets                                  Specs.Trackings
             character.Stats.Defense         += Statics.Specs.Trackings.Defense;
             character.Stats.Resist          += Statics.Specs.Trackings.Resist;
