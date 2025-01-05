@@ -4,9 +4,14 @@ using Services;
 
 namespace Avelraangame3.Controllers;
 
-public class CharacterController(ICharacterService characterService) : Controller
+public class CharacterController : Controller
 {
-    private readonly ICharacterService _characterService = characterService;
+    private readonly ICharacterService _characterService;
+
+    public CharacterController(ICharacterService characterService)
+    {
+        _characterService = characterService;
+    }
 
     #region views
     // GET: Character/Index
@@ -38,21 +43,21 @@ public class CharacterController(ICharacterService characterService) : Controlle
     {
         try
         {
-            var character = _characterService.GetCharacter(Guid.Parse(characterId), Guid.Parse(sessionId));
+            var character = _characterService.GetCharacter(new CharacterIdentity
+            {
+                Id = Guid.Parse(characterId),
+                SessionId = Guid.Parse(sessionId)
+            });
 
             return View(character);
         }
         catch (Exception ex)
         {
-            return Error(ex.Message);
+            return BadRequest(ex.Message);
         }
     }
 
     // GET: Character/Error?info=infoToDisplay
-    public IActionResult Error(string info)
-    {
-        return Content($"<<< click back to return\n\n\n{info}");
-    }
     #endregion
 
     #region requests
@@ -62,7 +67,11 @@ public class CharacterController(ICharacterService characterService) : Controlle
     {
         try
         {
-            var character = _characterService.GetCharacter(Guid.Parse(characterId), Guid.Parse(sessionId));
+            var character = _characterService.GetCharacter(new CharacterIdentity
+            {
+                Id = Guid.Parse(characterId),
+                SessionId = Guid.Parse(sessionId)
+            });
 
             return Ok(character);
         }
@@ -72,6 +81,8 @@ public class CharacterController(ICharacterService characterService) : Controlle
         }
     }
     
+
+
     // POST: Character/CreateCharacter
     [HttpPost]
     public IActionResult CreateCharacter([FromBody] CreateCharacter createCharacter)
@@ -119,7 +130,6 @@ public class CharacterController(ICharacterService characterService) : Controlle
             return BadRequest(ex.Message);
         }
     }
-
 
     // PUT: Character/EquipItem
     [HttpPut]

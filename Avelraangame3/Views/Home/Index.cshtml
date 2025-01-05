@@ -1,27 +1,76 @@
-﻿@model CharactersVm;
-
-@{
+﻿@{
     ViewData["Title"] = "Home Page";
 }
 
 <p class="text-center text-muted">Av'el'Raan game</p>
 <div class="container mt-3 footer-border">
-    <div class="row mt-3 ">
-        <div class="col flex-wrap d-flex justify-content-center align-items-center">
-            <p>Known adventurers</p>
+    @* Create player or login row *@
+    <div id="createPlayerOrLogin">
+        <div class="row mt-2">
+            <div class="col d-flex justify-content-center align-items-center">
+                <p class="mb-0 text-muted">Create player</p>
+            </div>
         </div>
-    </div>
-    <div class="row mt-3">
-        <div class="col d-flex justify-content-center align-items-center">
-            @foreach (var characterPortrait in Model.CharactersPortraits)
-            {
-                <img src="@characterPortrait" style="width: 50px; height: 50px" class="rounded-2 p-0 m-2" />
-            }
+        <div class="row mt-2">
+            <div class="col d-inline-flex justify-content-center align-items-center">
+                <input id="name" class="input-with-color w-25 px-2 rounded-2" title="name your player" placeholder="name ..." value="" /> 
+                <button onclick="createPlayer()" class="btn btn-sm btn-outline-secondary ms-2">Create</button>
+            </div>
+        </div>
+        <div class="row mt-2 text-center">
+            <p class="mb-0 text-muted">or...</p>
+            <p class="mb-0 text-muted">Use session id</p>
+        </div>
+        <div class="row mt-2">
+            <div class="col d-inline-flex justify-content-center align-items-center">
+                <input id="session" class="input-with-color w-25 px-2 rounded-2" title="name your player" placeholder="session id ..." value="" />
+                <button class="btn btn-sm btn-outline-secondary ms-2">Login</button>
+            </div>
         </div>
     </div>
 </div>
 
 
 <script>
-    
+    const showHideCreatePlayer = () => {
+        var playerFromLocalStorage = localStorage.getItem("playerName");
+        var sessionIdFromLocalStorage = localStorage.getItem("sessionId");
+
+        if (playerFromLocalStorage && sessionIdFromLocalStorage) {
+            $("#createPlayerOrLogin").hide();
+        }  
+    }
+
+    const createPlayer = () => {
+        var playerName = $("#name").val();
+
+        if (!playerName) {
+            return;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("CreateCharacter", "Character")',
+            contentType: 'application/json',
+            // data: JSON.stringify(data),
+            success: function (response) {
+                
+                localStorage.setItem("playerName", response.Name);
+                localStorage.setItem("sessionId", response.Id);
+
+                window.location.reload();
+
+            },
+            error: function (xhr, status, error) {
+                window.location.href = "/home/error?info=" + xhr.responseText;
+            }
+        });
+
+
+    }
+
+
+    // to run
+
+    showHideCreatePlayer();
 </script>

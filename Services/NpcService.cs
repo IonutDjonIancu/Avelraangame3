@@ -4,50 +4,26 @@ namespace Services;
 
 public interface INpcService
 {
-    CharacterNpc GenerateNpcForDuel(CharacterIdentity character);
+    Character GenerateNpc(string effortLevelName, List<Character>? characters = null);
 }
 
 public class NpcService : INpcService
 {
-    private readonly ISnapshot _snapshot;
     private readonly IDiceService _diceService;
-    private readonly ICharacterService _characterService;
 
-    public NpcService(
-        ISnapshot snapshot,
-        IDiceService diceService,
-        ICharacterService characterService)
+    public NpcService(IDiceService diceService)
     {
-        _snapshot = snapshot;
         _diceService = diceService;
-        _characterService = characterService;  
     }
 
-    public CharacterNpc GenerateNpcForDuel(CharacterIdentity characterIdentity)
+    public Character GenerateNpc(string effortLevelName, List<Character>? characters = null)
     {
-        var character = Validators.ValidateCharacterOnNpcGenerate(characterIdentity, _snapshot);
-        CharacterNpc npc;
-
-        if (character.Details.BattleboardId != Guid.Empty)
-        {
-            npc = _snapshot.Npcs.First(s => s.Details.BattleboardId == character.Details.BattleboardId);
-            return npc;
-        }
-
-        var battleboardId = Guid.NewGuid();
-
-        character.Details.IsLocked = true;
-        character.Details.BattleboardId = battleboardId;
-        character.Details.BattleboardType = Statics.Battleboards.Types.Duel;
-
-        var charActual = _characterService.GetCharacter(character.Identity.Id, character.Identity.SessionId);
-
-        npc = new CharacterNpc
+        var npc = new Character
         {
             Identity = new CharacterIdentity
             {
                 Id = Guid.NewGuid(),
-                SessionId = Guid.Empty,
+                SessionId = Guid.Empty, // empty session id represents the npc is owned by the Ai
             },
             Details = new CharacterDetails
             {
@@ -60,26 +36,29 @@ public class NpcService : INpcService
                 IsNpc = true,
                 Levelup = 0,
                 Name = $"npc_{DateTime.Now.Ticks.ToString()[..5]}",
-                Portrait = "https://i.pinimg.com/originals/29/32/63/293263670b8780146ab0c4e40a2ea890.gif",
+                Portrait = "https://i.pinimg.com/originals/a7/73/d6/a773d6556319fa93b90385e96da2a0d5.gif", // TODO: need to change this portrait to be dynamic
                 Worth = 0,
-                BattleboardId = battleboardId,
-                BattleboardType = Statics.Battleboards.Types.Duel,
             },
         };
 
         SetNpcSpec(npc);
-        SetNpcWealth(npc);
-        SetNpcActuals(npc, charActual.Actuals);
 
-        _snapshot.Npcs.Add(npc);
+        if (effortLevelName == Statics.EffortLevelNames.Core)
+        {
+            throw new NotImplementedException();   
+        } 
+        else
+        {
+            SetNpcActualsAndFights_nonCore(effortLevelName, npc);
+        }
 
         return npc;
     }
 
     #region private methods
-    private void SetNpcSpec(CharacterNpc npc)
+    private void SetNpcSpec(Character npc)
     {
-        var roll = _diceService.Roll_1dn(3);
+        var roll = _diceService.Roll1dN(3);
 
         switch (roll)
         {
@@ -96,49 +75,91 @@ public class NpcService : INpcService
                 break;
         }
     }
-
-    private void SetNpcWealth(CharacterNpc npc)
+    
+    private void SetNpcActualsAndFights_nonCore(string effortLevelName, Character npc)
     {
-        npc.Details.Wealth += _diceService.Roll_1dn(100);
+        var effortLvl = effortLevelName == Statics.EffortLevelNames.Medium ? Statics.EffortLevels.Medium : Statics.EffortLevels.Easy;
+
+        // main
+        npc.Actuals.Strength = _diceService.Roll1dN(effortLvl);
+        npc.Actuals.Constitution = _diceService.Roll1dN(effortLvl);
+        npc.Actuals.Agility = _diceService.Roll1dN(effortLvl);
+        npc.Actuals.Willpower = _diceService.Roll1dN(effortLvl);
+        npc.Actuals.Abstract = _diceService.Roll1dN(effortLvl);
+        // skills
+        npc.Actuals.Psionics = _diceService.Roll1dN(effortLvl);
+        npc.Actuals.Social = _diceService.Roll1dN(effortLvl);
+        npc.Actuals.Hide = _diceService.Roll1dN(effortLvl);
+        npc.Actuals.Survival = _diceService.Roll1dN(effortLvl);
+        npc.Actuals.Tactics = _diceService.Roll1dN(effortLvl);
+        npc.Actuals.Aid = _diceService.Roll1dN(effortLvl);
+        npc.Actuals.Crafting = _diceService.Roll1dN(effortLvl);
+        npc.Actuals.Spot = _diceService.Roll1dN(effortLvl);
+        // assets
+        npc.Actuals.Defense = _diceService.Roll1dN(effortLvl);
+        npc.Actuals.Resist = _diceService.Roll1dN(effortLvl); 
+        npc.Actuals.Defense = _diceService.Roll1dN(effortLvl);
+
+        npc.Actuals.Actions = effortLevelName == Statics.EffortLevelNames.Medium ? 2 : 1;
+
+        var skillRoll1 = _diceService.Roll1dN(effortLvl);
+        var skillRoll2 = _diceService.Roll1dN(effortLvl);
+        if (npc.Details.Spec == Statics.Specs.Sorcery)
+        {
+            npc.Actuals.Arcane = skillRoll1 >= skillRoll2 ? skillRoll1 : skillRoll2;
+            npc.Actuals.Melee = skillRoll1 >= skillRoll2 ? skillRoll2 : skillRoll1;
+            npc.Actuals.Endurance = _diceService.Roll1dN(50);
+            npc.Actuals.Accretion = _diceService.Roll1dN(100);
+        }
+        else
+        {
+            npc.Actuals.Melee = skillRoll1 >= skillRoll2 ? skillRoll1 : skillRoll2;
+            npc.Actuals.Arcane = skillRoll1 >= skillRoll2 ? skillRoll2 : skillRoll1;
+
+            if (npc.Details.Spec == Statics.Specs.Warring)
+            {
+                npc.Actuals.Endurance = _diceService.Roll1dN(100);
+                npc.Actuals.Accretion = 0;
+            }
+            else if (npc.Details.Spec == Statics.Specs.Tracking)
+            {
+                npc.Actuals.Endurance = _diceService.Roll1dN(75);
+                npc.Actuals.Accretion = _diceService.Roll1dN(50);
+            }
+        }
+
+        if (npc.Actuals.Defense >= 90)
+        {
+            npc.Actuals.Defense = 90;
+        }
+        if (npc.Actuals.Resist >= 100)
+        {
+            npc.Actuals.Resist = 100;
+        }
+
+        // main
+        npc.Fights.Strength = npc.Actuals.Strength;
+        npc.Fights.Constitution = npc.Actuals.Constitution;
+        npc.Fights.Agility = npc.Actuals.Agility;
+        npc.Fights.Willpower = npc.Actuals.Willpower;
+        npc.Fights.Abstract = npc.Actuals.Abstract;
+        // skills
+        npc.Fights.Melee = npc.Actuals.Melee;
+        npc.Fights.Arcane = npc.Actuals.Arcane;
+        npc.Fights.Psionics = npc.Actuals.Psionics;
+        npc.Fights.Social = npc.Actuals.Social;
+        npc.Fights.Hide = npc.Actuals.Hide;
+        npc.Fights.Survival = npc.Actuals.Survival;
+        npc.Fights.Tactics = npc.Actuals.Tactics;
+        npc.Fights.Aid = npc.Actuals.Aid;
+        npc.Fights.Crafting = npc.Actuals.Crafting;
+        npc.Fights.Spot = npc.Actuals.Spot;
+        // assets
+        npc.Fights.Defense = npc.Actuals.Defense;
+        npc.Fights.Resist  = npc.Actuals.Resist ;
+        npc.Fights.Actions = npc.Actuals.Actions;
+        npc.Fights.Endurance = npc.Actuals.Endurance;
+        npc.Fights.Accretion = npc.Actuals.Accretion;
     }
-
-    private void SetNpcActuals(CharacterNpc npc, CharacterActuals character)
-    {
-        // stats
-        npc.Actuals.Stats.Defense = _diceService.Roll_mdn(character.Stats.Defense / 2, character.Stats.Defense + character.Stats.Defense / 2);
-        if (npc.Actuals.Stats.Defense >= 90)
-            npc.Actuals.Stats.Defense = 90;
-        npc.Actuals.Stats.Resist = _diceService.Roll_mdn(character.Stats.Resist / 2, character.Stats.Resist + character.Stats.Resist / 2);
-        if (npc.Actuals.Stats.Resist >= 100)
-            npc.Actuals.Stats.Resist = 100;
-        npc.Actuals.Stats.Actions = _diceService.Roll_mdn(character.Stats.Actions / 2, character.Stats.Actions + character.Stats.Actions / 2);
-        npc.Actuals.Stats.Endurance = _diceService.Roll_mdn(character.Stats.Endurance / 2, character.Stats.Endurance + character.Stats.Endurance / 2);
-        npc.Actuals.Stats.Accretion = _diceService.Roll_mdn(character.Stats.Accretion / 2, character.Stats.Accretion + character.Stats.Accretion / 2);
-        // feats
-        npc.Actuals.Feats.Combat = _diceService.Roll_mdn(character.Feats.Combat / 2, character.Feats.Combat + character.Feats.Combat / 2);
-        npc.Actuals.Feats.Strength = _diceService.Roll_mdn(character.Feats.Strength / 2, character.Feats.Strength + character.Feats.Strength / 2);
-        npc.Actuals.Feats.Tactics = _diceService.Roll_mdn(character.Feats.Tactics / 2, character.Feats.Tactics + character.Feats.Tactics / 2);
-        npc.Actuals.Feats.Athletics = _diceService.Roll_mdn(character.Feats.Athletics / 2, character.Feats.Athletics + character.Feats.Athletics / 2);
-        npc.Actuals.Feats.Survival = _diceService.Roll_mdn(character.Feats.Survival / 2, character.Feats.Survival + character.Feats.Survival / 2);
-        npc.Actuals.Feats.Social = _diceService.Roll_mdn(character.Feats.Social / 2, character.Feats.Social + character.Feats.Social / 2);
-        npc.Actuals.Feats.Abstract = _diceService.Roll_mdn(character.Feats.Abstract / 2, character.Feats.Abstract + character.Feats.Abstract / 2);
-        npc.Actuals.Feats.Psionic = _diceService.Roll_mdn(character.Feats.Psionic / 2, character.Feats.Psionic + character.Feats.Psionic / 2);
-        npc.Actuals.Feats.Crafting = _diceService.Roll_mdn(character.Feats.Crafting / 2, character.Feats.Crafting + character.Feats.Crafting / 2);
-        npc.Actuals.Feats.Medicine = _diceService.Roll_mdn(character.Feats.Medicine / 2, character.Feats.Medicine + character.Feats.Medicine / 2);
-        // featseff
-        npc.Actuals.Feats.CombatEff = _diceService.Roll_mdn(character.Feats.CombatEff / 2, character.Feats.CombatEff + character.Feats.CombatEff / 2);
-        npc.Actuals.Feats.StrengthEff = _diceService.Roll_mdn(character.Feats.StrengthEff / 2, character.Feats.StrengthEff + character.Feats.StrengthEff / 2);
-        npc.Actuals.Feats.TacticsEff = _diceService.Roll_mdn(character.Feats.TacticsEff / 2, character.Feats.TacticsEff + character.Feats.TacticsEff / 2);
-        npc.Actuals.Feats.AthleticsEff = _diceService.Roll_mdn(character.Feats.AthleticsEff / 2, character.Feats.AthleticsEff + character.Feats.AthleticsEff / 2);
-        npc.Actuals.Feats.SurvivalEff = _diceService.Roll_mdn(character.Feats.SurvivalEff / 2, character.Feats.SurvivalEff + character.Feats.SurvivalEff / 2);
-        npc.Actuals.Feats.SocialEff = _diceService.Roll_mdn(character.Feats.SocialEff / 2, character.Feats.SocialEff + character.Feats.SocialEff / 2);
-        npc.Actuals.Feats.AbstractEff = _diceService.Roll_mdn(character.Feats.AbstractEff / 2, character.Feats.AbstractEff + character.Feats.AbstractEff / 2);
-        npc.Actuals.Feats.PsionicEff = _diceService.Roll_mdn(character.Feats.PsionicEff / 2, character.Feats.PsionicEff + character.Feats.PsionicEff / 2);
-        npc.Actuals.Feats.CraftingEff = _diceService.Roll_mdn(character.Feats.CraftingEff / 2, character.Feats.CraftingEff + character.Feats.CraftingEff / 2);
-        npc.Actuals.Feats.MedicineEff = _diceService.Roll_mdn(character.Feats.MedicineEff / 2, character.Feats.MedicineEff + character.Feats.MedicineEff / 2);
-    }
-
-
-
     #endregion
 }

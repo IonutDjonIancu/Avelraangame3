@@ -1,0 +1,73 @@
+﻿@{
+    ViewData["Title"] = "Test";
+}
+
+<div class="row">
+    @* <div class="col-8">
+        <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+            <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Upload">Upload</a>
+            <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Create">Create</a>
+            <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Details">Characters</a>
+        </div>
+    </div> *@
+    <p>
+        some tests here idk...
+    </p>
+    <div class="col-4">
+        <div id="spinner" class="spinner-grow text-secondary float-end" role="status" title="Loading...">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-3 footer-border">
+    <div class="row mt-2">
+        <div class="col-3" style="border: 1px solid darkgreen">
+            <button onclick="foo()" type="button" class="btn btn-outline-secondary">Get</button>
+            <button onclick="foo2()" type="button" class="btn btn-outline-secondary">Save</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    const foo = () => {
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("GetKVValueAsync", "Test")',
+            contentType: "application/json",
+            // data: data,
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (xhr, status, error) {
+                console.log(error)
+                // window.location.href = "/home/error?info=" + xhr.responseText;
+            }
+        });
+    }
+
+    const foo2 = () => {
+        $.ajax({
+            type: 'PUT',
+            url: '@Url.Action("SaveKVValueAsync", "Test")',
+            contentType: "application/json",
+            // data: data,
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (xhr, status, error) {
+                console.log(error)
+                // window.location.href = "/home/error?info=" + xhr.responseText;
+            }
+        });
+    }
+
+    const hideLoading = () => {
+        $(document).ready(() => {
+            $("#spinner").hide(500);
+        });
+    }
+
+    hideLoading();
+</script>

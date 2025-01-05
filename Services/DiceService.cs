@@ -5,138 +5,140 @@ namespace Services;
 public interface IDiceService
 {
     /// <summary>
-    /// With reroll.
+    /// 1d20 roll with reroll.
     /// </summary>
     /// <param name="total"></param>
     /// <returns></returns>
-    int Roll_d20(int total = 0);
+    int Rolld20(int total = 0);
 
     /// <summary>
-    /// No reroll.
+    /// 1d20 roll excluding a reroll.
     /// </summary>
     /// <returns></returns>
-    int Roll_d20_no_rr();
+    int Rolld20NoReroll();
 
     /// <summary>
-    /// No reroll.
+    /// 1dN roll excluding a reroll.
     /// </summary>
     /// <returns></returns>
-    int Roll_1dn(int n);
+    int Roll1dN(int n);
 
     /// <summary>
-    /// No reroll.
+    /// 1d4 roll excluding a reroll.
     /// </summary>
     /// <returns></returns>
-    int Roll_mdn(int m, int n);
+    int Roll1d4();
 
-    double Roll_vs_effort(CharacterVm charVm, string craft, int effort, ISnapshot snapshot);
+    /// <summary>
+    /// MdN roll excluding a reroll.
+    /// </summary>
+    /// <returns></returns>
+    int RollMdN(int m, int n);
+
+    /// <summary>
+    /// Character roll versus an effort value.
+    /// </summary>
+    /// <param name="character"></param>
+    /// <param name="stat"></param>
+    /// <param name="effortLevel"></param>
+    (bool, int) RollVsEffort(Character character, string skill, int effortLevel, bool canLevelup, bool isFight);
+
+    // TODO: implement rollAttack, rollRest, rollCast, rollMend
 }
 
 public class DiceService : IDiceService
 {
+    private readonly IValidatorService _validator;
+
     static readonly Random random = new();
 
-    /// <summary>
-    /// return a percentage of the result
-    /// </summary>
-    /// <param name="charVm"></param>
-    /// <param name="feat"></param>
-    /// <param name="effort"></param>
-    /// <param name="snapshot"></param>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
-    public double Roll_vs_effort(CharacterVm charVm, string feat, int effort, ISnapshot snapshot)
+    public DiceService(IValidatorService validator)
     {
-        if (!Statics.Feats.All.Contains(feat))
-            throw new Exception("No such craft found to roll.");
-
-        Validators.ValidateAgainstNull(charVm, "CharacterVm cannot be null.");
-
-        var charRoll = RollFeat(charVm, feat, snapshot);
-        var effortRoll = Roll_1dn(effort);
-        var result = charRoll - effortRoll;
-
-        if (result <= 0)
-        {
-            return 0.00;
-        }
-        else if (result <= 4)
-        {
-            return 0.1;
-        }
-        else if (result <= 8)
-        {
-            return 0.25;
-        }
-        else if (result <= 12)
-        {
-            return 0.5;
-        }
-        else if (result <= 16)
-        {
-            return 0.75;
-        }
-        else if (result <= 20)
-        {
-            return 1;
-        }
-        else
-        {
-            return result * 5 / 100; // kept like this for dice faces reminder of old rules
-        }
+        _validator = validator; 
     }
 
-    public int Roll_1dn(int n)
+    public (bool, int) RollVsEffort(Character character, string skill, int effortLevel, bool canLevelup, bool isFight)
+    {
+        if (!Statics.Stats.All.Contains(skill))
+            throw new Exception("No such skill found to roll.");
+
+        _validator.ValidateAgainstNull(character, "Character cannot be null.");
+        _validator.ValidatePostiveNumber(effortLevel, "Effort level cannot be 0 or smaller.");
+        _validator.ValidateString(skill, "Skill string is missing or invalid.");
+
+        var charRoll = RollStat(character, skill, canLevelup, isFight);
+
+        return (charRoll > effortLevel, charRoll);
+    }
+
+    public int Roll1d4()
+    {
+        return random.Next(1, 5);
+    }
+
+    public int Roll1dN(int n)
     {
         return random.Next(1, n + 1);   
     }
 
-    public int Roll_mdn(int m, int n)
+    public int RollMdN(int m, int n)
     {
         Validators.ValidateDiceMdNRoll(m, n);
 
         return random.Next(m, n + 1);
     }
 
-    public int Roll_d20_no_rr()
+    public int Rolld20NoReroll()
     {
         return random.Next(1, 21);
     }
 
-    public int Roll_d20(int total = 0)
+    public int Rolld20(int total = 0)
     {
         total += random.Next(1, 21);
 
         if (total % 20 == 0)
         {
-            return Roll_d20(total);
+            return Rolld20(total);
         }
 
         return total;
     }
 
     #region private methods
-    private int RollFeat(CharacterVm charVm, string craft, ISnapshot snapshot)
+    private int RollStat(Character character, string stat, bool canLevelup, bool isFight)
     {
-        var character = snapshot.Characters.Find(s => s.Identity.Id == charVm.Identity.Id)!;
-        var roll = Roll_d20();
+        var roll = Rolld20();
 
-        UpgradeEntityLevel(roll, character);
-        LevelUp(roll, character);
-
-        return craft switch
+        if (canLevelup && roll >= 20)
         {
-            Statics.Feats.Combat => Roll_d20() + charVm.Actuals.Feats.Combat,
-            Statics.Feats.Strength => Roll_d20() + charVm.Actuals.Feats.Strength,
-            Statics.Feats.Tactics => Roll_d20() + charVm.Actuals.Feats.Tactics,
-            Statics.Feats.Athletics => Roll_d20() + charVm.Actuals.Feats.Athletics,
-            Statics.Feats.Survival => Roll_d20() + charVm.Actuals.Feats.Survival,
-            Statics.Feats.Social => Roll_d20() + charVm.Actuals.Feats.Social,
-            Statics.Feats.Abstract => Roll_d20() + charVm.Actuals.Feats.Abstract,
-            Statics.Feats.Psionic => Roll_d20() + charVm.Actuals.Feats.Psionic,
-            Statics.Feats.Crafting => Roll_d20() + charVm.Actuals.Feats.Crafting,
-            Statics.Feats.Medicine => Roll_d20() + charVm.Actuals.Feats.Medicine,
-            _ => throw new Exception("Wrong craft provided.")
+            UpgradeEntityLevel(roll, character);
+            LevelUp(character);
+        }
+
+        return stat switch
+        {
+            Statics.Stats.Strength      => isFight ? roll + character.Fights.Strength       : roll + character.Actuals.Strength,
+            Statics.Stats.Constitution  => isFight ? roll + character.Fights.Constitution   : roll + character.Actuals.Constitution,
+            Statics.Stats.Agility       => isFight ? roll + character.Fights.Agility        : roll + character.Actuals.Agility,
+            Statics.Stats.Willpower     => isFight ? roll + character.Fights.Willpower      : roll + character.Actuals.Willpower,
+            Statics.Stats.Abstract      => isFight ? roll + character.Fights.Abstract       : roll + character.Actuals.Abstract,
+            Statics.Stats.Melee         => isFight ? roll + character.Fights.Melee          : roll + character.Actuals.Melee,
+            Statics.Stats.Arcane        => isFight ? roll + character.Fights.Arcane         : roll + character.Actuals.Arcane,
+            Statics.Stats.Psionics      => isFight ? roll + character.Fights.Psionics       : roll + character.Actuals.Psionics,
+            Statics.Stats.Social        => isFight ? roll + character.Fights.Social         : roll + character.Actuals.Social,
+            Statics.Stats.Hide          => isFight ? roll + character.Fights.Hide           : roll + character.Actuals.Hide,
+            Statics.Stats.Survival      => isFight ? roll + character.Fights.Survival       : roll + character.Actuals.Survival,
+            Statics.Stats.Tactics       => isFight ? roll + character.Fights.Tactics        : roll + character.Actuals.Tactics,
+            Statics.Stats.Aid           => isFight ? roll + character.Fights.Aid            : roll + character.Actuals.Aid,
+            Statics.Stats.Crafting      => isFight ? roll + character.Fights.Crafting       : roll + character.Actuals.Crafting,
+            Statics.Stats.Perception    => isFight ? roll + character.Fights.Spot           : roll + character.Actuals.Spot,
+            Statics.Stats.Defense       => isFight ? roll + character.Fights.Defense        : roll + character.Actuals.Defense,
+            Statics.Stats.Resist        => isFight ? roll + character.Fights.Resist         : roll + character.Actuals.Resist,
+            Statics.Stats.Actions       => isFight ? roll + character.Fights.Actions        : roll + character.Actuals.Actions,
+            Statics.Stats.Endurance     => isFight ? roll + character.Fights.Endurance      : roll + character.Actuals.Endurance,
+            Statics.Stats.Accretion     => isFight ? roll + character.Fights.Accretion      : roll + character.Actuals.Accretion,
+            _ => throw new Exception("Wrong stat provided.")
         };
     }
 
@@ -164,10 +166,9 @@ public class DiceService : IDiceService
         }
     }
 
-    private static void LevelUp(int roll, Character character)
+    private static void LevelUp(Character character)
     {
-        var result = (int)(roll / 20);
-        character.Details.Levelup = result * 10 * character.Details.Entitylevel;
+        character.Details.Levelup += 2 * character.Details.Entitylevel;
     }
     #endregion
 }

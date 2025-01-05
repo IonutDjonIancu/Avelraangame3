@@ -1,15 +1,15 @@
-﻿@model CharacterVm
+﻿@model Characters
 
 @* Townhall/Duel *@
 
 <div class="row">
     <div class="col-8">
         <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-            <button type="button" class="btn btn-outline-secondary">Duel</button>
-            <button type="button" class="btn btn-outline-dark">Tournament</button>
-            <button type="button" class="btn btn-outline-dark">Adventure</button>
-            <button type="button" class="btn btn-outline-dark">Market</button>
-            <button type="button" class="btn btn-outline-dark">Mercs</button>
+            <button type="button" class="btn btn-secondary">Duel</button>
+            <button type="button" class="btn btn-outline-secondary">Quest</button>
+            <button type="button" class="btn btn-outline-secondary">Tourney</button>
+            <button type="button" class="btn btn-outline-secondary">Tavern</button>
+            <button type="button" class="btn btn-outline-secondary">Market</button>
         </div>
     </div>
     <div class="col-4">
@@ -21,67 +21,37 @@
 
 <div class="container mt-3 footer-border">
     <div id="challengeBtn">
-        <button onclick="challengeNpc()" class="btn btn-sm btn-outline-secondary mt-3">Challenge NPC</button>
+        <button onclick="fightNpc('Easy')" class="btn btn-sm btn-outline-secondary mt-3">Challenge NPC easy</button>
+        <button onclick="fightNpc('Medium')" class="btn btn-sm btn-outline-secondary mt-3">Challenge NPC medium</button>
+        <button onclick="fightNpc('Core')" class="btn btn-sm btn-outline-secondary mt-3">Challenge NPC core</button>
     </div>
-    <div class="row mt-3" id="battleboard" style="display:none">
-        @* Character *@
-        <div class="col-6">
-            <div class="float-end">
-                <img class="rounded-3 m-2 pointer item-@Model.Details.Entitylevel" src="@Model.Details.Portrait" width="60" height="80" title="@Model.Details.Name" />
-            </div>
-        </div>
-        @* Npc *@
-        <div class="col-6" id="npcArea">
+</div>
+
+<div class="container mt-3 footer-border">
+    <div class="row mt-3" id="battlequeue">
+        <div class="col col-12 d-flex justify-content-start">
+            @foreach (var characterPortrait in Model.CharactersPortraits) 
+            {
+                <img class="rounded-3 m-1"
+                     src="@characterPortrait"
+                     width="60"
+                     height="80" />
+            }
         </div>
     </div>
 </div>
 
 <script>
-    const challengeNpc = () => {
+    const fightNpc = (difficulty) => {
 
-        console.clear();
+        var characterId = localStorage.getItem("characterId");
+        var sessionId = localStorage.getItem("sessionId");
 
-        const characterId = localStorage.getItem("characterId");
-        const sessionId = localStorage.getItem("sessionId");
+        if (!characterId || !sessionId) {
+            return;
+        }
 
-        if (!characterId) return;
-        $("#spinner").show();
-
-
-        $.ajax({
-            type: 'POST',
-            url: '@Url.Action("GetNpcForDuel", "Townhall")',
-            contentType: "application/json",
-            data: JSON.stringify({
-                id: characterId,
-                sessionId: sessionId
-            }),
-            success: function (response) {
-                console.log(response);
-                console.log(JSON.parse(localStorage.getItem("character")));
-                
-                localStorage.setItem("npc", response);
-
-                $("#challengeBtn").hide();
-                $("#battleboard").show();
-
-                var npcHtml = `
-                    <div>
-                        <img class="rounded-3 m-2 pointer item-${response.details.entitylevel}" src="${response.details.portrait}" width="60" height="80" title="${response.details.name}" />
-                    </div>
-                `
-                $("#npcArea").append(npcHtml);
-
-                hideLoading();
-            },
-            error: function (xhr, status, error) {
-                window.location.href = "/home/error?info=" + xhr.responseText;
-            }
-        });
-
-
-
-
+        window.location.href = "/townhall/duelOf?characterId=" + characterId + "&sessionId=" + sessionId + "&effortLevelName=" + difficulty;
     }
 
     const hideLoading = () => {

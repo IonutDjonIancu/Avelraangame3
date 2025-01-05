@@ -7,6 +7,5 @@ public class ImportCharacter
 
 public class ImportCharacterResponse
 {
-    public Guid CharacterId { get; set; }
-    public Guid SessionId { get; set; }
+    public CharacterIdentity CharacterIdentity { get; set; }
 }

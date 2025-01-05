@@ -74,14 +74,16 @@
             dataType: 'json',
             success: function (response) {
                 localStorage.setItem("character", JSON.stringify(response));
-                console.log(response);
 
                 var charImageHtml = `
-                    <img style="border: solid 2px gray" class="rounded-3 me-2 pointer" src="${response.details.portrait}" width="30" height="30" title="${response.details.name}" />
+                        <img style="border: solid 2px gray; border-radius: 20px" class="me-2 pointer" src="${response.details.portrait}" width="30" height="30" title="${response.details.name}" />
                 `
 
                 $("#navbar").append(charImageHtml);
             },
+            error: function (xhr, status, error) {
+                window.location.href = "/home/error?info=" + xhr.responseText;
+            }
         });
 
 

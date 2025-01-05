@@ -1,4 +1,4 @@
-﻿@model CharacterVm
+﻿@model Character
 
 @* Character/DetailsOf *@
 <div class="row">
@@ -6,7 +6,7 @@
         <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
             <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Upload">Upload</a>
             <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Create">Create</a>
-            <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Details">Details</a>
+            <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Details">Characters</a>
         </div>
     </div>
     <div class="col-4">
@@ -16,16 +16,21 @@
     </div>
 </div>
 
-@* Stats and feats *@
 <div class="container mt-3 footer-border">
-    <div class="row mt-3">
-        <div class="col-2">
+    <div class="row d-flex justify-content-between mt-3">
+        @* Portrait *@
+        <div class="col-1">
+            <p class="mb-0">Portrait</p>
+            <img class="rounded-3 mt-3 ms-4 pointer" src="@Model.Details.Portrait" width="60" height="80" title="this is how your character will look on the battleboard" />
+        </div>
+        @* Details *@
+        <div class="col-3">
             <p class="mb-0">Character</p>
             <ul>
                 @if(Model.Details.IsLocked)
                 {
                     <li>
-                        <span class="text-red">character locked (@Model.Details.BattleboardType)</span>
+                        <span class="text-red">character locked (@Model.Details.BoardType)</span>
                     </li>
                 }
                 <li>
@@ -61,111 +66,120 @@
                 <li>
                     worth: <span class="text-muted">@Model.Details.Worth</span>
                 </li>
+                <li>
+                    renown: <span class="text-muted">@Model.Details.Renown</span>
+                </li>
             </ul>
-        </div>
-        <div class="col-1">
-            <p class="mb-0">Portrait</p>
-            <img class="rounded-3 mt-3 ms-4 pointer" src="@Model.Details.Portrait" width="60" height="80" title="this is how your character will look on the battleboard"/>
         </div>
         @* Stats *@
         <div class="col-3">
             <p class="mb-0">Stats</p>
             <ul>
                 <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Defense')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    defense: 
-                    <span class="text-muted">@Model.Actuals.Stats.Defense</span> %
-                </li>
-                <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Resist')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    resist: 
-                    <span class="text-muted">@Model.Actuals.Stats.Resist</span> %
-                </li>
-                <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Actions')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    actions: 
-                    <span class="text-muted">@Model.Actuals.Stats.Actions</span>
-                </li>
-                <li>
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Endurance')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    endurance: 
-                    <span class="text-muted">@Model.Actuals.Stats.Endurance</span>
+                    Endurance:
+                    <span class="text-muted">@Model.Actuals.Endurance</span>
                 </li>
                 <li>
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Accretion')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    accretion: 
-                    <span class="text-muted">@Model.Actuals.Stats.Accretion</span>
+                    Accretion:
+                    <span class="text-muted">@Model.Actuals.Accretion</span>
                 </li>
-            </ul>
-        </div>
-        @* Feats *@
-        <div class="col-3">
-            <p class="mb-0">Feats</p>
-            <ul>
                 <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Combat')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    combat: 
-                    <span class="text-muted">@Model.Actuals.Feats.Combat</span> |
-                    <span>@Model.Actuals.Feats.CombatEff</span> 
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Defense')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Defense:
+                    <span class="text-muted">@Model.Actuals.Defense</span> %
+                </li>
+                <li>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Resist')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Resist :
+                    <span class="text-muted">@Model.Actuals.Resist</span> %
+                </li>
+                <li>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Actions')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Actions:
+                    <span class="text-muted">@Model.Actuals.Actions</span>
                 </li>
                 <li>
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Strength')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    strength: 
-                    <span class="text-muted">@Model.Actuals.Feats.Strength</span> |
-                    <span>@Model.Actuals.Feats.StrengthEff</span>
+                    Strength:
+                    <span class="text-muted">@Model.Actuals.Strength</span>
                 </li>
                 <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Tactics')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    tactics: 
-                    <span class="text-muted">@Model.Actuals.Feats.Tactics</span> |
-                    <span>@Model.Actuals.Feats.TacticsEff</span>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Constitution')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Constitution:
+                    <span class="text-muted">@Model.Actuals.Constitution</span>
                 </li>
                 <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Athletics')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    athletics: 
-                    <span class="text-muted">@Model.Actuals.Feats.Athletics</span> |
-                    <span>@Model.Actuals.Feats.AthleticsEff</span>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Agility')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Agility:
+                    <span class="text-muted">@Model.Actuals.Agility</span>
                 </li>
-                 <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Survival')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    survival: 
-                    <span class="text-muted">@Model.Actuals.Feats.Survival</span> |
-                    <span>@Model.Actuals.Feats.SurvivalEff</span>
-                </li>
-            </ul>
-        </div>
-        <div class="col-3">
-            <p class="mb-0">Feats (continued)</p>
-            <ul>
                 <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Social')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    social: 
-                    <span class="text-muted">@Model.Actuals.Feats.Social</span> |
-                    <span>@Model.Actuals.Feats.SocialEff</span>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Willpower')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Willpower:
+                    <span class="text-muted">@Model.Actuals.Willpower</span>
                 </li>
                 <li>
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Abstract')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    abstract: 
-                    <span class="text-muted">@Model.Actuals.Feats.Abstract</span> |
-                    <span>@Model.Actuals.Feats.AbstractEff</span>
+                    Abstract:
+                    <span class="text-muted">@Model.Actuals.Abstract</span>
+                </li>
+            </ul>
+        </div>
+        @* Skills *@
+        <div class="col-3">
+            <p class="mb-0">Skills</p>
+            <ul>
+                <li>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Melee')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Melee:
+                    <span class="text-muted">@Model.Actuals.Melee</span>
                 </li>
                 <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Psionic')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    psionic: 
-                    <span class="text-muted">@Model.Actuals.Feats.Psionic</span> |
-                    <span>@Model.Actuals.Feats.PsionicEff</span>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Arcane')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Arcane:
+                    <span class="text-muted">@Model.Actuals.Arcane</span>
+                </li>
+                <li>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Psionics')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Psionics:
+                    <span class="text-muted">@Model.Actuals.Psionics</span>
+                </li>
+                <li>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Social')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Social:
+                    <span class="text-muted">@Model.Actuals.Social</span>
+                </li>
+                 <li>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Hide')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Hide:
+                    <span class="text-muted">@Model.Actuals.Hide</span>
+                </li>
+                <li>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Survival')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Survival:
+                    <span class="text-muted">@Model.Actuals.Survival</span>
+                </li>
+                <li>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Tactics')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Tactics:
+                    <span class="text-muted">@Model.Actuals.Tactics</span>
+                </li>
+                <li>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Aid')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Aid:
+                    <span class="text-muted">@Model.Actuals.Aid</span>
                 </li>
                 <li>
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Crafting')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    crafting: 
-                    <span class="text-muted">@Model.Actuals.Feats.Crafting</span> |
-                    <span>@Model.Actuals.Feats.CraftingEff</span>
+                    Crafting:
+                    <span class="text-muted">@Model.Actuals.Crafting</span>
                 </li>
                  <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Medicine')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    medicine: 
-                    <span class="text-muted">@Model.Actuals.Feats.Medicine</span> |
-                    <span>@Model.Actuals.Feats.MedicineEff</span>
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Spot')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Spot:
+                    <span class="text-muted">@Model.Actuals.Spot</span>
                 </li>
             </ul>
         </div>
@@ -193,7 +207,6 @@
                     id="@item.Id"
                     onclick="equipUnequipItem('@item.Id', 'unequip', 'inventory')"
                     title="@item.Name
-
 *** details ***
 @(item.HasTaint ? "tainted" : "untainted")
 @item.Type.ToLower()
@@ -201,21 +214,26 @@ level @item.Level
 value @item.Value
 *** stats ***
 DEF @item.Stats.Defense
-RES @item.Stats.Resist
+RES @item.Stats.Resist 
 ACT @item.Stats.Actions
 END @item.Stats.Endurance
 ACC @item.Stats.Accretion
-*** feats ***
-COM @item.Feats.Combat | @item.Feats.CombatEff
-STR @item.Feats.Strength | @item.Feats.StrengthEff
-TAC @item.Feats.Tactics | @item.Feats.TacticsEff
-ATH @item.Feats.Athletics | @item.Feats.AthleticsEff
-SUR @item.Feats.Survival | @item.Feats.SurvivalEff
-SOC @item.Feats.Social | @item.Feats.SocialEff
-ABS @item.Feats.Abstract | @item.Feats.AbstractEff
-PSI @item.Feats.Psionic | @item.Feats.PsionicEff
-CRA @item.Feats.Crafting | @item.Feats.CraftingEff
-MED @item.Feats.Medicine | @item.Feats.MedicineEff" />
+STR @item.Stats.Strength
+CNS @item.Stats.Constitution
+AGL @item.Stats.Agility
+WIL @item.Stats.Willpower
+ABS @item.Stats.Abstract
+*** skills ***
+MEL @item.Stats.Melee
+ARC @item.Stats.Arcane 
+PSI @item.Stats.Psionics
+SOC @item.Stats.Social
+HID @item.Stats.Hide
+SUR @item.Stats.Survival
+TAC @item.Stats.Tactics
+AID @item.Stats.Aid 
+CRA @item.Stats.Crafting
+SPO @item.Stats.Spot " />
             }
         </div>
         @* Regalia *@
@@ -228,7 +246,6 @@ MED @item.Feats.Medicine | @item.Feats.MedicineEff" />
                         id="@trinket.Id"
                         onclick="equipUnequipItem('@trinket.Id', 'unequip', 'regalia')"
                         title="@trinket.Name
-
 *** details ***
 @(trinket.HasTaint ? "tainted" : "untainted")
 @(trinket.IsPermanent ? "can be consumed" : "can only be worn")
@@ -241,85 +258,100 @@ RES @trinket.Stats.Resist
 ACT @trinket.Stats.Actions
 END @trinket.Stats.Endurance
 ACC @trinket.Stats.Accretion
-*** feats ***
-COM @trinket.Feats.Combat | @trinket.Feats.CombatEff
-STR @trinket.Feats.Strength | @trinket.Feats.StrengthEff
-TAC @trinket.Feats.Tactics | @trinket.Feats.TacticsEff
-ATH @trinket.Feats.Athletics | @trinket.Feats.AthleticsEff
-SUR @trinket.Feats.Survival | @trinket.Feats.SurvivalEff
-SOC @trinket.Feats.Social | @trinket.Feats.SocialEff
-ABS @trinket.Feats.Abstract | @trinket.Feats.AbstractEff
-PSI @trinket.Feats.Psionic | @trinket.Feats.PsionicEff
-CRA @trinket.Feats.Crafting | @trinket.Feats.CraftingEff
-MED @trinket.Feats.Medicine | @trinket.Feats.MedicineEff" />
+STR @trinket.Stats.Strength
+CNS @trinket.Stats.Constitution
+AGL @trinket.Stats.Agility
+WIL @trinket.Stats.Willpower
+ABS @trinket.Stats.Abstract
+*** skills ***
+MEL @trinket.Stats.Melee
+ARC @trinket.Stats.Arcane
+PSI @trinket.Stats.Psionics
+SOC @trinket.Stats.Social
+HID @trinket.Stats.Hide
+SUR @trinket.Stats.Survival
+TAC @trinket.Stats.Tactics
+AID @trinket.Stats.Aid
+CRA @trinket.Stats.Crafting
+SPO @trinket.Stats.Spot " />
             }
         </div>
         @* Supplies *@
         <div class="col-6">
             <p class="mb-2">Supplies</p>
-            @foreach (var item in Model.Supplies.Items)
+            @foreach (var suppliesItem in Model.Supplies.Items)
             {
                 <img 
-                    src="@item.Icon" 
-                    class="rounded-2 item item-@item.Level"
-                    id="@item.Id"
-                    onclick="equipUnequipItem('@item.Id', 'equip', 'inventory')"
-                    title="@item.Name
+                    src="@suppliesItem.Icon" 
+                    class="rounded-2 item item-@suppliesItem.Level"
+                    id="@suppliesItem.Id"
+                    onclick="equipUnequipItem('@suppliesItem.Id', 'equip', 'inventory')"
+                    title="@suppliesItem.Name
 
 *** details ***
-@(item.HasTaint ? "tainted" : "untainted")
-@item.Type.ToLower()
-level @item.Level
-value @item.Value
+@(suppliesItem.HasTaint ? "tainted" : "untainted")
+@suppliesItem.Type.ToLower()
+level @suppliesItem.Level
+value @suppliesItem.Value
 *** stats ***
-DEF @item.Stats.Defense
-RES @item.Stats.Resist
-ACT @item.Stats.Actions
-END @item.Stats.Endurance
-ACC @item.Stats.Accretion
-*** feats ***
-COM @item.Feats.Combat | @item.Feats.CombatEff
-STR @item.Feats.Strength | @item.Feats.StrengthEff
-TAC @item.Feats.Tactics | @item.Feats.TacticsEff
-ATH @item.Feats.Athletics | @item.Feats.AthleticsEff
-SUR @item.Feats.Survival | @item.Feats.SurvivalEff
-SOC @item.Feats.Social | @item.Feats.SocialEff
-ABS @item.Feats.Abstract | @item.Feats.AbstractEff
-PSI @item.Feats.Psionic | @item.Feats.PsionicEff
-CRA @item.Feats.Crafting | @item.Feats.CraftingEff
-MED @item.Feats.Medicine | @item.Feats.MedicineEff" />
+DEF @suppliesItem.Stats.Defense
+RES @suppliesItem.Stats.Resist
+ACT @suppliesItem.Stats.Actions
+END @suppliesItem.Stats.Endurance
+ACC @suppliesItem.Stats.Accretion
+STR @suppliesItem.Stats.Strength
+CNS @suppliesItem.Stats.Constitution
+AGL @suppliesItem.Stats.Agility
+WIL @suppliesItem.Stats.Willpower
+ABS @suppliesItem.Stats.Abstract
+*** skills ***
+MEL @suppliesItem.Stats.Melee
+ARC @suppliesItem.Stats.Arcane
+PSI @suppliesItem.Stats.Psionics
+SOC @suppliesItem.Stats.Social
+HID @suppliesItem.Stats.Hide
+SUR @suppliesItem.Stats.Survival
+TAC @suppliesItem.Stats.Tactics
+AID @suppliesItem.Stats.Aid
+CRA @suppliesItem.Stats.Crafting
+SPO @suppliesItem.Stats.Spot " />
             }
-            @foreach (var trinket in Model.Supplies.Regalia)
+            @foreach (var suppliesTrinket in Model.Supplies.Regalia)
             {
-                <img src="@trinket.Icon"
-                     class="rounded-2 item item-@trinket.Level"
-                     id="@trinket.Id"
-                     onclick="equipUnequipItem('@trinket.Id', 'equip', 'regalia')"
-                     title="@trinket.Name
+                <img src="@suppliesTrinket.Icon"
+                     class="rounded-2 item item-@suppliesTrinket.Level"
+                     id="@suppliesTrinket.Id"
+                     onclick="equipUnequipItem('@suppliesTrinket.Id', 'equip', 'regalia')"
+                     title="@suppliesTrinket.Name
 
 *** details ***
-@(trinket.HasTaint ? "tainted" : "untainted")
-@(trinket.IsPermanent ? "can be consumed" : "can only be worn")
-@trinket.Type.ToLower()
-level @trinket.Level
-value @trinket.Value
+@(suppliesTrinket.HasTaint ? "tainted" : "untainted")
+@(suppliesTrinket.IsPermanent ? "can be consumed" : "can only be worn")
+@suppliesTrinket.Type.ToLower()
+level @suppliesTrinket.Level
+value @suppliesTrinket.Value
 *** stats ***
-DEF @trinket.Stats.Defense
-RES @trinket.Stats.Resist
-ACT @trinket.Stats.Actions
-END @trinket.Stats.Endurance
-ACC @trinket.Stats.Accretion
-*** feats ***
-COM @trinket.Feats.Combat | @trinket.Feats.CombatEff
-STR @trinket.Feats.Strength | @trinket.Feats.StrengthEff
-TAC @trinket.Feats.Tactics | @trinket.Feats.TacticsEff
-ATH @trinket.Feats.Athletics | @trinket.Feats.AthleticsEff
-SUR @trinket.Feats.Survival | @trinket.Feats.SurvivalEff
-SOC @trinket.Feats.Social | @trinket.Feats.SocialEff
-ABS @trinket.Feats.Abstract | @trinket.Feats.AbstractEff
-PSI @trinket.Feats.Psionic | @trinket.Feats.PsionicEff
-CRA @trinket.Feats.Crafting | @trinket.Feats.CraftingEff
-MED @trinket.Feats.Medicine | @trinket.Feats.MedicineEff" />
+DEF @suppliesTrinket.Stats.Defense
+RES @suppliesTrinket.Stats.Resist
+ACT @suppliesTrinket.Stats.Actions
+END @suppliesTrinket.Stats.Endurance
+ACC @suppliesTrinket.Stats.Accretion
+STR @suppliesTrinket.Stats.Strength
+CNS @suppliesTrinket.Stats.Constitution
+AGL @suppliesTrinket.Stats.Agility
+WIL @suppliesTrinket.Stats.Willpower
+ABS @suppliesTrinket.Stats.Abstract
+*** skills ***
+MEL @suppliesTrinket.Stats.Melee
+ARC @suppliesTrinket.Stats.Arcane
+PSI @suppliesTrinket.Stats.Psionics
+SOC @suppliesTrinket.Stats.Social
+HID @suppliesTrinket.Stats.Hide
+SUR @suppliesTrinket.Stats.Survival
+TAC @suppliesTrinket.Stats.Tactics
+AID @suppliesTrinket.Stats.Aid
+CRA @suppliesTrinket.Stats.Crafting
+SPO @suppliesTrinket.Stats.Spot " />
             }
         </div>
     </div>
@@ -509,7 +541,7 @@ MED @trinket.Feats.Medicine | @trinket.Feats.MedicineEff" />
             data: JSON.stringify({
                 characterId: characterId,
                 sessionId: sessionId,
-                attribute: attr
+                stat: attr
             }),
             success: function (response) {
                 localStorage.setItem("character", JSON.stringify(response));
@@ -527,5 +559,6 @@ MED @trinket.Feats.Medicine | @trinket.Feats.MedicineEff" />
         });
     }
 
+    // run on load
     hideLoading();
 </script>
