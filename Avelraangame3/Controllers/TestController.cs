@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
+using Models;
 using Services;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
@@ -28,11 +27,11 @@ public class TestController : Controller
         _snapshot = snapshot;
 
         _httpClient = new HttpClient();
-        _accountId = "e5680807d9009718f76e8636c56b9078";
-        _namespaceId = "8bf9c87e934d493a8aedc5e1353ed01c";
-        _apiToken = "tI3QQSt6OgxLxY1UWs1LtgnXrXqN9_VYHYzNxmIE";
-        _email = "iiancu85@gmail.com";
-        _globalApiKey = "b45ad32539802a8048f4296ead4c1066c634d";
+        _accountId = "*****";
+        _namespaceId = "*****";
+        _apiToken = "*****";
+        _email = "*****";
+        _globalApiKey = "*****";
     }
 
     public IActionResult Index()
@@ -72,7 +71,6 @@ public class TestController : Controller
         var key = "Snapshot";
         _httpClient.DefaultRequestHeaders.Add("X-Auth-Email", _email);
         _httpClient.DefaultRequestHeaders.Add("X-Auth-Key", _globalApiKey);
-        //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiToken);
 
         var jsonContent = JsonSerializer.Serialize(_snapshot);
         var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");

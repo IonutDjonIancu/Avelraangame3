@@ -1,10 +1,8 @@
-﻿using Models;
-
-namespace Services;
+﻿namespace Models;
 
 public interface ISnapshot
 {
-    HashSet<Character> Characters { get; set; }
+    HashSet<Player> Players { get; set; }
 
     List<Board> Boards { get; set; }
 
@@ -15,7 +13,7 @@ public interface ISnapshot
 
 public class Snapshot : ISnapshot
 {
-    public HashSet<Character> Characters { get; set; } = [];
+    public HashSet<Player> Players { get; set; } = [];
 
     public List<Board> Boards { get; set; } = [];
 

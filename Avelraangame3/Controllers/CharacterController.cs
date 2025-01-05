@@ -4,9 +4,14 @@ using Services;
 
 namespace Avelraangame3.Controllers;
 
-public class CharacterController(ICharacterService characterService) : Controller
+public class CharacterController : Controller
 {
-    private readonly ICharacterService _characterService = characterService;
+    private readonly ICharacterService _characterService;
+
+    public CharacterController(ICharacterService characterService)
+    {
+        _characterService = characterService;
+    }
 
     #region views
     // GET: Character/Index

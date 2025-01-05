@@ -49,6 +49,7 @@ public class CharacterService : ICharacterService
 
     public string CreateCharacter(CreateCharacter create)
     {
+        // validate player
         _validator.ValidateOnCreateCharacter(create);
 
         var character = new Character
@@ -65,22 +66,30 @@ public class CharacterService : ICharacterService
         SetInventory(character);
         SetWorth(character);
 
-        _snapshot.Characters.Add(character);
+        _snapshot.Players.FirstOrDefault(s => s.Name == create.PlayerName)!.Characters.Add(character);
 
         var characterString = EncryptionService.EncryptString(JsonConvert.SerializeObject(character));
 
         return characterString;
     }
 
-    public Characters GetAllAliveCharacters()
+    public Characters GetAllAliveCharacters(string playerName)
     {
-        return new Characters
+        // validate
+
+        var listOfCharacters = new Characters();
+
+        _snapshot.Players.FirstOrDefault(s => s.Name == playerName)!.Characters.ForEach(s =>
         {
-            CharactersPortraits = _snapshot.Characters
-                .Where(s => s.Details.IsAlive && !s.Details.IsNpc)
-                .Select(s => s.Details.Portrait)
-                .ToList(),
-        };
+            listOfCharacters.CharactersList.Add(new CharacterVm
+            {
+                Id = s.Identity.Id,
+                Name = s.Details.Name,
+                Portrait = s.Details.Portrait
+            });
+        });
+
+        return listOfCharacters;
     }
 
     public Characters GetAllLockedCharacters()

@@ -22,12 +22,14 @@ public class Character
 
 public class Characters
 {
-    public List<string> CharactersPortraits { get; set; }
+    public List<CharacterVm> CharactersList { get; set; } = [];
 }
 
-public class CharactersView
+public class CharacterVm
 {
-
+    public Guid Id { get; set; }
+    public string Name { get; set; }
+    public string Portrait { get; set; }
 }
 
 public class CharacterIdentity

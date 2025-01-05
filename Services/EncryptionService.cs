@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Services;
 
-public class EncryptionService
+public class EncryptionService // TODO: will remove encryption service
 {
     private const string Key = "9b8e7a1d58c64f2a906b3d7f3e8a49c0"; // TODO: replace with Azure appsettings
     private const string IV = "b2a0d1c8e9f3c5a4"; // TODO: replace with Azure appsettings

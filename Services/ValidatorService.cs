@@ -13,6 +13,10 @@ public interface IValidatorService
     void ValidatePostiveNumber(int number, string message);
     #endregion
 
+    #region player
+    void ValidateOnCreatePlayer(string playerName);
+    #endregion
+
     #region character
     void ValidateOnCreateCharacter(CreateCharacter character);
     Character ValidateCharacterExists(CharacterIdentity identity);
@@ -64,6 +68,20 @@ public class ValidatorService : IValidatorService
     {
         if (number <= 0)
             throw new Exception(message);
+    }
+    #endregion
+
+    #region player
+    public void ValidateOnCreatePlayer(string playerName)
+    {
+        ValidateString(playerName, "Player name cannot be empty.");
+
+        if (playerName.Length > 20)
+        {
+            throw new Exception("Player name cannot exceed 20 characters in length.");
+        }
+
+        var player = _snapshot.Players.FirstOrDefault(p => p.Name.Equals(playerName, StringComparison.InvariantCultureIgnoreCase)) ?? throw new Exception("Player with that name already exists.");
     }
     #endregion
 
