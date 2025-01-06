@@ -21,16 +21,13 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark pointer" onclick="navigateTo('/Character')">Character</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Character" asp-action="Index">Character</a>
+                            <a class="nav-link text-dark pointer" onclick="navigateTo('/Townhall')">Townhall</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Townhall" asp-action="Index">Townhall</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark pointer" onclick="navigateTo('/Privacy')">Privacy</a>
                         </li>
                     </ul>
                 </div>
@@ -58,36 +55,34 @@
 </html>
 
 <script>
-    const loginCharacter = () => {
-        var characterId = localStorage.getItem("characterId");
-        var sessionId = localStorage.getItem("sessionId");
+    // routes
+    const navigateTo = (url) => {
+        window.location.href = url;
+    };
 
-        if (!characterId) {
-            return;
-        }
+    const getPlayerId = () => {
+        var playerId = localStorage.getItem("playerId");
 
-        $.ajax({
-            type: 'GET',
-            url: '@Url.Action("GetCharacter", "Character")' +
-                '?characterId=' + encodeURIComponent(characterId) +
-                '&sessionId=' + encodeURIComponent(sessionId),
-            dataType: 'json',
-            success: function (response) {
-                localStorage.setItem("character", JSON.stringify(response));
-
-                var charImageHtml = `
-                        <img style="border: solid 2px gray; border-radius: 20px" class="me-2 pointer" src="${response.details.portrait}" width="30" height="30" title="${response.details.name}" />
-                `
-
-                $("#navbar").append(charImageHtml);
-            },
-            error: function (xhr, status, error) {
-                window.location.href = "/home/error?info=" + xhr.responseText;
-            }
-        });
-
-
+        if(playerId) {
+            return localStorage.getItem("playerId");
+        }   
+        
+        window.alert("Missing player id.");
     }
 
-    loginCharacter();
+    const hideLoading = () => {
+        $(document).ready(() => {
+            $("#spinner").hide(500);
+        });
+    }
+
+    const showLoading = () => {
+         $("#spinner").show();
+    }
+
+    const logModel = () => {
+        var model = JSON.parse('@Html.Raw(Json.Serialize(Model))');
+        console.log(model);
+    }
+
 </script>

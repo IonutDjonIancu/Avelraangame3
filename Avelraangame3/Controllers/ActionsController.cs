@@ -4,6 +4,7 @@ using Services;
 
 namespace Avelraangame3.Controllers;
 
+[Route("Actions")]
 public class ActionsController : Controller
 {
     public IActionService _actionService { get; set; }

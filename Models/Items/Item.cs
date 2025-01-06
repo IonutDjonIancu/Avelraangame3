@@ -14,7 +14,7 @@ public class Item
     public string Icon { get; set; }
     public int Level { get; set; }
 
-    public CharacterStats Stats { get; set; } = new();
+    public CharacterStats BonusStats { get; set; } = new();
 
     public int Value { get; set; }
 }

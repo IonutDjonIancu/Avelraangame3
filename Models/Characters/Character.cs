@@ -6,9 +6,7 @@ public class Character
 {
     public CharacterIdentity Identity { get; set; } = new();
     public CharacterDetails Details { get; set; } = new();
-    public CharacterStats Stats { get; set; } = new();
-    public CharacterStats Actuals { get; set; } = new();
-    public CharacterStats Fights { get; set; } = new();
+    public Stats Stats { get; set; } = new();
 
     [MaxLength(4)]
     public List<Item> Inventory { get; set; } = [];
@@ -18,6 +16,13 @@ public class Character
     public CharacterSupplies Supplies { get; set; } = new();
 
     public List<string> SpecialSkills { get; set; } = [];
+}
+
+public class Stats
+{
+    public CharacterStats Base { get; set; } = new();
+    public CharacterStats Actual { get; set; } = new();
+    public CharacterStats Fight { get; set; } = new();
 }
 
 public class Characters
@@ -63,7 +68,7 @@ public class CharacterDetails
     public string BoardType { get; set; }
 
     /// <summary>
-    /// Used to count how many CoreRules fights the character has won.
+    /// Used to count how many core rules fights the character has survived.
     /// </summary>
     public int Renown { get; set; } 
 }
@@ -86,13 +91,12 @@ public class CharacterStats
     public int Tactics { get; set; }
     public int Aid { get; set; }
     public int Crafting { get; set; }
-    public int Spot { get; set; }
+    public int Perception { get; set; }
     // assets
     public int Defense { get; set; }
-    public int Resist { get; set; }
     public int Actions { get; set; }
-    public int Endurance { get; set; }
-    public int Accretion { get; set; }
+    public int Hitpoints { get; set; }
+    public int Mana { get; set; }
 }
 
 public class CharacterSupplies

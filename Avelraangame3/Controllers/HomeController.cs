@@ -1,37 +1,35 @@
 using Microsoft.AspNetCore.Mvc;
-using Models;
 using Services;
 
 namespace Avelraangame3.Controllers;
 
-[Route("/")]
+[Route("")]
 public class HomeController : Controller
 {
-    private readonly ISnapshot _snapshot;
-    private readonly IValidatorService _validatorService;
+    private readonly IPlayerService _playerService;
 
-    public HomeController(
-        ISnapshot snapshot,
-        IValidatorService validatorService)
+    public HomeController(IPlayerService playerService)
     {
-        _snapshot = snapshot;
-        _validatorService = validatorService;
+        _playerService = playerService;
     }
 
     #region views
-    // GET: Home/Index
+    // GET: /
+    [HttpGet("")]
     public IActionResult Index()
     {
         return View();
     }
 
-    // GET: Home/Privacy
+    // GET: Privacy
+    [HttpGet("Privacy")]
     public IActionResult Privacy()
     {
         return View();
     }
 
-    // GET: Home/Error?info=infoToDisplay
+    // GET: Error?info=infoToDisplay
+    [HttpGet("Error")]
     public IActionResult Error(string info)
     {
         return Content($"<<< click the back button of the browser to return\n\n\n{info}");
@@ -44,17 +42,7 @@ public class HomeController : Controller
     {
         try
         {
-            _validatorService.ValidateOnCreatePlayer(playerName);
-
-            var playerId = Guid.NewGuid();
-
-            var player = new Player
-            {
-                Name = playerName,
-                Id = playerId
-            };
-
-            _snapshot.Players.Add(player);
+            var player = _playerService.CreatePlayer(playerName);
             
             return Ok(player);
         }
@@ -63,7 +51,5 @@ public class HomeController : Controller
             return BadRequest(ex.Message);
         }
     }
-
-
     #endregion
 }

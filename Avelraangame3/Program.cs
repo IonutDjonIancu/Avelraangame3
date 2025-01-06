@@ -4,13 +4,14 @@ using Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddSingleton<ISnapshot, Snapshot>();
+builder.Services.AddSingleton<ISnapshot, Snapshot>(sp => new Snapshot());
 builder.Services.AddSingleton<IValidatorService, ValidatorService>();
 builder.Services.AddSingleton<IDiceService, DiceService>();
 
 builder.Services.AddTransient<IItemService, ItemService>();
-builder.Services.AddTransient<INpcService, NpcService>();
+builder.Services.AddTransient<IPlayerService, PlayerService>();
 builder.Services.AddTransient<ICharacterService, CharacterService>();
+builder.Services.AddTransient<INpcService, NpcService>();
 builder.Services.AddTransient<ITownhallService, TownhallService>();
 builder.Services.AddTransient<IActionService, ActionService>();
 

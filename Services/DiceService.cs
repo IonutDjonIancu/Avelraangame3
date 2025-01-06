@@ -41,7 +41,7 @@ public interface IDiceService
     /// <param name="character"></param>
     /// <param name="stat"></param>
     /// <param name="effortLevel"></param>
-    (bool, int) RollVsEffort(Character character, string skill, int effortLevel, bool canLevelup, bool isFight);
+    (bool, int) RollVsEffort(Character character, string skill, int effortLevel, bool canLevelup);
 
     // TODO: implement rollAttack, rollRest, rollCast, rollMend
 }
@@ -57,7 +57,7 @@ public class DiceService : IDiceService
         _validator = validator; 
     }
 
-    public (bool, int) RollVsEffort(Character character, string skill, int effortLevel, bool canLevelup, bool isFight)
+    public (bool, int) RollVsEffort(Character character, string skill, int effortLevel, bool canLevelup)
     {
         if (!Statics.Stats.All.Contains(skill))
             throw new Exception("No such skill found to roll.");
@@ -66,7 +66,7 @@ public class DiceService : IDiceService
         _validator.ValidatePostiveNumber(effortLevel, "Effort level cannot be 0 or smaller.");
         _validator.ValidateString(skill, "Skill string is missing or invalid.");
 
-        var charRoll = RollStat(character, skill, canLevelup, isFight);
+        var charRoll = RollStat(character, skill, canLevelup);
 
         return (charRoll > effortLevel, charRoll);
     }
@@ -106,7 +106,7 @@ public class DiceService : IDiceService
     }
 
     #region private methods
-    private int RollStat(Character character, string stat, bool canLevelup, bool isFight)
+    private int RollStat(Character character, string stat, bool canLevelup)
     {
         var roll = Rolld20();
 
@@ -118,26 +118,25 @@ public class DiceService : IDiceService
 
         return stat switch
         {
-            Statics.Stats.Strength      => isFight ? roll + character.Fights.Strength       : roll + character.Actuals.Strength,
-            Statics.Stats.Constitution  => isFight ? roll + character.Fights.Constitution   : roll + character.Actuals.Constitution,
-            Statics.Stats.Agility       => isFight ? roll + character.Fights.Agility        : roll + character.Actuals.Agility,
-            Statics.Stats.Willpower     => isFight ? roll + character.Fights.Willpower      : roll + character.Actuals.Willpower,
-            Statics.Stats.Abstract      => isFight ? roll + character.Fights.Abstract       : roll + character.Actuals.Abstract,
-            Statics.Stats.Melee         => isFight ? roll + character.Fights.Melee          : roll + character.Actuals.Melee,
-            Statics.Stats.Arcane        => isFight ? roll + character.Fights.Arcane         : roll + character.Actuals.Arcane,
-            Statics.Stats.Psionics      => isFight ? roll + character.Fights.Psionics       : roll + character.Actuals.Psionics,
-            Statics.Stats.Social        => isFight ? roll + character.Fights.Social         : roll + character.Actuals.Social,
-            Statics.Stats.Hide          => isFight ? roll + character.Fights.Hide           : roll + character.Actuals.Hide,
-            Statics.Stats.Survival      => isFight ? roll + character.Fights.Survival       : roll + character.Actuals.Survival,
-            Statics.Stats.Tactics       => isFight ? roll + character.Fights.Tactics        : roll + character.Actuals.Tactics,
-            Statics.Stats.Aid           => isFight ? roll + character.Fights.Aid            : roll + character.Actuals.Aid,
-            Statics.Stats.Crafting      => isFight ? roll + character.Fights.Crafting       : roll + character.Actuals.Crafting,
-            Statics.Stats.Perception    => isFight ? roll + character.Fights.Spot           : roll + character.Actuals.Spot,
-            Statics.Stats.Defense       => isFight ? roll + character.Fights.Defense        : roll + character.Actuals.Defense,
-            Statics.Stats.Resist        => isFight ? roll + character.Fights.Resist         : roll + character.Actuals.Resist,
-            Statics.Stats.Actions       => isFight ? roll + character.Fights.Actions        : roll + character.Actuals.Actions,
-            Statics.Stats.Endurance     => isFight ? roll + character.Fights.Endurance      : roll + character.Actuals.Endurance,
-            Statics.Stats.Accretion     => isFight ? roll + character.Fights.Accretion      : roll + character.Actuals.Accretion,
+            Statics.Stats.Strength      => character.Details.IsLocked ? roll + character.Stats.Fight.Strength       : roll + character.Stats.Actual.Strength,
+            Statics.Stats.Constitution  => character.Details.IsLocked ? roll + character.Stats.Fight.Constitution   : roll + character.Stats.Actual.Constitution,
+            Statics.Stats.Agility       => character.Details.IsLocked ? roll + character.Stats.Fight.Agility        : roll + character.Stats.Actual.Agility,
+            Statics.Stats.Willpower     => character.Details.IsLocked ? roll + character.Stats.Fight.Willpower      : roll + character.Stats.Actual.Willpower,
+            Statics.Stats.Abstract      => character.Details.IsLocked ? roll + character.Stats.Fight.Abstract       : roll + character.Stats.Actual.Abstract,
+            Statics.Stats.Melee         => character.Details.IsLocked ? roll + character.Stats.Fight.Melee          : roll + character.Stats.Actual.Melee,
+            Statics.Stats.Arcane        => character.Details.IsLocked ? roll + character.Stats.Fight.Arcane         : roll + character.Stats.Actual.Arcane,
+            Statics.Stats.Psionics      => character.Details.IsLocked ? roll + character.Stats.Fight.Psionics       : roll + character.Stats.Actual.Psionics,
+            Statics.Stats.Social        => character.Details.IsLocked ? roll + character.Stats.Fight.Social         : roll + character.Stats.Actual.Social,
+            Statics.Stats.Hide          => character.Details.IsLocked ? roll + character.Stats.Fight.Hide           : roll + character.Stats.Actual.Hide,
+            Statics.Stats.Survival      => character.Details.IsLocked ? roll + character.Stats.Fight.Survival       : roll + character.Stats.Actual.Survival,
+            Statics.Stats.Tactics       => character.Details.IsLocked ? roll + character.Stats.Fight.Tactics        : roll + character.Stats.Actual.Tactics,
+            Statics.Stats.Aid           => character.Details.IsLocked ? roll + character.Stats.Fight.Aid            : roll + character.Stats.Actual.Aid,
+            Statics.Stats.Crafting      => character.Details.IsLocked ? roll + character.Stats.Fight.Crafting       : roll + character.Stats.Actual.Crafting,
+            Statics.Stats.Perception    => character.Details.IsLocked ? roll + character.Stats.Fight.Perception           : roll + character.Stats.Actual.Perception,
+            Statics.Stats.Defense       => character.Details.IsLocked ? roll + character.Stats.Fight.Defense        : roll + character.Stats.Actual.Defense,
+            Statics.Stats.Actions       => character.Details.IsLocked ? roll + character.Stats.Fight.Actions        : roll + character.Stats.Actual.Actions,
+            Statics.Stats.Hitpoints     => character.Details.IsLocked ? roll + character.Stats.Fight.Hitpoints      : roll + character.Stats.Actual.Hitpoints,
+            Statics.Stats.Mana          => character.Details.IsLocked ? roll + character.Stats.Fight.Mana           : roll + character.Stats.Actual.Mana,
             _ => throw new Exception("Wrong stat provided.")
         };
     }

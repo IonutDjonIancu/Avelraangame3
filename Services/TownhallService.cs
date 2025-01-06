@@ -89,61 +89,55 @@ public class TownhallService : ITownhallService
     #region private methods
     private void PrepareForFight_nonCore(Board board)
     {
-        var effortLevelTop = board.EffortLevelName == Statics.EffortLevelNames.Easy ? Statics.EffortLevels.Easy : Statics.EffortLevels.Normal;
-        var effortLevel = _diceService.Roll1dN(effortLevelTop);
-        var effort = _diceService.Roll1dN(effortLevel);
+        throw new NotImplementedException("Needs to be redone");
 
-        // gg = goodGuy
-        // bg = badGuy
+        //var effortLevelTop = board.EffortLevelName == Statics.EffortLevelNames.Easy ? Statics.EffortLevels.Easy : Statics.EffortLevels.Normal;
+        //var effortLevel = _diceService.Roll1dN(effortLevelTop);
+        //var effort = _diceService.Roll1dN(effortLevel);
 
-        var ggChar = board.GoodGuys.OrderBy(s => s.Actuals.Tactics).First();
-        var bgChar = board.BadGuys.OrderBy(s => s.Actuals.Tactics).First();
+        //// gg = goodGuy
+        //// bg = badGuy
 
-        var (ggIsSave, ggRoll) = _diceService.RollVsEffort(ggChar, Statics.Stats.Tactics, effortLevel, true, true);
-        var (bgIsSave, bgRoll) = _diceService.RollVsEffort(bgChar, Statics.Stats.Tactics, effortLevel, true, true);
+        //var ggChar = board.GoodGuys.OrderBy(s => s.Stats.Actual.Tactics).First();
+        //var bgChar = board.BadGuys.OrderBy(s => s.Stats.Actual.Tactics).First();
 
-        if (ggIsSave && !bgIsSave)
-        {
-            board.Message = "Major tactical advantage.";
+        //var (ggIsSave, ggRoll) = _diceService.RollVsEffort(ggChar, Statics.Stats.Tactics, effortLevel, true);
+        //var (bgIsSave, bgRoll) = _diceService.RollVsEffort(bgChar, Statics.Stats.Tactics, effortLevel, true);
 
-            bgChar.Fights.Defense   = (int)(bgChar.Actuals.Defense * 0.5);
-            bgChar.Fights.Endurance = (int)(bgChar.Actuals.Endurance * 0.5);
-            bgChar.Fights.Accretion = (int)(bgChar.Actuals.Accretion * 0.5);
-            bgChar.Fights.Actions -= 1;
-        }
-        else if (ggIsSave && bgIsSave && ggRoll > bgRoll)
-        {
-            board.Message = "Moderate tactical advantage.";
+        //if (ggIsSave && !bgIsSave)
+        //{
+        //    board.Message = "Major tactical advantage.";
 
-            bgChar.Fights.Defense   = (int)(bgChar.Actuals.Defense * 0.75);
-            bgChar.Fights.Endurance = (int)(bgChar.Actuals.Endurance * 0.75);
-            bgChar.Fights.Accretion = (int)(bgChar.Actuals.Accretion * 0.75);
-        }
-        else if (ggIsSave && bgIsSave && ggRoll == bgRoll)
-        {
-            board.Message = "Tactical stalemate.";
-        }
-        else if (ggIsSave && bgIsSave && ggRoll < bgRoll)
-        {
-            board.Message = "Moderate tactical disadvantage.";
+        //    bgChar.Stats.Fight.Defense   = (int)(bgChar.Actuals.Defense * 0.5);
+        //    bgChar.Stats.Fight.Actions -= 1;
+        //}
+        //else if (ggIsSave && bgIsSave && ggRoll > bgRoll)
+        //{
+        //    board.Message = "Moderate tactical advantage.";
 
-            ggChar.Fights.Defense   = (int)(ggChar.Actuals.Defense * 0.75);
-            ggChar.Fights.Endurance = (int)(ggChar.Actuals.Endurance * 0.75);
-            ggChar.Fights.Accretion = (int)(ggChar.Actuals.Accretion * 0.75);
-        }
-        else if (!ggIsSave && bgIsSave)
-        {
-            board.Message = "Major tactical disadvantage.";
+        //    bgChar.Fights.Defense   = (int)(bgChar.Actuals.Defense * 0.75);
+        //}
+        //else if (ggIsSave && bgIsSave && ggRoll == bgRoll)
+        //{
+        //    board.Message = "Tactical stalemate.";
+        //}
+        //else if (ggIsSave && bgIsSave && ggRoll < bgRoll)
+        //{
+        //    board.Message = "Moderate tactical disadvantage.";
 
-            ggChar.Fights.Defense   = (int)(ggChar.Actuals.Defense * 0.5);
-            ggChar.Fights.Endurance = (int)(ggChar.Actuals.Endurance * 0.5);
-            ggChar.Fights.Accretion = (int)(ggChar.Actuals.Accretion * 0.5);
-            ggChar.Fights.Actions -= 1;
-        } 
-        else
-        {
-            board.Message = "Tactically inconclusive.";
-        }
+        //    ggChar.Fights.Defense   = (int)(ggChar.Actuals.Defense * 0.75);
+        //}
+        //else if (!ggIsSave && bgIsSave)
+        //{
+        //    board.Message = "Major tactical disadvantage.";
+
+        //    ggChar.Fights.Defense   = (int)(ggChar.Actuals.Defense * 0.5);
+        //    ggChar.Fights.Actions -= 1;
+        //} 
+        //else
+        //{
+        //    board.Message = "Tactically inconclusive.";
+        //}
     }
     #endregion
 }

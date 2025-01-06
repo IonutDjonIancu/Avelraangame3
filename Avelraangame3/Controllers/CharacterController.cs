@@ -33,11 +33,15 @@ public class CharacterController : Controller
         return View();
     }
 
-    // GET: Character/Details
-    [HttpGet("Details")]
-    public IActionResult Details()
+    // GET: Character/Details/123
+    [HttpGet("Details/{playerId}")]
+    public IActionResult Details(string playerId)
     {
-        return View();
+        _validatorService.ValidateGuid(playerId, "Player id is in wrong format.");
+
+        var character = _characterService.GetAllCharacters(Guid.Parse(playerId));
+
+        return View(character);
     }
 
     // GET: Character//DetailsOf/123/456
@@ -88,15 +92,15 @@ public class CharacterController : Controller
         }
     }
 
-    // GET: Character/GetAllAliveCharacters/123
-    [HttpGet("GetAllAliveCharacters/{playerId}")]
-    public IActionResult GetAllAliveCharacters(string playerId)
+    // GET: Character/GetAllCharacters/123
+    [HttpGet("GetAllCharacters/{playerId}")]
+    public IActionResult GetAllCharacters(string playerId)
     {
         try
         {
             _validatorService.ValidateGuid(playerId, "Player id is in wrong format.");
 
-            var character = _characterService.GetAllAliveCharacters(Guid.Parse(playerId));
+            var character = _characterService.GetAllCharacters(Guid.Parse(playerId));
 
             return Ok(character);
         }
@@ -143,7 +147,7 @@ public class CharacterController : Controller
     }
 
     // POST: Character/CreateCharacter
-    [HttpPost]
+    [HttpPost("CreateCharacter")]
     public IActionResult CreateCharacter([FromBody] CreateCharacter create)
     {
         try
@@ -159,14 +163,14 @@ public class CharacterController : Controller
     }
 
     // PUT: Character/EquipItem
-    [HttpPut]
+    [HttpPut("EquipItem")]
     public IActionResult EquipItem([FromBody] EquipItem equipItem)
     {
         try
         {
-            var characterResponse = _characterService.EquipItem(equipItem);
+            _characterService.EquipItem(equipItem);
 
-            return Ok(characterResponse);
+            return Ok();
         }
         catch (Exception ex)
         {
@@ -175,14 +179,14 @@ public class CharacterController : Controller
     }
 
     // PUT: Character/UnequipItem
-    [HttpPut]
+    [HttpPut("UnequipItem")]
     public IActionResult UnequipItem([FromBody] EquipItem equipItem)
     {
         try
         {
-            var characterResponse = _characterService.UnequipItem(equipItem);
+            _characterService.UnequipItem(equipItem);
 
-            return Ok(characterResponse);
+            return Ok();
         }
         catch (Exception ex)
         {
@@ -191,14 +195,14 @@ public class CharacterController : Controller
     }
 
     // PUT: Character/UnequipItem
-    [HttpPut]
+    [HttpPut("SellItem")]
     public IActionResult SellItem([FromBody] EquipItem equipItem)
     {
         try
         {
-            var characterResponse = _characterService.SellItem(equipItem);
+            _characterService.SellItem(equipItem);
 
-            return Ok(characterResponse);
+            return Ok();
         }
         catch (Exception ex)
         {
@@ -207,14 +211,14 @@ public class CharacterController : Controller
     }
 
     // PUT: Character/Levelup
-    [HttpPut]
+    [HttpPut("Levelup")]
     public IActionResult Levelup([FromBody] CharacterLevelup levelup)
     {
         try
         {
-            var characterResponse = _characterService.Levelup(levelup);
+            _characterService.Levelup(levelup);
 
-            return Ok(characterResponse);
+            return Ok();
         }
         catch (Exception ex)
         {

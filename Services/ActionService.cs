@@ -70,34 +70,27 @@ public class ActionService : IActionService
     //    else if (target.Stats.Abstract > target.Stats.Psionics)
     //    {
     //        targetStat = Statics.Stats.Abstract;
-    //        target.Fights.Accretion -= (int)(target.Fights.Abstract * 0.1);
     //    }
     //    else
     //    {
     //        targetStat = Statics.Stats.Psionics;
-    //        target.Fights.Accretion -= (int)(target.Fights.Psionics * 0.1);
     //    }
 
     //    var sourceRoll = 1; // TODO: change this to actual dice roll
 
     //    if (targetStat == Statics.Stats.Melee)
     //    {
-    //        target.Fights.Endurance -= (int)(sourceRoll * source.Fights.Melee);
     //    }
     //    else if (targetStat == Statics.Stats.Abstract)
     //    {
 
     //        var result = (int)(sourceRoll * source.Fights.AbstractEff);
-    //        result -= result * target.Fights.Resist / 100;
 
-    //        target.Fights.Endurance -= result;
     //    }
     //    else
     //    {
     //        var result = (int)(sourceRoll * source.Fights.PsionicEff);
-    //        result -= result * target.Fights.Resist / 100;
 
-    //        target.Fights.Endurance -= result;
     //    }
     //}
 

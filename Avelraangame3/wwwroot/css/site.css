@@ -39,14 +39,6 @@ body {
     border-color: #7b8a8b;
 }
 
-.text-white {
-    color: #fff;
-}
-
-.text-green {
-    color: forestgreen;
-}
-
 .text-100 {
     color: #215e21;
 }
@@ -73,6 +65,22 @@ body {
 
 .text-red {
     color: darkred;
+}
+
+.text-gray {
+    color: darkslategray
+}
+
+.text-white {
+    color: #fff;
+}
+
+.text-green {
+    color: forestgreen;
+}
+
+.text-orange {
+    color: darkorange;
 }
 
 .pointer {
@@ -150,6 +158,11 @@ body {
     opacity: 0.1;
 }
 
+ul {
+    padding-left: 1rem;
+}
+
 li {
-    margin-bottom: 2px
+    margin-bottom: 2px;
+    list-style-type: none;
 }

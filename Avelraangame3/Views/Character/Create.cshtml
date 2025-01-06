@@ -1,8 +1,7 @@
 ﻿@* Character/Create *@
 <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-    <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Upload">Upload</a>
-    <a type="button" class="btn btn-secondary" asp-controller="Character" asp-action="Create">Create</a>
-    <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Details">Characters</a>
+    <button class="btn btn-secondary">Create</button>
+    <button class="btn btn-outline-secondary" onclick="navigateTo('/Character/Details/' + getPlayerId())">Characters</button>
 </div>
 
 <div class="container mt-3 footer-border">
@@ -65,20 +64,10 @@
             </div>
         </div>
     </div>
-    <div id="characterString" style="display:none">
+    <div id="characterDone" style="display:none">
         <div class="row mt-2">
             <div class="col d-flex justify-content-center align-items-center">
-                <p class="mb-0 text-muted">Character encrypted string</p>
-            </div>
-        </div>
-        <div class="row mt-2">
-            <div class="col d-flex justify-content-center align-items-center">
-                <textarea id="characterStringArea" class="input-with-color w-75 mt-2 p-0 ps-2 rounded-2" title="this is your character's encrypted string" style="font-size:xx-small"></textarea>
-            </div>
-        </div>
-        <div class="row mt-4">
-            <div class="col d-flex justify-content-center align-items-center">
-                <button onclick="copyCharacter()" id="copyBtn" class="btn btn-sm btn-outline-secondary primary-green">Copy</button>
+                <p class="mb-0 text-muted">Done</p>
             </div>
         </div>
     </div>
@@ -99,19 +88,16 @@
         $("#portraitLocation").append(imageHtml);
     }
 
-    const copyCharacter = () => {
-        $("#characterStringArea").select();
-        document.execCommand('copy');
-    }
-
     const createCharacter = () => {
         var name = $("#name").val();
         var portrait = $("#portrait").val();
         var race = $("#race").val();
         var culture = $("#culture").val();
         var spec = $("#spec").val();
+        var playerId = localStorage.getItem("playerId");
 
         var data = {
+            playerId: playerId,
             name: name,
             portrait: portrait,
             race: race,
@@ -119,18 +105,19 @@
             spec: spec
         }
 
+        var url = "CreateCharacter"
+
         $.ajax({
             type: 'POST',
-            url: '@Url.Action("CreateCharacter", "Character")',
+            url: url,
             contentType: 'application/json',
             data: JSON.stringify(data),
             success: function (response) {
-                $("#characterStringArea").val(response);
                 $('#characterCreate').slideUp(200)
-                $('#characterString').slideDown(400)
+                $('#characterDone').slideDown(400)
             },
             error: function (xhr, status, error) {
-                window.location.href = "/home/error?info=" + xhr.responseText;
+                window.alert(xhr.responseText);
             }
         });
     }

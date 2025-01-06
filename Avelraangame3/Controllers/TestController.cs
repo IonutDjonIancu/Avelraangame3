@@ -34,6 +34,7 @@ public class TestController : Controller
         _globalApiKey = "*****";
     }
 
+    [HttpGet("")]
     public IActionResult Index()
     {
         return View();

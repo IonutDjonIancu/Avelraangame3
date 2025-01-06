@@ -71,10 +71,9 @@ public static class Statics
         public const string Perception      = "Perception";
         // assets
         public const string Defense         = "Defense";
-        public const string Resist          = "Resist";
         public const string Actions         = "Actions";
-        public const string Endurance       = "Endurance";
-        public const string Accretion       = "Accretion";
+        public const string Hitpoints       = "Hitpoints";
+        public const string Mana            = "Mana";
 
 
         public static readonly List<string> All =
@@ -95,10 +94,9 @@ public static class Statics
             Crafting,
             Perception,
             Defense,
-            Resist,
             Actions,
-            Endurance,
-            Accretion
+            Hitpoints,
+            Mana
         ];
     }
 
@@ -223,10 +221,9 @@ public static class Statics
             public const int Perception     = 2;
             // assets
             public const int Defense        = 1;
-            public const int Resist         = 1;
             public const int Actions        = 1;
-            public const int Endurance      = 40;
-            public const int Accretion      = 10;
+            public const int Hitpoints      = 2;
+            public const int Mana           = 0;
         }
 
         public const string Elf = "Elf";
@@ -251,10 +248,9 @@ public static class Statics
             public const int Perception     = 5;
             // assets
             public const int Defense        = 1;
-            public const int Resist         = 1;
             public const int Actions        = 1;
-            public const int Endurance      = 30;
-            public const int Accretion      = 50;
+            public const int Hitpoints      = 1;
+            public const int Mana           = 5;
         }
 
         public const string Dwarf = "Dwarf";
@@ -279,10 +275,9 @@ public static class Statics
             public const int Perception     = 1;
             // assets
             public const int Defense        = 3;
-            public const int Resist         = 3;
             public const int Actions        = 1;
-            public const int Endurance      = 50;
-            public const int Accretion      = 10;
+            public const int Hitpoints      = 3;
+            public const int Mana           = 0;
         }
 
         public static readonly List<string> All =
@@ -317,10 +312,9 @@ public static class Statics
             public const int Perception     = 0;
             // assets
             public const int Defense        = 2;
-            public const int Resist         = 0;
             public const int Actions        = 0;
-            public const int Endurance      = 5;
-            public const int Accretion      = 0;
+            public const int Hitpoints      = 1;
+            public const int Mana           = 0;
         }
 
         public const string Highborn = "Highborn";
@@ -345,10 +339,9 @@ public static class Statics
             public const int Perception     = 4;
             // assets
             public const int Defense        = 0;
-            public const int Resist         = 3;
             public const int Actions        = 0;
-            public const int Endurance      = 3;
-            public const int Accretion      = 5;
+            public const int Hitpoints      = 1;
+            public const int Mana           = 3;
         }
 
         public const string Undermountain = "Undermountain";
@@ -373,10 +366,9 @@ public static class Statics
             public const int Perception     = 0;
             // assets
             public const int Defense        = 5;
-            public const int Resist         = 2;
             public const int Actions        = 0;
-            public const int Endurance      = 10;
-            public const int Accretion      = -10;
+            public const int Hitpoints      = 2;
+            public const int Mana           = 0;
         }
 
         public static readonly List<string> All =
@@ -411,10 +403,9 @@ public static class Statics
             public const int Perception     = 3;
             // assets
             public const int Defense        = 5;
-            public const int Resist         = 0;
             public const int Actions        = 1;
-            public const int Endurance      = 10;
-            public const int Accretion      = 0;
+            public const int Hitpoints      = 3;
+            public const int Mana           = 0;
         }
 
         public const string Sorcery = "Sorcery";
@@ -439,10 +430,9 @@ public static class Statics
             public const int Perception     = 0;
             // assets
             public const int Defense        = 0;
-            public const int Resist         = 5;
             public const int Actions        = 0;
-            public const int Endurance      = 3;
-            public const int Accretion      = 10;
+            public const int Hitpoints      = 1;
+            public const int Mana           = 5;
         }
 
         public const string Tracking = "Tracking";
@@ -467,10 +457,9 @@ public static class Statics
             public const int Perception     = 5;
             // assets
             public const int Defense        = 2;
-            public const int Resist         = 2;
             public const int Actions        = 0;
-            public const int Endurance      = 5;
-            public const int Accretion      = 5;
+            public const int Hitpoints      = 2;
+            public const int Mana           = 0;
         }
 
         public static readonly List<string> All =

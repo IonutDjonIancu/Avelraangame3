@@ -111,7 +111,10 @@ public class ValidatorService : IValidatorService
             throw new Exception("Player name cannot exceed 20 characters in length.");
         }
 
-        var player = _snapshot.Players.FirstOrDefault(p => p.Name.Equals(playerName, StringComparison.InvariantCultureIgnoreCase)) ?? throw new Exception("Player with that name already exists.");
+        var player = _snapshot.Players.FirstOrDefault(p => p.Name.Equals(playerName, StringComparison.InvariantCultureIgnoreCase));
+
+        if (player is not null)
+            throw new Exception("Player with that name already exists.");
     }
     #endregion
 
@@ -128,10 +131,14 @@ public class ValidatorService : IValidatorService
     public (Item, Character) ValidateEquipItem(EquipItem equipItem)
     {
         ValidateAgainstNull(equipItem, "Equip item cannot be null.");
+        ValidateGuid(equipItem.PlayerId);
+        ValidateGuid(equipItem.CharacterId);
+        ValidateGuid(equipItem.ItemId);
+
         var character = ValidateCharacterExists(new CharacterIdentity
         {
             Id = equipItem.CharacterId,
-            PlayerId = equipItem.SessionId,
+            PlayerId = equipItem.PlayerId,
         });
 
         if (character.Details.IsLocked)
@@ -168,10 +175,14 @@ public class ValidatorService : IValidatorService
     public (Item, Character) ValidateUnequipItem(EquipItem equipItem)
     {
         ValidateAgainstNull(equipItem, "Unequip item cannot be null.");
+        ValidateGuid(equipItem.PlayerId);
+        ValidateGuid(equipItem.CharacterId);
+        ValidateGuid(equipItem.ItemId);
+
         var character = ValidateCharacterExists(new CharacterIdentity
         {
             Id = equipItem.CharacterId,
-            PlayerId = equipItem.SessionId,
+            PlayerId = equipItem.PlayerId,
         });
 
         if (character.Details.IsLocked)
@@ -188,11 +199,15 @@ public class ValidatorService : IValidatorService
 
     public (Item, Character) ValidateSellItem(EquipItem equipItem)
     {
-        ValidateAgainstNull(equipItem, "Equip item cannot be null.");
+        ValidateAgainstNull(equipItem, "Unequip item cannot be null.");
+        ValidateGuid(equipItem.PlayerId);
+        ValidateGuid(equipItem.CharacterId);
+        ValidateGuid(equipItem.ItemId);
+
         var character = ValidateCharacterExists(new CharacterIdentity
         {
             Id = equipItem.CharacterId,
-            PlayerId = equipItem.SessionId,
+            PlayerId = equipItem.PlayerId,
         });
 
         if (character.Details.IsLocked)
@@ -204,9 +219,6 @@ public class ValidatorService : IValidatorService
 
         var item = character.Supplies.Items.Union(character.Supplies.Regalia).First(s => s.Id == equipItem.ItemId)!;
 
-        if (_snapshot.ItemsSold.Contains(item.Id))
-            throw new Exception("This item has already been sold.");
-
         return (item, character);
     }
 
@@ -216,13 +228,13 @@ public class ValidatorService : IValidatorService
         var character = ValidateCharacterExists(new CharacterIdentity
         {
             Id = itemToBuy.CharacterId,
-            PlayerId = itemToBuy.SessionId,
+            PlayerId = itemToBuy.PlayerId,
         });
 
         if (character.Details.IsLocked)
             throw new Exception("Character is locked.");
 
-        var item = _snapshot.Market.Find(s => s.Id == itemToBuy.ItemId) ?? throw new Exception("No such item found on market.");
+        var item = _snapshot.Market.FirstOrDefault(s => s.Id == itemToBuy.ItemId) ?? throw new Exception("No such item found on market.");
 
         if (item.Value > character.Details.Wealth)
             throw new Exception("Not enough coin to purchase this item.");
@@ -234,6 +246,8 @@ public class ValidatorService : IValidatorService
     {
         ValidateAgainstNull(levelup, "Level up cannot be null.");
         ValidateString(levelup.Stat, "Stat missing or invalid for levelup.");
+        ValidateGuid(levelup.CharacterId);
+        ValidateGuid(levelup.PlayerId);
 
         if (!Statics.Stats.All.Contains(levelup.Stat))
             throw new Exception("Unable to find stat in list of stats.");
@@ -248,16 +262,16 @@ public class ValidatorService : IValidatorService
             throw new Exception("Character is locked.");
 
         if (!character.Details.IsAlive)
-            throw new Exception("Unable to export: character is dead.");
+            throw new Exception("Character is dead.");
 
         if (character.Details.Levelup == 0)
             throw new Exception("No lvl up points to distribute.");
 
         var stat = typeof(CharacterStats).GetProperty(levelup.Stat)!;
-        var currentValue = (int)stat.GetValue(character.Stats)!;
+        var currentValue = (int)stat.GetValue(character.Stats.Base)!;
 
         if (currentValue >= character.Details.Levelup)
-            throw new Exception("Current value is higher than the available number of level up points.");
+            throw new Exception("Level up points value should be higher than the selected stat.");
         
         return character;
     }
@@ -269,12 +283,7 @@ public class ValidatorService : IValidatorService
         ValidateGuid(identity.PlayerId);
         ValidatePlayerExists(identity.PlayerId);
 
-        var character = _snapshot.Players.First(s => s.Id == identity.PlayerId).Characters.FirstOrDefault(s => s.Identity.Id == identity.Id) ?? throw new Exception("Character not found.");
-
-        if (character.Details.IsNpc)
-            return character;
-
-        return character;
+        return _snapshot.Players.First(s => s.Id == identity.PlayerId).Characters.FirstOrDefault(s => s.Identity.Id == identity.Id) ?? throw new Exception("Character not found.");
     }
 
     public void ValidateOnGetCharacters(Guid playerId)

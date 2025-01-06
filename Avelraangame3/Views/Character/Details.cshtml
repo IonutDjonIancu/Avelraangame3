@@ -1,10 +1,11 @@
-﻿@* Character/Details *@
+﻿@model Characters
+
+@* Character/Details *@
 <div class="row">
     <div class="col-8">
         <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-            <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Upload">Upload</a>
-            <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Create">Create</a>
-            <a type="button" class="btn btn-secondary" asp-controller="Character" asp-action="Details">Characters</a>
+            <button class="btn btn-outline-secondary" onclick="navigateTo('/Character/Create')">Create</button>
+            <button class="btn btn-secondary">Characters</button>
         </div>
     </div>
     <div class="col-4">
@@ -14,105 +15,44 @@
     </div>
 </div>
 
-<div class="container mt-3 footer-border" id="showContent" style="display:none"></div>
-<div class="container mt-3 footer-border" id="content" style="display:none">
-    <div class="row mt-3">
-        <div class="col-3">
-            <ul>
-                <li class="text-muted">
-                    item 1
-                </li>
-                <li>
-                    item 2
-                </li>
-                <li>
-                    item 3
-                </li>
-            </ul>
+@if(Model.CharactersList.Count > 0) 
+{
+    <div class="container mt-3 footer-border" id="characters">
+        <div class="row d-flex justify-content-between mt-3">
+            <div class="col col-12 d-flex justify-content-start">
+                @foreach (var character in Model.CharactersList)
+                {
+                    <img class="rounded-3 m-1 pointer"
+                        onclick="loadCharacter('@character.Id')"
+                        id="@character.Id"
+                        src="@character.Portrait"
+                        title="@character.Name"
+                        width="60"
+                        height="80" />
+                }
+            </div>
         </div>
-        <div class="col-3">
-            <ul>
-                <li>
-                    item 1
-                </li>
-                <li>
-                    item 2
-                </li>
-                <li>
-                    item 3
-                </li>
-            </ul>
-        </div>
-        <div class="col-3">
-            <ul>
-                <li>
-                    item 1
-                </li>
-                <li>
-                    item 2
-                </li>
-                <li>
-                    item 3
-                </li>
-            </ul>
-        </div>
-        <div class="col-3">
-            <ul>
-                <li>
-                    item 1
-                </li>
-                <li>
-                    item 2
-                </li>
-                <li>
-                    item 3
-                </li>
-            </ul>
-        </div>
-    </div>    
-</div>
+    </div>
+} 
+else 
+{
+    <p class="mb-0 text-muted">No characters to show...</p>
+}
 
 <script>
-    const loadCharacter = () => {
-        var characterId = localStorage.getItem("characterId");
-        var sessionId = localStorage.getItem("sessionId");
+    const loadCharacter = (characterId) => {
+        var playerId = getPlayerId();
 
-        if (!characterId || !sessionId) {
+        if (!characterId || !playerId) {
             return;
         }
 
-        window.location.href = "/character/detailsOf?characterId=" + characterId + "&sessionId=" + sessionId;
-    }
-
-    const getCharacter = () => {
-
-        var characterId = localStorage.getItem("characterId");
-        var sessionId = localStorage.getItem("sessionId");
-
-        $.ajax({
-            type: 'GET',
-            url: '@Url.Action("GetCharacter", "Character")' +
-                '?characterId=' + encodeURIComponent(characterId) +
-                '&sessionId=' + encodeURIComponent(sessionId),
-            dataType: 'json',
-            success: function (response) {
-                localStorage.setItem("character", JSON.stringify(response));
-                console.log(response);
-
-                var charImageHtml = `
-                        <img onclick="loadCharacter()" class="rounded-3 mt-3 pointer" src="${response.details.portrait}" width="60" height="80" title="Show character" />
-                `
-
-                $("#showContent").append(charImageHtml);
-                $("#spinner").hide(500);
-                $("#showContent").show();
-            },
-            error: function (xhr, status, error) {
-                window.location.href = "/home/error?info=" + xhr.responseText;
-            }
-        });
+        navigateTo(`/Character/DetailsOf/${playerId}/${characterId}`);
     }
 
     // run logic
-    getCharacter();
+    $(document).ready(() => {
+        hideLoading();
+        logModel();
+    });
 </script>

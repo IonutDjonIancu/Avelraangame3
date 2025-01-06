@@ -3,6 +3,7 @@ using Services;
 
 namespace Avelraangame3.Controllers;
 
+[Route("Item")]
 public class ItemController : Controller
 {
     private readonly IItemService _itemService;
@@ -13,6 +14,7 @@ public class ItemController : Controller
     }
 
     #region requests
+    [HttpGet("GetRandomItem")]
     public IActionResult GetRandomItem()
     {
         return Ok();

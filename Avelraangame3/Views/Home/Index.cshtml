@@ -19,7 +19,7 @@
         </div>
         <div class="row mt-2 text-center">
             <p class="mb-0 text-muted">or...</p>
-            <p class="mb-0 text-muted">Use session id</p>
+            <p class="mb-0 text-muted">use your session token</p>
         </div>
         <div class="row mt-2">
             <div class="col d-inline-flex justify-content-center align-items-center">
@@ -28,17 +28,45 @@
             </div>
         </div>
     </div>
+    <div id="showSessionToken">
+        <div class="row mt-2 text-center">
+            <p id="playerName" class="mb-0 text-muted"></p>
+            <p id="sessionToken" class="mb-0 text-muted"></p>
+            <div>
+                <button onclick="clearLocalStorage()">clear</button>
+                <button onclick="test()">test</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 
 <script>
+    const test = () => {
+        console.log(getPlayerId());
+    }
+
+    const clearLocalStorage = () => {
+        localStorage.clear();
+        window.location.reload();
+    }
+
+    const displayPlayerInfo = () => {
+        $("#playerName").text(localStorage.getItem("playerName"));
+        $("#sessionToken").text(localStorage.getItem("playerId"));
+    };
+
     const showHideCreatePlayer = () => {
         var playerFromLocalStorage = localStorage.getItem("playerName");
-        var sessionIdFromLocalStorage = localStorage.getItem("sessionId");
+        var sessionIdFromLocalStorage = localStorage.getItem("playerId");
 
         if (playerFromLocalStorage && sessionIdFromLocalStorage) {
             $("#createPlayerOrLogin").hide();
-        }  
+            displayPlayerInfo();
+        } else {
+            $("#showSessionToken").hide();
+        }
+        
     }
 
     const createPlayer = () => {
@@ -48,27 +76,24 @@
             return;
         }
 
+        var url = `CreatePlayer/${playerName}`;
+
         $.ajax({
             type: 'POST',
-            url: '@Url.Action("CreateCharacter", "Character")',
+            url: url,
             contentType: 'application/json',
-            // data: JSON.stringify(data),
             success: function (response) {
                 
-                localStorage.setItem("playerName", response.Name);
-                localStorage.setItem("sessionId", response.Id);
+                localStorage.setItem("playerName", response.name);
+                localStorage.setItem("playerId", response.id);
 
                 window.location.reload();
-
             },
             error: function (xhr, status, error) {
-                window.location.href = "/home/error?info=" + xhr.responseText;
+                window.location.href = "/error?info=" + xhr.responseText;
             }
         });
-
-
     }
-
 
     // to run
 

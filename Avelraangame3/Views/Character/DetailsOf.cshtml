@@ -4,9 +4,8 @@
 <div class="row">
     <div class="col-8">
         <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-            <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Upload">Upload</a>
-            <a type="button" class="btn btn-outline-dark" asp-controller="Character" asp-action="Create">Create</a>
-            <a type="button" class="btn btn-outline-secondary" asp-controller="Character" asp-action="Details">Characters</a>
+            <button class="btn btn-outline-secondary" onclick="navigateTo('/Character/Create')">Create</button>
+            <button class="btn btn-outline-secondary" onclick="navigateTo('/Character/Details/' + getPlayerId())">Characters</button>
         </div>
     </div>
     <div class="col-4">
@@ -29,44 +28,44 @@
             <ul>
                 @if(Model.Details.IsLocked)
                 {
-                    <li>
+                    <li class="text-gray">
                         <span class="text-red">character locked (@Model.Details.BoardType)</span>
                     </li>
                 }
-                <li>
+                <li class="text-gray">
                     name: <span class="text-muted">@Model.Details.Name</span>
                 </li>
-                <li>
+                <li class="text-gray">
                     race: <span class="text-muted">@Model.Details.Race</span>
                 </li>
-                 <li>
+                <li class="text-gray">
                     culture: <span class="text-muted">@Model.Details.Culture</span>
                 </li>
-                <li>
+                <li class="text-gray">
                     specialization: <span class="text-muted">@Model.Details.Spec</span>
                 </li>
-                <li>
+                <li class="text-gray">
                     entity level: <span class="text-muted">@Model.Details.Entitylevel</span>
                 </li>
                 @if (Model.Details.Levelup > 0)
                 {
-                    <li>
-                        level up pts.: <span class="text-green">@Model.Details.Levelup</span>
+                    <li class="text-gray">
+                        level up pts.: <span class="text-orange">@Model.Details.Levelup</span>
                     </li>
                 }
                 else
                 {
-                    <li>
+                    <li class="text-gray">
                         level up pts.: <span class="text-muted">@Model.Details.Levelup</span>
                     </li>
                 }
-                <li>
+                <li class="text-gray">
                     wealth: <span class="text-muted">@Model.Details.Wealth</span>
                 </li>
-                <li>
+                <li class="text-gray">
                     worth: <span class="text-muted">@Model.Details.Worth</span>
                 </li>
-                <li>
+                <li class="text-gray">
                     renown: <span class="text-muted">@Model.Details.Renown</span>
                 </li>
             </ul>
@@ -75,55 +74,50 @@
         <div class="col-3">
             <p class="mb-0">Stats</p>
             <ul>
-                <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Endurance')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    Endurance:
-                    <span class="text-muted">@Model.Actuals.Endurance</span>
+                <li class="text-gray">
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Hitpoints')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Hitpoints:
+                    <span class="text-muted">@Model.Stats.Actual.Hitpoints</span>
                 </li>
-                <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Accretion')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    Accretion:
-                    <span class="text-muted">@Model.Actuals.Accretion</span>
-                </li>
-                <li>
+                <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Defense')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Defense:
-                    <span class="text-muted">@Model.Actuals.Defense</span> %
+                    <span class="text-muted">@Model.Stats.Actual.Defense</span>
                 </li>
-                <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Resist')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    Resist :
-                    <span class="text-muted">@Model.Actuals.Resist</span> %
+                <li class="text-gray">
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Mana')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Mana:
+                    <span class="text-muted">@Model.Stats.Actual.Mana</span>
                 </li>
-                <li>
+                <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Actions')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Actions:
-                    <span class="text-muted">@Model.Actuals.Actions</span>
+                    <span class="text-muted">@Model.Stats.Actual.Actions</span>
                 </li>
-                <li>
+                <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Strength')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Strength:
-                    <span class="text-muted">@Model.Actuals.Strength</span>
+                    <span class="text-muted">@Model.Stats.Actual.Strength</span>
                 </li>
-                <li>
+                <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Constitution')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Constitution:
-                    <span class="text-muted">@Model.Actuals.Constitution</span>
+                    <span class="text-muted">@Model.Stats.Actual.Constitution</span>
                 </li>
-                <li>
+                <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Agility')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Agility:
-                    <span class="text-muted">@Model.Actuals.Agility</span>
+                    <span class="text-muted">@Model.Stats.Actual.Agility</span>
                 </li>
-                <li>
+                <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Willpower')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Willpower:
-                    <span class="text-muted">@Model.Actuals.Willpower</span>
+                    <span class="text-muted">@Model.Stats.Actual.Willpower</span>
                 </li>
-                <li>
+                <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Abstract')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Abstract:
-                    <span class="text-muted">@Model.Actuals.Abstract</span>
+                    <span class="text-muted">@Model.Stats.Actual.Abstract</span>
                 </li>
             </ul>
         </div>
@@ -131,55 +125,55 @@
         <div class="col-3">
             <p class="mb-0">Skills</p>
             <ul>
-                <li>
+                <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Melee')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Melee:
-                    <span class="text-muted">@Model.Actuals.Melee</span>
+                    <span class="text-muted">@Model.Stats.Actual.Melee</span>
                 </li>
-                <li>
+                <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Arcane')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Arcane:
-                    <span class="text-muted">@Model.Actuals.Arcane</span>
+                    <span class="text-muted">@Model.Stats.Actual.Arcane</span>
                 </li>
-                <li>
+                <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Psionics')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Psionics:
-                    <span class="text-muted">@Model.Actuals.Psionics</span>
+                    <span class="text-muted">@Model.Stats.Actual.Psionics</span>
                 </li>
-                <li>
+                <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Social')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Social:
-                    <span class="text-muted">@Model.Actuals.Social</span>
+                    <span class="text-muted">@Model.Stats.Actual.Social</span>
                 </li>
-                 <li>
+                <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Hide')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Hide:
-                    <span class="text-muted">@Model.Actuals.Hide</span>
+                    <span class="text-muted">@Model.Stats.Actual.Hide</span>
                 </li>
-                <li>
+                <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Survival')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Survival:
-                    <span class="text-muted">@Model.Actuals.Survival</span>
+                    <span class="text-muted">@Model.Stats.Actual.Survival</span>
                 </li>
-                <li>
+                <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Tactics')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Tactics:
-                    <span class="text-muted">@Model.Actuals.Tactics</span>
+                    <span class="text-muted">@Model.Stats.Actual.Tactics</span>
                 </li>
-                <li>
+                <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Aid')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Aid:
-                    <span class="text-muted">@Model.Actuals.Aid</span>
+                    <span class="text-muted">@Model.Stats.Actual.Aid</span>
                 </li>
-                <li>
+                <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Crafting')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Crafting:
-                    <span class="text-muted">@Model.Actuals.Crafting</span>
+                    <span class="text-muted">@Model.Stats.Actual.Crafting</span>
                 </li>
-                 <li>
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Spot')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    Spot:
-                    <span class="text-muted">@Model.Actuals.Spot</span>
+                <li class="text-gray">
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Perception')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Perception:
+                    <span class="text-muted">@Model.Stats.Actual.Perception</span>
                 </li>
             </ul>
         </div>
@@ -213,27 +207,26 @@
 level @item.Level
 value @item.Value
 *** stats ***
-DEF @item.Stats.Defense
-RES @item.Stats.Resist 
-ACT @item.Stats.Actions
-END @item.Stats.Endurance
-ACC @item.Stats.Accretion
-STR @item.Stats.Strength
-CNS @item.Stats.Constitution
-AGL @item.Stats.Agility
-WIL @item.Stats.Willpower
-ABS @item.Stats.Abstract
+HPS @item.BonusStats.Hitpoints
+DEF @item.BonusStats.Defense
+MAN @item.BonusStats.Mana
+ACT @item.BonusStats.Actions
+STR @item.BonusStats.Strength
+CNS @item.BonusStats.Constitution
+AGL @item.BonusStats.Agility
+WIL @item.BonusStats.Willpower
+ABS @item.BonusStats.Abstract
 *** skills ***
-MEL @item.Stats.Melee
-ARC @item.Stats.Arcane 
-PSI @item.Stats.Psionics
-SOC @item.Stats.Social
-HID @item.Stats.Hide
-SUR @item.Stats.Survival
-TAC @item.Stats.Tactics
-AID @item.Stats.Aid 
-CRA @item.Stats.Crafting
-SPO @item.Stats.Spot " />
+MEL @item.BonusStats.Melee
+ARC @item.BonusStats.Arcane 
+PSI @item.BonusStats.Psionics
+SOC @item.BonusStats.Social
+HID @item.BonusStats.Hide
+SUR @item.BonusStats.Survival
+TAC @item.BonusStats.Tactics
+AID @item.BonusStats.Aid 
+CRA @item.BonusStats.Crafting
+PER @item.BonusStats.Perception " />
             }
         </div>
         @* Regalia *@
@@ -253,27 +246,26 @@ SPO @item.Stats.Spot " />
 level @trinket.Level
 value @trinket.Value
 *** stats ***
-DEF @trinket.Stats.Defense
-RES @trinket.Stats.Resist
-ACT @trinket.Stats.Actions
-END @trinket.Stats.Endurance
-ACC @trinket.Stats.Accretion
-STR @trinket.Stats.Strength
-CNS @trinket.Stats.Constitution
-AGL @trinket.Stats.Agility
-WIL @trinket.Stats.Willpower
-ABS @trinket.Stats.Abstract
+HPS @trinket.BonusStats.Hitpoints
+DEF @trinket.BonusStats.Defense
+MAN @trinket.BonusStats.Mana
+ACT @trinket.BonusStats.Actions
+STR @trinket.BonusStats.Strength
+CNS @trinket.BonusStats.Constitution
+AGL @trinket.BonusStats.Agility
+WIL @trinket.BonusStats.Willpower
+ABS @trinket.BonusStats.Abstract
 *** skills ***
-MEL @trinket.Stats.Melee
-ARC @trinket.Stats.Arcane
-PSI @trinket.Stats.Psionics
-SOC @trinket.Stats.Social
-HID @trinket.Stats.Hide
-SUR @trinket.Stats.Survival
-TAC @trinket.Stats.Tactics
-AID @trinket.Stats.Aid
-CRA @trinket.Stats.Crafting
-SPO @trinket.Stats.Spot " />
+MEL @trinket.BonusStats.Melee
+ARC @trinket.BonusStats.Arcane
+PSI @trinket.BonusStats.Psionics
+SOC @trinket.BonusStats.Social
+HID @trinket.BonusStats.Hide
+SUR @trinket.BonusStats.Survival
+TAC @trinket.BonusStats.Tactics
+AID @trinket.BonusStats.Aid
+CRA @trinket.BonusStats.Crafting
+PER @trinket.BonusStats.Perception " />
             }
         </div>
         @* Supplies *@
@@ -294,27 +286,26 @@ SPO @trinket.Stats.Spot " />
 level @suppliesItem.Level
 value @suppliesItem.Value
 *** stats ***
-DEF @suppliesItem.Stats.Defense
-RES @suppliesItem.Stats.Resist
-ACT @suppliesItem.Stats.Actions
-END @suppliesItem.Stats.Endurance
-ACC @suppliesItem.Stats.Accretion
-STR @suppliesItem.Stats.Strength
-CNS @suppliesItem.Stats.Constitution
-AGL @suppliesItem.Stats.Agility
-WIL @suppliesItem.Stats.Willpower
-ABS @suppliesItem.Stats.Abstract
+HPS @suppliesItem.BonusStats.Hitpoints
+DEF @suppliesItem.BonusStats.Defense
+MAN @suppliesItem.BonusStats.Mana
+ACT @suppliesItem.BonusStats.Actions
+STR @suppliesItem.BonusStats.Strength
+CNS @suppliesItem.BonusStats.Constitution
+AGL @suppliesItem.BonusStats.Agility
+WIL @suppliesItem.BonusStats.Willpower
+ABS @suppliesItem.BonusStats.Abstract
 *** skills ***
-MEL @suppliesItem.Stats.Melee
-ARC @suppliesItem.Stats.Arcane
-PSI @suppliesItem.Stats.Psionics
-SOC @suppliesItem.Stats.Social
-HID @suppliesItem.Stats.Hide
-SUR @suppliesItem.Stats.Survival
-TAC @suppliesItem.Stats.Tactics
-AID @suppliesItem.Stats.Aid
-CRA @suppliesItem.Stats.Crafting
-SPO @suppliesItem.Stats.Spot " />
+MEL @suppliesItem.BonusStats.Melee
+ARC @suppliesItem.BonusStats.Arcane
+PSI @suppliesItem.BonusStats.Psionics
+SOC @suppliesItem.BonusStats.Social
+HID @suppliesItem.BonusStats.Hide
+SUR @suppliesItem.BonusStats.Survival
+TAC @suppliesItem.BonusStats.Tactics
+AID @suppliesItem.BonusStats.Aid
+CRA @suppliesItem.BonusStats.Crafting
+PER @suppliesItem.BonusStats.Perception " />
             }
             @foreach (var suppliesTrinket in Model.Supplies.Regalia)
             {
@@ -331,91 +322,32 @@ SPO @suppliesItem.Stats.Spot " />
 level @suppliesTrinket.Level
 value @suppliesTrinket.Value
 *** stats ***
-DEF @suppliesTrinket.Stats.Defense
-RES @suppliesTrinket.Stats.Resist
-ACT @suppliesTrinket.Stats.Actions
-END @suppliesTrinket.Stats.Endurance
-ACC @suppliesTrinket.Stats.Accretion
-STR @suppliesTrinket.Stats.Strength
-CNS @suppliesTrinket.Stats.Constitution
-AGL @suppliesTrinket.Stats.Agility
-WIL @suppliesTrinket.Stats.Willpower
-ABS @suppliesTrinket.Stats.Abstract
+HPS @suppliesTrinket.BonusStats.Hitpoints
+DEF @suppliesTrinket.BonusStats.Defense
+MAN @suppliesTrinket.BonusStats.Mana
+ACT @suppliesTrinket.BonusStats.Actions
+STR @suppliesTrinket.BonusStats.Strength
+CNS @suppliesTrinket.BonusStats.Constitution
+AGL @suppliesTrinket.BonusStats.Agility
+WIL @suppliesTrinket.BonusStats.Willpower
+ABS @suppliesTrinket.BonusStats.Abstract
 *** skills ***
-MEL @suppliesTrinket.Stats.Melee
-ARC @suppliesTrinket.Stats.Arcane
-PSI @suppliesTrinket.Stats.Psionics
-SOC @suppliesTrinket.Stats.Social
-HID @suppliesTrinket.Stats.Hide
-SUR @suppliesTrinket.Stats.Survival
-TAC @suppliesTrinket.Stats.Tactics
-AID @suppliesTrinket.Stats.Aid
-CRA @suppliesTrinket.Stats.Crafting
-SPO @suppliesTrinket.Stats.Spot " />
+MEL @suppliesTrinket.BonusStats.Melee
+ARC @suppliesTrinket.BonusStats.Arcane
+PSI @suppliesTrinket.BonusStats.Psionics
+SOC @suppliesTrinket.BonusStats.Social
+HID @suppliesTrinket.BonusStats.Hide
+SUR @suppliesTrinket.BonusStats.Survival
+TAC @suppliesTrinket.BonusStats.Tactics
+AID @suppliesTrinket.BonusStats.Aid
+CRA @suppliesTrinket.BonusStats.Crafting
+PER @suppliesTrinket.BonusStats.Perception " />
             }
-        </div>
-    </div>
-</div>
-
-<div class="container mt-3 footer-border">
-    <div id="characterString" style="display:none">
-        <div class="row mt-3">
-            <div class="col d-flex justify-content-center align-items-center">
-                <textarea id="characterStringArea" class="input-with-color w-75 mt-2 p-0 ps-2 rounded-2" title="this is your character's encrypted string" style="font-size:xx-small"></textarea>
-            </div>
-        </div>
-        <div class="row mt-3">
-            <div class="col d-flex justify-content-center align-items-center">
-                <div class="btn-group btn-group-sm">
-                    <button onclick="copyCharacter()" id="copyBtn" class="btn btn-sm btn-outline-dark">Copy</button>
-                    <button onclick="hideCopyCharacterAction()" title="close export tab" type="button" class="btn btn-outline-dark actions secondary-darkred">&#10008;</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row mt-3">
-        <div>
-            <button onclick="exportCharacter()" class="btn btn-sm btn-outline-dark float-end">Export character</button>
         </div>
     </div>
 </div>
 
 <script>
-    const hideCopyCharacterAction = () => {
-        $("#characterString").slideUp(200);
-    }
-
-    const copyCharacter = () => {
-        $("#characterStringArea").select();
-        document.execCommand('copy');
-    }
-
-    const exportCharacter = () => {
-        const characterId = localStorage.getItem("characterId");
-        const sessionId = localStorage.getItem("sessionId");
-
-        if (!characterId) return;
-        $("#spinner").show();
-
-        $.ajax({
-            type: 'PUT',
-            url: '@Url.Action("ExportCharacter", "Character")',
-            contentType: "application/json",
-            data: JSON.stringify({
-                id: characterId,
-                sessionId: sessionId
-            }),
-            success: function (response) {
-                $("#characterStringArea").val(response);
-                $('#characterString').slideDown(200)
-                hideLoading();
-            },
-            error: function (xhr, status, error) {
-                window.location.href = "/home/error?info=" + xhr.responseText;
-            }
-        });
-    }
-
     const equipUnequipItem = (id, action, type) => {
         $("#inventoryActions").show();
         itemSelect(id);
@@ -444,121 +376,127 @@ SPO @suppliesTrinket.Stats.Spot " />
 
     const equipItem = () => {
 
-        const characterId = localStorage.getItem("characterId");
-        const sessionId = localStorage.getItem("sessionId");
-        const itemId = localStorage.getItem("selectedItem");
+        var characterId = JSON.parse('@Html.Raw(Json.Serialize(Model))').identity.id;
+        var playerId = getPlayerId();
+        var itemId = localStorage.getItem("selectedItem");
 
-        if (!characterId) return;
-        $("#spinner").show();
+        if (!characterId || !playerId || !itemId) return;
+        showLoading();
         
+        var url = "/Character/EquipItem";
+
         $.ajax({
             type: 'PUT',
-            url: '@Url.Action("EquipItem", "Character")',
+            url: url,
             contentType: "application/json",
             data: JSON.stringify({
                 itemId: itemId,
                 characterId: characterId,
-                sessionId: sessionId
+                playerId: playerId
             }),
             success: function (response) {
-                localStorage.setItem("character", JSON.stringify(response));
                 location.reload();
             },
             error: function (xhr, status, error) {
-                window.location.href = "/home/error?info=" + xhr.responseText;
+                alert(xhr.responseText);
+                hideLoading();
             }
         });
     }
 
     const unequipItem = () => {
 
-        const characterId = localStorage.getItem("characterId");
-        const sessionId = localStorage.getItem("sessionId");
-        const itemId = localStorage.getItem("selectedItem");
+        var characterId = JSON.parse('@Html.Raw(Json.Serialize(Model))').identity.id;
+        var playerId = getPlayerId();
+        var itemId = localStorage.getItem("selectedItem");
 
-        if (!characterId) return;
-        $("#spinner").show();
+        if (!characterId || !playerId || !itemId) return;
+        showLoading();
+
+        var url = "/Character/UnequipItem";
 
         $.ajax({
             type: 'PUT',
-            url: '@Url.Action("UnequipItem", "Character")',
+            url: url,
             contentType: "application/json",
             data: JSON.stringify({
                 itemId: itemId,
                 characterId: characterId,
-                sessionId: sessionId
+                playerId: playerId
             }),
-            success: function (response) {
-                localStorage.setItem("character", JSON.stringify(response));
+             success: function (response) {
                 location.reload();
             },
             error: function (xhr, status, error) {
-                window.location.href = "/home/error?info=" + xhr.responseText;
+                alert(xhr.responseText);
+                hideLoading();
             }
         });
     }
 
     const sellItem = () => {
 
-        const characterId = localStorage.getItem("characterId");
-        const sessionId = localStorage.getItem("sessionId");
-        const itemId = localStorage.getItem("selectedItem");
+        var characterId = JSON.parse('@Html.Raw(Json.Serialize(Model))').identity.id;
+        var playerId = getPlayerId();
+        var itemId = localStorage.getItem("selectedItem");
 
-        if (!characterId) return;
-        $("#spinner").show();
+        if (!characterId || !playerId || !itemId) return;
+        showLoading();
+
+        var url = "/Character/SellItem";
 
         $.ajax({
             type: 'PUT',
-            url: '@Url.Action("SellItem", "Character")',
+            url: url,
             contentType: "application/json",
             data: JSON.stringify({
                 itemId: itemId,
                 characterId: characterId,
-                sessionId: sessionId
+                playerId: playerId
             }),
             success: function (response) {
-                localStorage.setItem("character", JSON.stringify(response));
                 location.reload();
             },
             error: function (xhr, status, error) {
-                window.location.href = "/home/error?info=" + xhr.responseText;
+                alert(xhr.responseText);
+                hideLoading();
             }
         });
     }
 
     const levelup = (attr) => {
 
-        const characterId = localStorage.getItem("characterId");
-        const sessionId = localStorage.getItem("sessionId");
+        const playerId = getPlayerId();
+        if(!playerId) return;
 
-        if (!characterId) return;
-        $("#spinner").show();
+        var characterId = JSON.parse('@Html.Raw(Json.Serialize(Model))').identity.id;
+
+        showLoading();
+
+        var url = "/Character/Levelup"
 
         $.ajax({
             type: 'PUT',
-            url: '@Url.Action("Levelup", "Character")',
+            url: url,
             contentType: "application/json",
             data: JSON.stringify({
                 characterId: characterId,
-                sessionId: sessionId,
+                playerId: playerId,
                 stat: attr
             }),
             success: function (response) {
-                localStorage.setItem("character", JSON.stringify(response));
                 location.reload();
             },
             error: function (xhr, status, error) {
-                window.location.href = "/home/error?info=" + xhr.responseText;
+                alert(xhr.responseText);
+                hideLoading();
             }
         });
     }
 
-    const hideLoading = () => {
-        $(document).ready(() => {
-            $("#spinner").hide(500);
-        });
-    }
-
     // run on load
-    hideLoading();
+    $(document).ready(() => {
+        hideLoading();
+        logModel();
+    });
 </script>

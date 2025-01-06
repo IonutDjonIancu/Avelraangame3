@@ -78,10 +78,10 @@
                         </div>
                         <div>
                             <div class="px-2 text-center" style="font-size: small">
-                                <span title="endurance" class="text-100">@character.Fights.Endurance</span> | <span title="defense">@character.Fights.Defense</span> &#9830; <span title="actions">@character.Fights.Actions</span>
+                                <span title="hitpoints" class="text-100">@character.Stats.Fight.Hitpoints</span> | <span title="defense">@character.Stats.Fight.Defense</span> &#9830; <span title="actions">@character.Stats.Fight.Actions</span>
                             </div>
                             <div class="px-2 text-center" style="font-size: small">
-                                <span title="accretion" class="text-100-m">@character.Fights.Accretion</span> | <span title="resist">@character.Fights.Resist</span> &#9824; <span style="font-size:x-small" title="specialization">@character.Details.Spec.Substring(0, 3)</span>
+                                <span title="mana" class="text-100-m">@character.Stats.Fight.Mana</span> | &#9824; <span style="font-size:x-small" title="specialization">@character.Details.Spec.Substring(0, 3)</span>
                             </div>
                         </div>
                     </div>
@@ -103,10 +103,10 @@
                         </div>
                         <div>
                             <div class="px-2 text-center" style="font-size: small">
-                                <span title="endurance" class="text-100">@npc.Fights.Endurance</span> | <span title="defense">@npc.Fights.Defense</span> &#9830; <span title="actions">@npc.Fights.Actions</span>
+                                <span title="hitpoints" class="text-100">@npc.Stats.Fight.Hitpoints</span> | <span title="defense">@npc.Stats.Fight.Defense</span> &#9830; <span title="actions">@npc.Stats.Fight.Actions</span>
                             </div>
                             <div class="px-2 text-center" style="font-size: small">
-                                <span title="accretion" class="text-100-m">@npc.Fights.Accretion</span> | <span title="resist">@npc.Fights.Resist</span> &#9824; <span style="font-size:x-small" title="specialization">@npc.Details.Spec.Substring(0, 3)</span>
+                                <span title="mana" class="text-100-m">@npc.Stats.Fight.Mana</span> | &#9824; <span style="font-size:x-small" title="specialization">@npc.Details.Spec.Substring(0, 3)</span>
                             </div>
                         </div>
                     </div>
@@ -177,16 +177,6 @@
         $("#actions").hide();
     }
 
-    const hideLoading = () => {
-        $(document).ready(() => {
-            $("#spinner").hide(500);
-        });
-
-        localStorage.removeItem("selectedChar1");
-        localStorage.removeItem("selectedChar2");
-
-        console.log(@Html.Raw(Json.Serialize(Model)));
-    }
 
     hideLoading();
 </script>
