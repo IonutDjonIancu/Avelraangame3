@@ -4,9 +4,13 @@ namespace Services;
 
 public interface ITownhallService
 {
+    #region Boards
     Board GetBoard(CharacterIdentity characterIdentity);
-
     Duel GenerateDuelVsNpc(CharacterIdentity characterIdentity, string effortLevelName);
+    #endregion
+
+    Market GetMarket(Guid playerId);
+    void GenerateItemsForMarket();
 }
 
 public class TownhallService : ITownhallService
@@ -16,19 +20,24 @@ public class TownhallService : ITownhallService
     private readonly ICharacterService _characterService;
     private readonly INpcService _npcService;
     private readonly IValidatorService _validatorService;
+    private readonly IItemService _itemService;
 
     public TownhallService(
         ISnapshot snapshot,
         IDiceService diceService,
         ICharacterService characterService,
         INpcService npcService,
-        IValidatorService validatorService)
+        IValidatorService validatorService,
+        IItemService itemService)
     {
         _snapshot = snapshot;
         _diceService = diceService;
         _characterService = characterService;  
         _npcService = npcService;
         _validatorService = validatorService;
+        _itemService = itemService;
+
+        GenerateItemsForMarket();
     }
 
     public Board GetBoard(CharacterIdentity characterIdentity)
@@ -86,6 +95,44 @@ public class TownhallService : ITownhallService
         return duel;
     }
 
+    public Market GetMarket(Guid playerId)
+    {
+        _validatorService.ValidatePlayerExists(playerId);
+
+        var market = new Market();
+
+        _snapshot.MarketItems.ForEach(s => market.Items.ItemsList.Add(s));
+
+        _snapshot.Players.First(s => s.Id == playerId)
+            .Characters.Where(s => s.Details.IsAlive && !s.Details.IsLocked).ToList()
+            .ForEach(d =>
+            {
+                market.Characters.CharactersList.Add(new CharacterVm
+                {
+                    Id = d.Identity.Id,
+                    Name = d.Details.Name,
+                    Portrait = d.Details.Portrait,
+                    Wealth = d.Details.Wealth,
+                });
+            });
+
+        return market;
+    }
+
+    public void GenerateItemsForMarket()
+    {
+        // TODO: this should change every day, unless the item is reserved
+
+        if (_snapshot.MarketItems.Count > 0)
+            return;
+
+        for (int i = 0; i < 20; i++)
+        {
+            _snapshot.MarketItems.Add(_itemService.GenerateRandomItem());
+        }
+    }
+
+
     #region private methods
     private void PrepareForFight_nonCore(Board board)
     {
@@ -139,5 +186,7 @@ public class TownhallService : ITownhallService
         //    board.Message = "Tactically inconclusive.";
         //}
     }
+
+    
     #endregion
 }

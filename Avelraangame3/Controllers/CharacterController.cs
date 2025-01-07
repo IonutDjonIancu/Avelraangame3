@@ -164,11 +164,11 @@ public class CharacterController : Controller
 
     // PUT: Character/EquipItem
     [HttpPut("EquipItem")]
-    public IActionResult EquipItem([FromBody] EquipItem equipItem)
+    public IActionResult EquipItem([FromBody] EquipItem item)
     {
         try
         {
-            _characterService.EquipItem(equipItem);
+            _characterService.EquipItem(item);
 
             return Ok();
         }
@@ -180,11 +180,11 @@ public class CharacterController : Controller
 
     // PUT: Character/UnequipItem
     [HttpPut("UnequipItem")]
-    public IActionResult UnequipItem([FromBody] EquipItem equipItem)
+    public IActionResult UnequipItem([FromBody] EquipItem item)
     {
         try
         {
-            _characterService.UnequipItem(equipItem);
+            _characterService.UnequipItem(item);
 
             return Ok();
         }
@@ -196,11 +196,27 @@ public class CharacterController : Controller
 
     // PUT: Character/UnequipItem
     [HttpPut("SellItem")]
-    public IActionResult SellItem([FromBody] EquipItem equipItem)
+    public IActionResult SellItem([FromBody] EquipItem item)
     {
         try
         {
-            _characterService.SellItem(equipItem);
+            _characterService.SellItem(item);
+
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+    
+    // PUT: Character/BuyItem
+    [HttpPut("BuyItem")]
+    public IActionResult BuyItem([FromBody] EquipItem item)
+    {
+        try
+        {
+            _characterService.BuyItem(item);
 
             return Ok();
         }
@@ -225,5 +241,6 @@ public class CharacterController : Controller
             return BadRequest(ex.Message);
         }
     }
+
     #endregion
 }

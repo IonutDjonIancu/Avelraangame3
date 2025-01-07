@@ -94,7 +94,7 @@
         var race = $("#race").val();
         var culture = $("#culture").val();
         var spec = $("#spec").val();
-        var playerId = localStorage.getItem("playerId");
+        var playerId = getPlayerId();
 
         var data = {
             playerId: playerId,

@@ -1,0 +1,184 @@
+﻿@model Market
+
+@{
+    ViewData["Title"] = "Character";
+}
+
+<div class="row">
+    <div class="col-8">
+        <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+            <button class="btn btn-outline-secondary">Duel</button>
+            <button class="btn btn-outline-secondary">Quest</button>
+            <button class="btn btn-outline-secondary">Tourney</button>
+            <button class="btn btn-outline-secondary">Tavern</button>
+            <button class="btn btn-secondary">Market</button>
+        </div>
+    </div>
+    <div class="col-4">
+        <div id="spinner" class="spinner-grow text-secondary float-end" role="status" title="Loading...">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
+
+@if (Model.Characters.CharactersList.Count > 0)
+{
+    <div class="container mt-3 footer-border" id="characters">
+        <div id="showWealth" class="row mt-1 mx-0 primary-green" style="display:none"></div>
+        <div class="row d-flex flex-wrap justify-content-between mt-1">
+            <div class="col col-12 d-flex flex-wrap justify-content-start">
+                @foreach (var character in Model.Characters.CharactersList)
+                {
+                    <img class="rounded-3 m-1 pointer item-char item-1 character-img"
+                         onclick="selectCharacter('@character.Id')"
+                         id="character-@character.Id"
+                         src="@character.Portrait"
+                         title="@character.Name" />
+                }
+            </div>
+        </div>
+    </div>
+} else {
+    <div class="container mt-3 footer-border">
+        <div class="row mt-2">
+            <div class="col d-flex justify-content-center align-items-center">
+                <p class="mb-0 text-muted">No characters to show...</p>
+            </div>
+        </div>
+    </div>
+}
+
+@if (Model.Items.ItemsList.Count > 0)
+{
+    <div class="container mt-3 footer-border" id="characters">
+        <div id="showCost" class="row d-flex flex-wrap mt-2 primary-green actions" style="display:none">
+            <div id="addCost" class="col-2 btn-group btn-group-sm actions" role="group"></div>
+        </div>
+        <div class="row d-flex flex-wrap justify-content-between mt-3">
+            <div class="col col-12 d-flex flex-wrap justify-content-start">
+                @foreach (var item in Model.Items.ItemsList)
+                {
+                    <img class="rounded-2 m-1 pointer item item-@item.Level item-img"
+                         onclick="selectItem('@item.Id')"
+                         id="item-@item.Id"
+                         src="@item.Icon"
+                         title="@item.Name
+*** details ***
+@(item.HasTaint ? "tainted" : "untainted")
+@item.Type.ToLower()
+level @item.Level
+value @item.Value
+*** stats ***
+HPS @item.BonusStats.Hitpoints
+DEF @item.BonusStats.Defense
+MAN @item.BonusStats.Mana
+ACT @item.BonusStats.Actions
+STR @item.BonusStats.Strength
+CNS @item.BonusStats.Constitution
+AGL @item.BonusStats.Agility
+WIL @item.BonusStats.Willpower
+ABS @item.BonusStats.Abstract
+*** skills ***
+MEL @item.BonusStats.Melee
+ARC @item.BonusStats.Arcane
+PSI @item.BonusStats.Psionics
+SOC @item.BonusStats.Social
+HID @item.BonusStats.Hide
+SUR @item.BonusStats.Survival
+TAC @item.BonusStats.Tactics
+AID @item.BonusStats.Aid
+CRA @item.BonusStats.Crafting
+PER @item.BonusStats.Perception" />
+                }
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container mt-3 footer-border">
+        <div class="row mt-2">
+            <div class="col d-flex justify-content-center align-items-center">
+                <p class="mb-0 text-muted">No characters to show...</p>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+
+
+<script>
+    const selectCharacter = (characterId) => {
+        localStorage.setItem('selectedCharacter', characterId);
+        
+        $('.selected-character1').each(function() {
+            $(this).removeClass('selected-character1');
+        });
+        $('#character-' + characterId).addClass('selected-character1');
+
+        var wealth = getModel().characters.charactersList.find(i => i.id === characterId).wealth;
+        $('#showWealth').append('Wealth: ' + wealth).show();
+    }
+
+    const selectItem = (itemId) => {
+        localStorage.setItem('selectedItem', itemId);
+
+        $('.selected-character2').each(function() {
+            $(this).removeClass('selected-character2');
+        });
+        $('#item-' + itemId).addClass('selected-character2');
+
+        var cost = getModel().items.itemsList.find(i => i.id === itemId).value;
+
+        var html = `
+            <button onclick="buyItem()" class="btn btn-sm btn-outline-dark primary-darkgreen">Buy for: ${cost}</button>
+            <button onclick="hideActions()" class="btn btn-sm btn-outline-dark secondary-darkred">&#10008;</button>
+        `
+        $('#addCost').empty();
+        $('#addCost').append(html);
+        $('#addCost').show();
+        $('#showCost').show();
+    }
+
+    const buyItem = () => {
+        var characterId = localStorage.getItem("selectedCharacter");
+        var itemId = localStorage.getItem("selectedItem");
+        var playerId = getPlayerId();
+
+        if(!characterId) alert("Select the character that buys.");
+
+        if(!characterId || !itemId || !playerId) return;
+
+        var url = "/Character/BuyItem";
+
+        $.ajax({
+            type: 'PUT',
+            url: url,
+            contentType: "application/json",
+            data: JSON.stringify({
+                itemId: itemId,
+                characterId: characterId,
+                playerId: playerId
+            }),
+            success: function (response) {
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                alert(xhr.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    // run logic
+    $(document).ready(() => {
+        hideLoading();
+        deselectCharItem();
+        logModel();
+    });
+</script>
+
+

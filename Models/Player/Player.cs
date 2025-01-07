@@ -10,5 +10,6 @@ public class Player
     [MaxLength(10)]
     public List<Character> Characters { get; set; } = [];
 
-    public HashSet<Character> Graveyard { get; set; } = [];
+    [MaxLength(1000)]
+    public List<Character> Graveyard { get; set; } = [];
 }

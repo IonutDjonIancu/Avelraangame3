@@ -8,29 +8,40 @@ namespace Avelraangame3.Controllers;
 public class TownhallController : Controller
 {
     private readonly ICharacterService _characterService;
-    private readonly INpcService _npcService;
+    private readonly ITownhallService _townhallService;
 
     public TownhallController(
         ICharacterService characterService,
-        INpcService npcService)
+        ITownhallService townhallService)
     {
         _characterService = characterService;
-        _npcService = npcService;
+        _townhallService = townhallService;
     }
 
     #region views
-    // GET: Townhall/Index
+    // GET: ""
     [HttpGet("")]
     public IActionResult Index()
     {
+        return View();
+    }
+
+    // GET: /Market/123
+    [HttpGet("Market/{playerId}")]
+    public IActionResult Market(Guid playerId)
+    {
         try
         {
-            return View();
+            var items = _townhallService.GetMarket(playerId);
+
+            return View(items);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            return Error(ex.Message);
+
+            throw;
         }
+
     }
 
     // GET: Townhall/Duel?characterId=string&sessionId=string

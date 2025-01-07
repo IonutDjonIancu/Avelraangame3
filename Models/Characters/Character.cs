@@ -35,6 +35,7 @@ public class CharacterVm
     public Guid Id { get; set; }
     public string Name { get; set; }
     public string Portrait { get; set; }
+    public int Wealth { get; set; }
 }
 
 public class CharacterIdentity

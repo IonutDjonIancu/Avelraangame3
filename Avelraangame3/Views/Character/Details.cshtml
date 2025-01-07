@@ -22,13 +22,11 @@
             <div class="col col-12 d-flex justify-content-start">
                 @foreach (var character in Model.CharactersList)
                 {
-                    <img class="rounded-3 m-1 pointer"
+                    <img class="rounded-3 item-1 item-char m-1 pointer"
                         onclick="loadCharacter('@character.Id')"
                         id="@character.Id"
                         src="@character.Portrait"
-                        title="@character.Name"
-                        width="60"
-                        height="80" />
+                        title="@character.Name" />
                 }
             </div>
         </div>
@@ -36,7 +34,11 @@
 } 
 else 
 {
-    <p class="mb-0 text-muted">No characters to show...</p>
+    <div class="container mt-3 footer-border">
+        <div class="row d-flex justify-content-between mt-3 text-center">
+            <p class="mb-0 text-muted">No characters to show...</p>
+        </div>
+    </div>
 }
 
 <script>

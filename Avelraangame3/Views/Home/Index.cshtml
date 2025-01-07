@@ -18,8 +18,7 @@
             </div>
         </div>
         <div class="row mt-2 text-center">
-            <p class="mb-0 text-muted">or...</p>
-            <p class="mb-0 text-muted">use your session token</p>
+            <p class="mb-0 text-muted">or use your session token</p>
         </div>
         <div class="row mt-2">
             <div class="col d-inline-flex justify-content-center align-items-center">
@@ -90,7 +89,7 @@
                 window.location.reload();
             },
             error: function (xhr, status, error) {
-                window.location.href = "/error?info=" + xhr.responseText;
+                alert(xhr.responseText);
             }
         });
     }

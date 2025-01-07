@@ -33,19 +33,19 @@
                     </li>
                 }
                 <li class="text-gray">
-                    name: <span class="text-muted">@Model.Details.Name</span>
+                    name: <span class="primary-green">@Model.Details.Name</span>
                 </li>
                 <li class="text-gray">
-                    race: <span class="text-muted">@Model.Details.Race</span>
+                    race: <span class="primary-green">@Model.Details.Race</span>
                 </li>
                 <li class="text-gray">
-                    culture: <span class="text-muted">@Model.Details.Culture</span>
+                    culture: <span class="primary-green">@Model.Details.Culture</span>
                 </li>
                 <li class="text-gray">
-                    specialization: <span class="text-muted">@Model.Details.Spec</span>
+                    specialization: <span class="primary-green">@Model.Details.Spec</span>
                 </li>
                 <li class="text-gray">
-                    entity level: <span class="text-muted">@Model.Details.Entitylevel</span>
+                    entity level: <span class="primary-green">@Model.Details.Entitylevel</span>
                 </li>
                 @if (Model.Details.Levelup > 0)
                 {
@@ -56,17 +56,17 @@
                 else
                 {
                     <li class="text-gray">
-                        level up pts.: <span class="text-muted">@Model.Details.Levelup</span>
+                        level up pts.: <span class="primary-green">@Model.Details.Levelup</span>
                     </li>
                 }
                 <li class="text-gray">
-                    wealth: <span class="text-muted">@Model.Details.Wealth</span>
+                    wealth: <span class="primary-green">@Model.Details.Wealth</span>
                 </li>
                 <li class="text-gray">
-                    worth: <span class="text-muted">@Model.Details.Worth</span>
+                    worth: <span class="primary-green">@Model.Details.Worth</span>
                 </li>
                 <li class="text-gray">
-                    renown: <span class="text-muted">@Model.Details.Renown</span>
+                    renown: <span class="primary-green">@Model.Details.Renown</span>
                 </li>
             </ul>
         </div>
@@ -77,47 +77,47 @@
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Hitpoints')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Hitpoints:
-                    <span class="text-muted">@Model.Stats.Actual.Hitpoints</span>
+                    <span class="primary-green">@Model.Stats.Actual.Hitpoints</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Defense')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Defense:
-                    <span class="text-muted">@Model.Stats.Actual.Defense</span>
+                    <span class="primary-green">@Model.Stats.Actual.Defense</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Mana')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Mana:
-                    <span class="text-muted">@Model.Stats.Actual.Mana</span>
+                    <span class="primary-green">@Model.Stats.Actual.Mana</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Actions')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Actions:
-                    <span class="text-muted">@Model.Stats.Actual.Actions</span>
+                    <span class="primary-green">@Model.Stats.Actual.Actions</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Strength')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Strength:
-                    <span class="text-muted">@Model.Stats.Actual.Strength</span>
+                    <span class="primary-green">@Model.Stats.Actual.Strength</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Constitution')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Constitution:
-                    <span class="text-muted">@Model.Stats.Actual.Constitution</span>
+                    <span class="primary-green">@Model.Stats.Actual.Constitution</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Agility')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Agility:
-                    <span class="text-muted">@Model.Stats.Actual.Agility</span>
+                    <span class="primary-green">@Model.Stats.Actual.Agility</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Willpower')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Willpower:
-                    <span class="text-muted">@Model.Stats.Actual.Willpower</span>
+                    <span class="primary-green">@Model.Stats.Actual.Willpower</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Abstract')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Abstract:
-                    <span class="text-muted">@Model.Stats.Actual.Abstract</span>
+                    <span class="primary-green">@Model.Stats.Actual.Abstract</span>
                 </li>
             </ul>
         </div>
@@ -128,52 +128,52 @@
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Melee')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Melee:
-                    <span class="text-muted">@Model.Stats.Actual.Melee</span>
+                    <span class="primary-green">@Model.Stats.Actual.Melee</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Arcane')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Arcane:
-                    <span class="text-muted">@Model.Stats.Actual.Arcane</span>
+                    <span class="primary-green">@Model.Stats.Actual.Arcane</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Psionics')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Psionics:
-                    <span class="text-muted">@Model.Stats.Actual.Psionics</span>
+                    <span class="primary-green">@Model.Stats.Actual.Psionics</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Social')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Social:
-                    <span class="text-muted">@Model.Stats.Actual.Social</span>
+                    <span class="primary-green">@Model.Stats.Actual.Social</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Hide')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Hide:
-                    <span class="text-muted">@Model.Stats.Actual.Hide</span>
+                    <span class="primary-green">@Model.Stats.Actual.Hide</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Survival')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Survival:
-                    <span class="text-muted">@Model.Stats.Actual.Survival</span>
+                    <span class="primary-green">@Model.Stats.Actual.Survival</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Tactics')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Tactics:
-                    <span class="text-muted">@Model.Stats.Actual.Tactics</span>
+                    <span class="primary-green">@Model.Stats.Actual.Tactics</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Aid')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Aid:
-                    <span class="text-muted">@Model.Stats.Actual.Aid</span>
+                    <span class="primary-green">@Model.Stats.Actual.Aid</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Crafting')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Crafting:
-                    <span class="text-muted">@Model.Stats.Actual.Crafting</span>
+                    <span class="primary-green">@Model.Stats.Actual.Crafting</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Perception')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Perception:
-                    <span class="text-muted">@Model.Stats.Actual.Perception</span>
+                    <span class="primary-green">@Model.Stats.Actual.Perception</span>
                 </li>
             </ul>
         </div>
@@ -184,8 +184,8 @@
 <div class="container mt-3 footer-border">
     @* Item actions *@
     <div id="inventoryActions" class="btn-group btn-group-sm pt-3" role="group" style="display:none">
-        <button onclick="equipItem()" id="equipAction" type="button" class="btn btn-outline-dark actions secondary-darkgreen" style="display:none">&#8592; equip</button>
-        <button onclick="unequipItem()" id="unequipAction" type="button" class="btn btn-outline-dark actions secondary-darkyellow" style="display:none">unequip &#8594;</button>
+        <button onclick="equipItem()" id="equipAction" type="button" class="btn btn-outline-dark actions primary-darkgreen" style="display:none">&#8592; equip</button>
+        <button onclick="unequipItem()" id="unequipAction" type="button" class="btn btn-outline-dark actions primary-darkyellow" style="display:none">unequip &#8594;</button>
         <button onclick="sellItem()" id="sellAction" type="button" class="btn btn-outline-dark actions" style="display:none">sell &#8605;</button>
         <button onclick="hideInventoryActions()" title="hide actions" type="button" class="btn btn-outline-dark actions secondary-darkred">&#10008;</button>
     </div>
@@ -226,7 +226,7 @@ SUR @item.BonusStats.Survival
 TAC @item.BonusStats.Tactics
 AID @item.BonusStats.Aid 
 CRA @item.BonusStats.Crafting
-PER @item.BonusStats.Perception " />
+PER @item.BonusStats.Perception" />
             }
         </div>
         @* Regalia *@

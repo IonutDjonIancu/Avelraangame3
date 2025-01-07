@@ -234,7 +234,7 @@ public class ValidatorService : IValidatorService
         if (character.Details.IsLocked)
             throw new Exception("Character is locked.");
 
-        var item = _snapshot.Market.FirstOrDefault(s => s.Id == itemToBuy.ItemId) ?? throw new Exception("No such item found on market.");
+        var item = _snapshot.MarketItems.FirstOrDefault(s => s.Id == itemToBuy.ItemId) ?? throw new Exception("No such item found on market.");
 
         if (item.Value > character.Details.Wealth)
             throw new Exception("Not enough coin to purchase this item.");

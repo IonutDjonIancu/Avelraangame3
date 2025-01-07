@@ -3,11 +3,11 @@
 }
 
 <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-    <button onclick="gotoDuel()" type="button" class="btn btn-outline-secondary">Duel</button>
-    <button type="button" class="btn btn-outline-secondary">Quest</button>
-    <button type="button" class="btn btn-outline-secondary">Tourney</button>
-    <button type="button" class="btn btn-outline-secondary">Tavern</button>
-    <button type="button" class="btn btn-outline-secondary">Market</button>
+    <button class="btn btn-outline-secondary">Duel</button>
+    <button class="btn btn-outline-secondary">Quest</button>
+    <button class="btn btn-outline-secondary">Tourney</button>
+    <button class="btn btn-outline-secondary">Tavern</button>
+    <button class="btn btn-outline-secondary" onclick="navigateTo('/Townhall/Market/' + getPlayerId())">Market</button>
 </div>
 
 <div class="container mt-3 footer-border">
@@ -19,16 +19,7 @@
 </div>
 
 <script>
-    const gotoDuel = () => {
-        var characterId = localStorage.getItem("characterId");
-        var sessionId = localStorage.getItem("sessionId");
-
-        if (!characterId || !sessionId) {
-            return;
-        }
-
-        window.location.href = "/townhall/duel?characterId=" + characterId + "&sessionId=" + sessionId;
-    }
+   
 
 </script>
 

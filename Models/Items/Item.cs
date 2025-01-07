@@ -18,3 +18,8 @@ public class Item
 
     public int Value { get; set; }
 }
+
+public class Items
+{
+    public List<Item> ItemsList { get; set; } = [];
+}

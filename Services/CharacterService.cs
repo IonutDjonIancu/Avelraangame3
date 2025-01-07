@@ -215,9 +215,7 @@ public class CharacterService : ICharacterService
     {
         var (item, character) = _validator.ValidateSellItem(equipItem);
 
-        var (isRollVsEffortSuccess, _) = _dice.RollVsEffort(character, Statics.Stats.Social, _dice.Roll1dN(Statics.EffortLevels.Easy), true);
-
-        character.Details.Wealth += isRollVsEffortSuccess ? item.Value + (int)(item.Value * 0.25) : item.Value;
+        character.Details.Wealth += item.Value;
 
         if (item.Type == Statics.Items.Types.Trinket)
         {
@@ -228,9 +226,9 @@ public class CharacterService : ICharacterService
             character.Supplies.Items.Remove(item);
         }
 
-        item.Value = (int)(item.Value * 0.25);
+        item.Value += (int)(item.Value * 0.25);
 
-        _snapshot.Market.Add(item);
+        _snapshot.MarketItems.Add(item);
     }
 
     public void BuyItem(EquipItem equipItem)
@@ -248,7 +246,7 @@ public class CharacterService : ICharacterService
                 character.Supplies.Items.Add(item);
             }
 
-            _snapshot.Market.Remove(item);
+            _snapshot.MarketItems.Remove(item);
 
             var (isRollVsEffortSuccess, _) = _dice.RollVsEffort(character, Statics.Stats.Social, _dice.Rolld20NoReroll(), true);
 
@@ -604,9 +602,9 @@ public class CharacterService : ICharacterService
         character.Regalia.Add(trinket);
     }
 
-    private void SetWorth(Character character)
+    private static void SetWorth(Character character)
     {
-        character.Details.Worth = _dice.Roll1dN(5) +
+        character.Details.Worth =
             (character.Stats.Base.Strength +
             character.Stats.Base.Constitution +
             character.Stats.Base.Agility +

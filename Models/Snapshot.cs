@@ -1,21 +1,28 @@
-﻿namespace Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Models;
 
 public interface ISnapshot
 {
-    HashSet<Player> Players { get; set; }
-    HashSet<Character> Npcs { get; set; }
+    List<Player> Players { get; set; }
+    List<Character> Npcs { get; set; }
     
     List<Board> Boards { get; set; }
 
-    HashSet<Item> Market {  get; set; }    
+    List<Item> MarketItems {  get; set; }    
 }
 
 public class Snapshot : ISnapshot
 {
-    public HashSet<Player> Players { get; set; } = [];
-    public HashSet<Character> Npcs { get; set; } = [];
+    [MaxLength(100)]
+    public List<Player> Players { get; set; } = [];
 
+    [MaxLength(100)]
+    public List<Character> Npcs { get; set; } = [];
+
+    [MaxLength(100)]
     public List<Board> Boards { get; set; } = [];
 
-    public HashSet<Item> Market { get; set; } = [];
+    [MaxLength (10000)]
+    public List<Item> MarketItems { get; set; } = [];
 }
