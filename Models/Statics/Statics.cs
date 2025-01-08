@@ -170,16 +170,22 @@ public static class Statics
 
         public static class Trinkets
         {
-            public const string AmuletOfStars = "Amulet of stars";
-            public const string RingOfTheMadji = "Ring of the madji";
-            public const string SashOfTenebre = "Sash of tenebre";
+            public const string OrbOfStars = "Orb of stars";
+            public const string AmuletOfBlackraveny = "Amulet of blackraveny";
+            public const string RingOfTheDjinn = "Ring of the djinn";
+            public const string SashOfDeirmaidun = "Sash of deirmaidun";
+            public const string SealOfLotharius = "Seal of lotharius";
             public const string SealOfSojourn = "Seal of sojourn";
+            public const string ArmbandOfAsriedor = "Armband of asriendor";
+            public const string ScarfOfFearuinar = "Scarf of fearuinar";
+            public const string OakleafOfCedricon = "Oakleaf of cedricon";
             public const string RuneOfTheSouthernStar = "Rune of the southern star";
-            public const string OrbOfSepteracorium = "Orb of septeracorium";
+            public const string ShardOfSepteracorium = "Shard of septeracorium";
+            public const string PommelOfTheMarquis = "Pommel of the marquis";
 
             public static readonly List<string> All =
             [
-                AmuletOfStars, RingOfTheMadji, SashOfTenebre, SealOfSojourn, RuneOfTheSouthernStar, OrbOfSepteracorium
+                OrbOfStars, AmuletOfBlackraveny, RingOfTheDjinn, SashOfDeirmaidun, SealOfLotharius, SealOfSojourn, RuneOfTheSouthernStar, ShardOfSepteracorium, ArmbandOfAsriedor, ScarfOfFearuinar, OakleafOfCedricon, PommelOfTheMarquis
             ];
         }
 

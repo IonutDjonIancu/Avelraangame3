@@ -75,14 +75,14 @@
             <p class="mb-0">Stats</p>
             <ul>
                 <li class="text-gray">
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Hitpoints')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    Hitpoints:
-                    <span class="primary-green">@Model.Stats.Actual.Hitpoints</span>
-                </li>
-                <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Defense')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Defense:
                     <span class="primary-green">@Model.Stats.Actual.Defense</span>
+                </li>
+                <li class="text-gray">
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Hitpoints')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Hitpoints:
+                    <span class="primary-green">@Model.Stats.Actual.Hitpoints</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Mana')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
@@ -201,32 +201,32 @@
                     id="@item.Id"
                     onclick="equipUnequipItem('@item.Id', 'unequip', 'inventory')"
                     title="@item.Name
+level @item.Level
 *** details ***
 @(item.HasTaint ? "tainted" : "untainted")
 @item.Type.ToLower()
-level @item.Level
 value @item.Value
 *** stats ***
-HPS @item.BonusStats.Hitpoints
-DEF @item.BonusStats.Defense
-MAN @item.BonusStats.Mana
-ACT @item.BonusStats.Actions
-STR @item.BonusStats.Strength
-CNS @item.BonusStats.Constitution
-AGL @item.BonusStats.Agility
-WIL @item.BonusStats.Willpower
-ABS @item.BonusStats.Abstract
+HPS @item.Bonuses.Hitpoints
+DEF @item.Bonuses.Defense
+MAN @item.Bonuses.Mana
+ACT @item.Bonuses.Actions
+STR @item.Bonuses.Strength
+CNS @item.Bonuses.Constitution
+AGL @item.Bonuses.Agility
+WIL @item.Bonuses.Willpower
+ABS @item.Bonuses.Abstract
 *** skills ***
-MEL @item.BonusStats.Melee
-ARC @item.BonusStats.Arcane 
-PSI @item.BonusStats.Psionics
-SOC @item.BonusStats.Social
-HID @item.BonusStats.Hide
-SUR @item.BonusStats.Survival
-TAC @item.BonusStats.Tactics
-AID @item.BonusStats.Aid 
-CRA @item.BonusStats.Crafting
-PER @item.BonusStats.Perception" />
+MEL @item.Bonuses.Melee
+ARC @item.Bonuses.Arcane 
+PSI @item.Bonuses.Psionics
+SOC @item.Bonuses.Social
+HID @item.Bonuses.Hide
+SUR @item.Bonuses.Survival
+TAC @item.Bonuses.Tactics
+AID @item.Bonuses.Aid 
+CRA @item.Bonuses.Crafting
+PER @item.Bonuses.Perception" />
             }
         </div>
         @* Regalia *@
@@ -239,33 +239,33 @@ PER @item.BonusStats.Perception" />
                         id="@trinket.Id"
                         onclick="equipUnequipItem('@trinket.Id', 'unequip', 'regalia')"
                         title="@trinket.Name
+level @trinket.Level
 *** details ***
 @(trinket.HasTaint ? "tainted" : "untainted")
 @(trinket.IsPermanent ? "can be consumed" : "can only be worn")
 @trinket.Type.ToLower()
-level @trinket.Level
 value @trinket.Value
 *** stats ***
-HPS @trinket.BonusStats.Hitpoints
-DEF @trinket.BonusStats.Defense
-MAN @trinket.BonusStats.Mana
-ACT @trinket.BonusStats.Actions
-STR @trinket.BonusStats.Strength
-CNS @trinket.BonusStats.Constitution
-AGL @trinket.BonusStats.Agility
-WIL @trinket.BonusStats.Willpower
-ABS @trinket.BonusStats.Abstract
+HPS @trinket.Bonuses.Hitpoints
+DEF @trinket.Bonuses.Defense
+MAN @trinket.Bonuses.Mana
+ACT @trinket.Bonuses.Actions
+STR @trinket.Bonuses.Strength
+CNS @trinket.Bonuses.Constitution
+AGL @trinket.Bonuses.Agility
+WIL @trinket.Bonuses.Willpower
+ABS @trinket.Bonuses.Abstract
 *** skills ***
-MEL @trinket.BonusStats.Melee
-ARC @trinket.BonusStats.Arcane
-PSI @trinket.BonusStats.Psionics
-SOC @trinket.BonusStats.Social
-HID @trinket.BonusStats.Hide
-SUR @trinket.BonusStats.Survival
-TAC @trinket.BonusStats.Tactics
-AID @trinket.BonusStats.Aid
-CRA @trinket.BonusStats.Crafting
-PER @trinket.BonusStats.Perception " />
+MEL @trinket.Bonuses.Melee
+ARC @trinket.Bonuses.Arcane
+PSI @trinket.Bonuses.Psionics
+SOC @trinket.Bonuses.Social
+HID @trinket.Bonuses.Hide
+SUR @trinket.Bonuses.Survival
+TAC @trinket.Bonuses.Tactics
+AID @trinket.Bonuses.Aid
+CRA @trinket.Bonuses.Crafting
+PER @trinket.Bonuses.Perception " />
             }
         </div>
         @* Supplies *@
@@ -286,26 +286,26 @@ PER @trinket.BonusStats.Perception " />
 level @suppliesItem.Level
 value @suppliesItem.Value
 *** stats ***
-HPS @suppliesItem.BonusStats.Hitpoints
-DEF @suppliesItem.BonusStats.Defense
-MAN @suppliesItem.BonusStats.Mana
-ACT @suppliesItem.BonusStats.Actions
-STR @suppliesItem.BonusStats.Strength
-CNS @suppliesItem.BonusStats.Constitution
-AGL @suppliesItem.BonusStats.Agility
-WIL @suppliesItem.BonusStats.Willpower
-ABS @suppliesItem.BonusStats.Abstract
+HPS @suppliesItem.Bonuses.Hitpoints
+DEF @suppliesItem.Bonuses.Defense
+MAN @suppliesItem.Bonuses.Mana
+ACT @suppliesItem.Bonuses.Actions
+STR @suppliesItem.Bonuses.Strength
+CNS @suppliesItem.Bonuses.Constitution
+AGL @suppliesItem.Bonuses.Agility
+WIL @suppliesItem.Bonuses.Willpower
+ABS @suppliesItem.Bonuses.Abstract
 *** skills ***
-MEL @suppliesItem.BonusStats.Melee
-ARC @suppliesItem.BonusStats.Arcane
-PSI @suppliesItem.BonusStats.Psionics
-SOC @suppliesItem.BonusStats.Social
-HID @suppliesItem.BonusStats.Hide
-SUR @suppliesItem.BonusStats.Survival
-TAC @suppliesItem.BonusStats.Tactics
-AID @suppliesItem.BonusStats.Aid
-CRA @suppliesItem.BonusStats.Crafting
-PER @suppliesItem.BonusStats.Perception " />
+MEL @suppliesItem.Bonuses.Melee
+ARC @suppliesItem.Bonuses.Arcane
+PSI @suppliesItem.Bonuses.Psionics
+SOC @suppliesItem.Bonuses.Social
+HID @suppliesItem.Bonuses.Hide
+SUR @suppliesItem.Bonuses.Survival
+TAC @suppliesItem.Bonuses.Tactics
+AID @suppliesItem.Bonuses.Aid
+CRA @suppliesItem.Bonuses.Crafting
+PER @suppliesItem.Bonuses.Perception " />
             }
             @foreach (var suppliesTrinket in Model.Supplies.Regalia)
             {
@@ -322,26 +322,26 @@ PER @suppliesItem.BonusStats.Perception " />
 level @suppliesTrinket.Level
 value @suppliesTrinket.Value
 *** stats ***
-HPS @suppliesTrinket.BonusStats.Hitpoints
-DEF @suppliesTrinket.BonusStats.Defense
-MAN @suppliesTrinket.BonusStats.Mana
-ACT @suppliesTrinket.BonusStats.Actions
-STR @suppliesTrinket.BonusStats.Strength
-CNS @suppliesTrinket.BonusStats.Constitution
-AGL @suppliesTrinket.BonusStats.Agility
-WIL @suppliesTrinket.BonusStats.Willpower
-ABS @suppliesTrinket.BonusStats.Abstract
+HPS @suppliesTrinket.Bonuses.Hitpoints
+DEF @suppliesTrinket.Bonuses.Defense
+MAN @suppliesTrinket.Bonuses.Mana
+ACT @suppliesTrinket.Bonuses.Actions
+STR @suppliesTrinket.Bonuses.Strength
+CNS @suppliesTrinket.Bonuses.Constitution
+AGL @suppliesTrinket.Bonuses.Agility
+WIL @suppliesTrinket.Bonuses.Willpower
+ABS @suppliesTrinket.Bonuses.Abstract
 *** skills ***
-MEL @suppliesTrinket.BonusStats.Melee
-ARC @suppliesTrinket.BonusStats.Arcane
-PSI @suppliesTrinket.BonusStats.Psionics
-SOC @suppliesTrinket.BonusStats.Social
-HID @suppliesTrinket.BonusStats.Hide
-SUR @suppliesTrinket.BonusStats.Survival
-TAC @suppliesTrinket.BonusStats.Tactics
-AID @suppliesTrinket.BonusStats.Aid
-CRA @suppliesTrinket.BonusStats.Crafting
-PER @suppliesTrinket.BonusStats.Perception " />
+MEL @suppliesTrinket.Bonuses.Melee
+ARC @suppliesTrinket.Bonuses.Arcane
+PSI @suppliesTrinket.Bonuses.Psionics
+SOC @suppliesTrinket.Bonuses.Social
+HID @suppliesTrinket.Bonuses.Hide
+SUR @suppliesTrinket.Bonuses.Survival
+TAC @suppliesTrinket.Bonuses.Tactics
+AID @suppliesTrinket.Bonuses.Aid
+CRA @suppliesTrinket.Bonuses.Crafting
+PER @suppliesTrinket.Bonuses.Perception " />
             }
         </div>
     </div>

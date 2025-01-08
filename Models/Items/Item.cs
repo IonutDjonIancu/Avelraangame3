@@ -7,14 +7,14 @@ public class Trinket : Item
 
 public class Item
 {
-    public bool HasTaint { get; set; }
     public Guid Id { get; set; }
+    public bool HasTaint { get; set; }
     public string Name { get; set; }
     public string Type { get; set; }
     public string Icon { get; set; }
     public int Level { get; set; }
 
-    public CharacterStats BonusStats { get; set; } = new();
+    public CharacterStats Bonuses { get; set; } = new();
 
     public int Value { get; set; }
 }
