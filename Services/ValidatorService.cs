@@ -15,6 +15,7 @@ public interface IValidatorService
     #region dice
     void ValidatePostiveNumber(int number, string message);
     void ValidateGreaterNumber(int number1, int number2, string message = "");
+    void ValidateRollCharacter(Character character, string stat);
     #endregion
 
     #region player
@@ -90,6 +91,15 @@ public class ValidatorService : IValidatorService
 
         if (number1 <= number2)
             throw new Exception(string.IsNullOrWhiteSpace(message) ? $"First number: {number1} cannot be equal or smaller than second number: {number2}" : message);
+    }
+
+    public void ValidateRollCharacter(Character character, string stat)
+    {
+        ValidateAgainstNull(character);
+        ValidateString(stat, "Stat string cannot be null or empty.");
+
+        if (!Statics.Stats.All.Contains(stat))
+            throw new Exception("Stat string not found in list of stats.");
     }
     #endregion
 

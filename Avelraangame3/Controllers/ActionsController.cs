@@ -7,7 +7,7 @@ namespace Avelraangame3.Controllers;
 [Route("Actions")]
 public class ActionsController : Controller
 {
-    public IActionService _actionService { get; set; }
+    private readonly IActionService _actionService;
 
     public ActionsController(IActionService actionService)
     {
@@ -19,7 +19,7 @@ public class ActionsController : Controller
 
     #region requests
     // PUT: Actions/RunAction
-    [HttpPut]
+    [HttpPut("RunAction")]
     public IActionResult RunAction([FromBody] CharacterActions actions)
     {
         try
