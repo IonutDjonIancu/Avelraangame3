@@ -66,6 +66,18 @@
         }   
     }
 
+    const selectCharacter = (characterId) => {
+        localStorage.setItem("selectedCharacter", characterId);
+    }
+
+    const selectItem = (itemId) => {
+        localStorage.setItem("selectedItem", itemId);
+    }
+
+    const selectTarget = (targetId) => {
+        localStorage.setItem("selectedTarget", targetId);
+    }
+
     const deselectCharItem = () => {
         localStorage.removeItem("selectedItem");
         localStorage.removeItem("selectedCharacter");

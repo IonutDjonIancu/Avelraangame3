@@ -39,7 +39,7 @@
                     else
                     {
                         <img class="rounded-3 m-1 pointer item-char item-1 character-img"
-                             onclick="selectCharacter('@character.Id')"
+                             onclick="selectCharacterLocal('@character.Id')"
                              id="character-@character.Id"
                              src="@character.Portrait"
                              title="@character.Name" />
@@ -69,7 +69,7 @@
                 @foreach (var item in Model.Items.ItemsList)
                 {
                     <img class="rounded-2 m-1 pointer item item-@item.Level item-img"
-                         onclick="selectItem('@item.Id')"
+                         onclick="selectItemLocal('@item.Id')"
                          id="item-@item.Id"
                          src="@item.Icon"
                          title="@item.Name
@@ -116,8 +116,8 @@ else
 }
 
 <script>
-    const selectCharacter = (characterId) => {
-        localStorage.setItem('selectedCharacter', characterId);
+    const selectCharacterLocal = (characterId) => {
+        selectCharacter(characterId);
         
         $('.selected-character1').each(function() {
             $(this).removeClass('selected-character1');
@@ -128,8 +128,8 @@ else
         $('#showWealth').append('Wealth: ' + wealth).show();
     }
 
-    const selectItem = (itemId) => {
-        localStorage.setItem('selectedItem', itemId);
+    const selectItemLocal = (itemId) => {
+        selectItem(itemId);
 
         $('.selected-character2').each(function() {
             $(this).removeClass('selected-character2');
