@@ -155,6 +155,10 @@ body {
     border: 2px solid purple;
 }
 
+.item-7 {
+    border: 2px solid darkred;
+}
+
 .selected {
     border: 3px solid white;
     opacity: 1;

@@ -79,22 +79,6 @@ public class CharacterService : ICharacterService
 
         var listOfCharacters = new Characters();
 
-        //var allPlayerCharacters = _snapshot.Players.First(s => s.Id == playerId).Characters.Where(s => !s.Details.IsNpc).ToList();
-
-        //if (allPlayerCharacters is null)
-        //    return listOfCharacters;
-
-        //foreach (var character in allPlayerCharacters)
-        //{
-        //    if (!character.Details.IsNpc)
-        //        listOfCharacters.CharactersList.Add(new CharacterVm
-        //        {
-        //            Id = character.Identity.Id,
-        //            Name = character.Details.Name,
-        //            Portrait = character.Details.Portrait
-        //        });
-        //}
-
         _snapshot.Players.First(s => s.Id == playerId)
             .Characters
             .Where(s => !s.Details.IsNpc).ToList()
@@ -104,7 +88,9 @@ public class CharacterService : ICharacterService
                 {
                     Id = s.Identity.Id,
                     Name = s.Details.Name,
-                    Portrait = s.Details.Portrait
+                    Portrait = s.Details.Portrait,
+                    Wealth = s.Details.Wealth,
+                    IsLocked = s.Details.IsLocked,
                 });
             });
 

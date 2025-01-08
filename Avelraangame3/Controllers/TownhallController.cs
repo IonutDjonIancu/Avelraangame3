@@ -44,19 +44,15 @@ public class TownhallController : Controller
 
     }
 
-    // GET: Townhall/Duel?characterId=string&sessionId=string
-    [HttpGet("Duel/{playerId}/{characterId}")]
-    public IActionResult Duel(string playerId, string characterId)
+    // GET: Townhall/Duels/123
+    [HttpGet("Duels/{playerId}")]
+    public IActionResult Duels(Guid playerId)
     {
         try
         {
-            var character = _characterService.GetCharacter(new CharacterIdentity
-            {
-                Id = Guid.Parse(characterId),
-                PlayerId = Guid.Parse(playerId)
-            });
+            var characters = _characterService.GetAllCharacters(playerId);
 
-            return View(character);
+            return View(characters);
         }
         catch (Exception ex)
         {

@@ -9,7 +9,7 @@ public interface ITownhallService
     Duel GenerateDuelVsNpc(CharacterIdentity characterIdentity, string effortLevelName);
     #endregion
 
-    Market GetMarket(Guid playerId);
+    MarketForPlayer GetMarket(Guid playerId);
     void GenerateItemsForMarket();
 }
 
@@ -95,11 +95,11 @@ public class TownhallService : ITownhallService
         return duel;
     }
 
-    public Market GetMarket(Guid playerId)
+    public MarketForPlayer GetMarket(Guid playerId)
     {
         _validatorService.ValidatePlayerExists(playerId);
 
-        var market = new Market();
+        var market = new MarketForPlayer();
 
         _snapshot.MarketItems.ForEach(s => market.Items.ItemsList.Add(s));
 
@@ -113,6 +113,7 @@ public class TownhallService : ITownhallService
                     Name = d.Details.Name,
                     Portrait = d.Details.Portrait,
                     Wealth = d.Details.Wealth,
+                    IsLocked = d.Details.IsLocked,
                 });
             });
 

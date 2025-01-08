@@ -2,12 +2,21 @@
     ViewData["Title"] = "Townhall";
 }
 
-<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-    <button class="btn btn-outline-secondary">Duel</button>
-    <button class="btn btn-outline-secondary">Quest</button>
-    <button class="btn btn-outline-secondary">Tourney</button>
-    <button class="btn btn-outline-secondary">Tavern</button>
-    <button class="btn btn-outline-secondary" onclick="navigateTo('/Townhall/Market/' + getPlayerId())">Market</button>
+<div class="row">
+    <div class="col-8">
+        <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+            <button class="btn btn-outline-secondary" onclick="navigateTo('/Townhall/Duels/' + getPlayerId())">Duels</button>
+            <button class="btn btn-outline-secondary">Quest</button>
+            <button class="btn btn-outline-secondary">Tourney</button>
+            <button class="btn btn-outline-secondary">Tavern</button>
+            <button class="btn btn-outline-secondary" onclick="navigateTo('/Townhall/Market/' + getPlayerId())">Market</button>
+        </div>
+    </div>
+    <div class="col-4">
+        <div id="spinner" class="spinner-grow text-secondary float-end" role="status" title="Loading...">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 </div>
 
 <div class="container mt-3 footer-border">
@@ -20,6 +29,9 @@
 
 <script>
    
-
+    // run logic
+    $(document).ready(() => {
+        hideLoading();
+    });
 </script>
 

@@ -1,4 +1,4 @@
-﻿@model Market
+﻿@model MarketForPlayer
 
 @{
     ViewData["Title"] = "Character";
@@ -7,7 +7,7 @@
 <div class="row">
     <div class="col-8">
         <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-            <button class="btn btn-outline-secondary">Duel</button>
+            <button class="btn btn-outline-secondary" onclick="navigateTo('/Townhall/Duels/' + getPlayerId())">Duels</button>
             <button class="btn btn-outline-secondary">Quest</button>
             <button class="btn btn-outline-secondary">Tourney</button>
             <button class="btn btn-outline-secondary">Tavern</button>
@@ -29,11 +29,21 @@
             <div class="col col-12 d-flex flex-wrap justify-content-start">
                 @foreach (var character in Model.Characters.CharactersList)
                 {
-                    <img class="rounded-3 m-1 pointer item-char item-1 character-img"
-                         onclick="selectCharacter('@character.Id')"
-                         id="character-@character.Id"
-                         src="@character.Portrait"
-                         title="@character.Name" />
+                    if (character.IsLocked)
+                    {
+                        <img class="rounded-3 m-1 pointer item-char item-7 character-img"
+                             id="character-@character.Id"
+                             src="@character.Portrait"
+                             title="This character is busy..." />
+                    }
+                    else
+                    {
+                        <img class="rounded-3 m-1 pointer item-char item-1 character-img"
+                             onclick="selectCharacter('@character.Id')"
+                             id="character-@character.Id"
+                             src="@character.Portrait"
+                             title="@character.Name" />
+                    }
                 }
             </div>
         </div>
@@ -104,11 +114,6 @@ else
         </div>
     </div>
 }
-
-
-
-
-
 
 <script>
     const selectCharacter = (characterId) => {
