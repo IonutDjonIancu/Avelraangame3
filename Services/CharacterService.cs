@@ -21,7 +21,7 @@ public interface ICharacterService
     void UnequipItem(EquipItem equipItem);
     void SellItem(EquipItem equipItem);
     void Levelup(CharacterLevelup levelup);
-    void BuyItem(EquipItem equipItem);
+    void BuyItemFromTown(EquipItem equipItem);
 
     void SetCharacterFights(Character character);
 }
@@ -231,7 +231,7 @@ public class CharacterService : ICharacterService
         _snapshot.MarketItems.Add(item);
     }
 
-    public void BuyItem(EquipItem equipItem)
+    public void BuyItemFromTown(EquipItem equipItem)
     {
         lock (this)
         {
@@ -246,11 +246,12 @@ public class CharacterService : ICharacterService
                 character.Supplies.Items.Add(item);
             }
 
+            var effort = _dice.Roll1dN(Statics.EffortLevels.Easy);
+            var roll = _dice.Rolld20Character(character, Statics.Stats.Social);
+
+            character.Details.Wealth -= roll > effort ? item.Value - (int)(item.Value * 0.25) : item.Value;
+            
             _snapshot.MarketItems.Remove(item);
-
-            var (isRollVsEffortSuccess, _) = _dice.RollVsEffort(character, Statics.Stats.Social, _dice.Rolld20NoReroll(), true);
-
-            character.Details.Wealth -= isRollVsEffortSuccess ? item.Value - (int)(item.Value * 0.25) : item.Value;
         }
     }
 

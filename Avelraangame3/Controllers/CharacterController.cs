@@ -209,14 +209,14 @@ public class CharacterController : Controller
             return BadRequest(ex.Message);
         }
     }
-    
-    // PUT: Character/BuyItem
-    [HttpPut("BuyItem")]
-    public IActionResult BuyItem([FromBody] EquipItem item)
+
+    // PUT: Character/BuyItemFromTown
+    [HttpPut("BuyItemFromTown")]
+    public IActionResult BuyItemFromTown([FromBody] EquipItem item)
     {
         try
         {
-            _characterService.BuyItem(item);
+            _characterService.BuyItemFromTown(item);
 
             return Ok();
         }

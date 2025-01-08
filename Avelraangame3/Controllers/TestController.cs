@@ -12,7 +12,6 @@ public class TestController : Controller
     private readonly HttpClient _httpClient;
     private readonly string _accountId;
     private readonly string _namespaceId;
-    private readonly string _apiToken;
     private readonly string _globalApiKey;
     private readonly string _email;
 
@@ -29,7 +28,6 @@ public class TestController : Controller
         _httpClient = new HttpClient();
         _accountId = "*****";
         _namespaceId = "*****";
-        _apiToken = "*****";
         _email = "*****";
         _globalApiKey = "*****";
     }
