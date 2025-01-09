@@ -106,7 +106,8 @@ public class ValidatorService : IValidatorService
     #region player
     public void ValidatePlayerExists(Guid playerId)
     {
-        ValidateGuid(playerId);
+        // Ai has an empty guid
+        if (playerId == Guid.Empty) return;
 
         if (!_snapshot.Players.Any(s => s.Id == playerId))
             throw new Exception($"Invalid player id: {playerId}");
@@ -290,10 +291,16 @@ public class ValidatorService : IValidatorService
     {
         ValidateAgainstNull(identity, "Identity cannot be null.");
         ValidateGuid(identity.Id);
-        ValidateGuid(identity.PlayerId);
         ValidatePlayerExists(identity.PlayerId);
 
-        return _snapshot.Players.First(s => s.Id == identity.PlayerId).Characters.FirstOrDefault(s => s.Identity.Id == identity.Id) ?? throw new Exception("Character not found.");
+        if (identity.PlayerId == Guid.Empty)
+        {
+            return _snapshot.Npcs.First(s => s.Identity.Id == identity.Id);
+        }
+        else
+        {
+            return _snapshot.Players.First(s => s.Id == identity.PlayerId).Characters.FirstOrDefault(s => s.Identity.Id == identity.Id) ?? throw new Exception("Character not found.");
+        }
     }
 
     public void ValidateOnGetCharacters(Guid playerId)

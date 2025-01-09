@@ -92,14 +92,17 @@ public class TownhallService : ITownhallService
         return _snapshot.Boards.Find(s => s.Id == boardId) ?? throw new Exception($"Board with id: {boardId} not found.");
     }
 
-    private Duel GenerateDuel(CharacterIdentity characterIdentity, string effortLevelName)
+    private Duel GenerateDuel(CharacterIdentity identity, string effortLevelName)
     {
-        var character = _validatorService.ValidateCharacterOnJoiningBoard(characterIdentity);
+        _validatorService.ValidateCharacterOnJoiningBoard(identity);
+
+        var character = _characterService.GetCharacter(identity);
         var boardId = Guid.NewGuid();
         
         var board = new Duel
         {
             Id = boardId,
+            PlayerId = identity.PlayerId,
             RoundNr = 1,
             Type = Statics.Boards.Types.Duel,
             EffortLevelName = effortLevelName
@@ -109,20 +112,47 @@ public class TownhallService : ITownhallService
         character.Details.IsHidden = false;
         character.Details.BoardId = boardId;
         character.Details.BoardType = Statics.Boards.Types.Duel;
-        board.GoodGuys.Add(character);
+        _characterService.SetCharacterFights(character);
+        
+        board.GoodGuys.Add(new CharacterVm
+        {
+            Id = character.Identity.Id,
+            Name = character.Details.Name,
+            Spec = character.Details.Spec,
+            IsLocked = character.Details.IsLocked,
+            IsAlive = character.Details.IsAlive,
+            Portrait = character.Details.Portrait,
+            Roll = 1,
+            Wealth = character.Details.Wealth,
+            Actuals = character.Stats.Actuals,
+            Fights = character.Stats.Fights,
+            EntityLevel = character.Details.Entitylevel,
+        });
 
         var npc = _npcService.GenerateNpc([character], board);
         npc.Details.IsLocked = true;
         npc.Details.IsHidden = false;
         npc.Details.BoardId = boardId;
         npc.Details.BoardType = Statics.Boards.Types.Duel;
-        board.BadGuys.Add(npc);
-
-        _characterService.SetCharacterFights(character);
         _characterService.SetCharacterFights(npc);
 
-        PrepareFight(board);
-        PrepareBattlequeue(board);
+        board.BadGuys.Add(new CharacterVm
+        {
+            Id = npc.Identity.Id,
+            Name = npc.Details.Name,
+            Spec = npc.Details.Spec,
+            IsLocked = npc.Details.IsLocked,
+            IsAlive = npc.Details.IsAlive,
+            Portrait = npc.Details.Portrait,
+            Roll = 1,
+            Wealth = npc.Details.Wealth,
+            Actuals = npc.Stats.Actuals,
+            Fights = npc.Stats.Fights,
+            EntityLevel = npc.Details.Entitylevel,
+        });
+
+        PrepareFight(board, identity.PlayerId);
+        PrepareBattlequeue(board, identity.PlayerId);
 
         _snapshot.Boards.Add(board);
 
@@ -142,7 +172,7 @@ public class TownhallService : ITownhallService
         }
     }
 
-    private void PrepareBattlequeue(Board board)
+    private void PrepareBattlequeue(Board board, Guid playerId)
     {
         var allParticipants = new List<CharacterVm>();
 
@@ -150,12 +180,12 @@ public class TownhallService : ITownhallService
         {
             allParticipants.Add(new CharacterVm
             {
-                Id = s.Identity.Id,
-                Name = s.Details.Name,
-                IsLocked = s.Details.IsLocked,
-                Portrait = s.Details.Portrait,
-                Roll = _diceService.Rolld20Character(s, Statics.Stats.Perception, true),
-                Wealth = s.Details.Wealth,
+                Id = s.Id,
+                Name = s.Name,
+                IsLocked = s.IsLocked,
+                Portrait = s.Portrait,
+                Roll = _diceService.Rolld20Character(new CharacterIdentity { Id = s.Id, PlayerId = playerId }, Statics.Stats.Perception, true),
+                Wealth = s.Wealth,
             });
         });
 
@@ -163,27 +193,27 @@ public class TownhallService : ITownhallService
         {
             allParticipants.Add(new CharacterVm
             {
-                Id = s.Identity.Id,
-                Name = s.Details.Name,
-                IsLocked = s.Details.IsLocked,
-                Portrait = s.Details.Portrait,
-                Roll = _diceService.Rolld20Character(s, Statics.Stats.Perception, true),
-                Wealth = s.Details.Wealth,
+                Id = s.Id,
+                Name = s.Name,
+                IsLocked = s.IsLocked,
+                Portrait = s.Portrait,
+                Roll = _diceService.Rolld20Character(new CharacterIdentity { Id = s.Id, PlayerId = Guid.Empty }, Statics.Stats.Perception, true),
+                Wealth = s.Wealth,
             });
         });
 
         board.Battlequeue = [.. allParticipants.OrderByDescending(s => s.Roll)];
     }
 
-    private void PrepareFight(Board board)
+    private void PrepareFight(Board board, Guid playerId)
     {
-        var goodGuysTactician = board.GoodGuys.OrderBy(s => s.Stats.Actual.Tactics).First();
-        var badGuysTactician = board.BadGuys.OrderBy(s => s.Stats.Actual.Tactics).First();
+        var goodGuysTactician = board.GoodGuys.OrderBy(s => s.Fights.Tactics).First();
+        var badGuysTactician = board.BadGuys.OrderBy(s => s.Fights.Tactics).First();
 
         var effortRoll = _diceService.RollEffortRoll(board, Statics.Stats.Tactics);
 
-        var goodGuyRoll = _diceService.Rolld20Character(goodGuysTactician, Statics.Stats.Tactics, true);
-        var badGuyRoll = _diceService.Rolld20Character(badGuysTactician, Statics.Stats.Tactics, true);
+        var goodGuyRoll = _diceService.Rolld20Character(new CharacterIdentity { Id = goodGuysTactician.Id, PlayerId = playerId }, Statics.Stats.Tactics, true);
+        var badGuyRoll = _diceService.Rolld20Character(new CharacterIdentity { Id = badGuysTactician.Id, PlayerId = Guid.Empty }, Statics.Stats.Tactics, true);
 
         var isGoodGuySaveVs = goodGuyRoll > effortRoll;
         var isBadGuySaveVs = badGuyRoll > effortRoll;
@@ -194,8 +224,8 @@ public class TownhallService : ITownhallService
 
             foreach (var guy in board.BadGuys)
             {
-                guy.Stats.Fight.Defense = (int)(guy.Stats.Actual.Defense * 0.5);
-                guy.Stats.Fight.Actions -= (int)(guy.Stats.Actual.Actions * 0.5);
+                guy.Fights.Defense = (int)(guy.Fights.Defense * 0.5);
+                guy.Fights.Actions -= (int)(guy.Fights.Actions * 0.5);
             }
         }
         else if (isGoodGuySaveVs && isBadGuySaveVs && goodGuyRoll > badGuyRoll)
@@ -204,7 +234,7 @@ public class TownhallService : ITownhallService
 
             foreach (var guy in board.BadGuys)
             {
-                guy.Stats.Fight.Defense = (int)(guy.Stats.Actual.Defense * 0.75);
+                guy.Fights.Defense = (int)(guy.Fights.Defense * 0.75);
             }
         }
         else if (isGoodGuySaveVs && isBadGuySaveVs && goodGuyRoll == badGuyRoll)
@@ -217,7 +247,7 @@ public class TownhallService : ITownhallService
 
             foreach (var guy in board.GoodGuys)
             {
-                guy.Stats.Fight.Defense = (int)(guy.Stats.Actual.Defense * 0.75);
+                guy.Fights.Defense = (int)(guy.Fights.Defense * 0.75);
             }
         }
         else if (!isGoodGuySaveVs && isBadGuySaveVs)
@@ -226,8 +256,8 @@ public class TownhallService : ITownhallService
 
             foreach (var guy in board.GoodGuys)
             {
-                guy.Stats.Fight.Defense = (int)(guy.Stats.Actual.Defense * 0.5);
-                guy.Stats.Fight.Actions -= (int)(guy.Stats.Actual.Actions * 0.5);
+                guy.Fights.Defense = (int)(guy.Fights.Defense * 0.5);
+                guy.Fights.Actions -= (int)(guy.Fights.Actions * 0.5);
             }
         }
         else

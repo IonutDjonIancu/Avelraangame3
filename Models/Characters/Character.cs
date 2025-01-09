@@ -21,8 +21,8 @@ public class Character
 public class Stats
 {
     public CharacterStats Base { get; set; } = new();
-    public CharacterStats Actual { get; set; } = new();
-    public CharacterStats Fight { get; set; } = new();
+    public CharacterStats Actuals { get; set; } = new();
+    public CharacterStats Fights { get; set; } = new();
 }
 
 public class Characters
@@ -35,9 +35,14 @@ public class CharacterVm
     public Guid Id { get; set; }
     public string Name { get; set; }
     public string Portrait { get; set; }
+    public string Spec { get; set; }
     public int Wealth { get; set; }
     public bool IsLocked { get; set; }
+    public bool IsAlive { get; set; }
     public int Roll { get; set; }
+    public int EntityLevel { get; set; }
+    public CharacterStats Actuals { get; set; }
+    public CharacterStats Fights { get; set; }
 }
 
 public class CharacterIdentity

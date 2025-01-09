@@ -1,6 +1,8 @@
 ﻿@model Characters
 
-@* Townhall/Duel *@
+@{
+    ViewData["Title"] = "Duels";
+}
 
 <div class="row">
     <div class="col-8">
@@ -22,6 +24,7 @@
 @if (Model.CharactersList.Count > 0)
 {
     <div class="container mt-3 footer-border" id="characters">
+        <div id="showName" class="row mt-1 mx-0 primary-green" style="display:none"></div>
         <div class="row d-flex flex-wrap justify-content-between mt-1">
             <div class="col col-12 d-flex flex-wrap justify-content-start">
                 @foreach (var character in Model.CharactersList)
@@ -77,6 +80,9 @@ else
             $(this).removeClass('selected-character1');
         });
         $('#character-' + characterId).addClass('selected-character1');
+
+        var name = getModel().charactersList.find(i => i.id === characterId).name;
+        $('#showName').empty().append('Name: ' + name).show();
     }
 
     const duel = (difficulty) => {
@@ -92,7 +98,5 @@ else
     }
 
     // run logic
-    $(document).ready(() => {
-        hideLoading();
-    });
+    
 </script>

@@ -233,7 +233,7 @@ public class CharacterService : ICharacterService
             }
 
             var effort = _dice.Roll1dN(Statics.EffortLevels.Easy);
-            var roll = _dice.Rolld20Character(character, Statics.Stats.Social);
+            var roll = _dice.Rolld20Character(character.Identity, Statics.Stats.Social);
 
             character.Details.Wealth -= roll > effort ? item.Value - (int)(item.Value * 0.25) : item.Value;
             
@@ -266,54 +266,54 @@ public class CharacterService : ICharacterService
     public void SetCharacterFights(Character character)
     {
         // main
-        character.Stats.Fight.Strength      = character.Stats.Actual.Strength;
-        character.Stats.Fight.Constitution  = character.Stats.Actual.Constitution;
-        character.Stats.Fight.Agility       = character.Stats.Actual.Agility;
-        character.Stats.Fight.Willpower     = character.Stats.Actual.Willpower;
-        character.Stats.Fight.Abstract      = character.Stats.Actual.Abstract;
+        character.Stats.Fights.Strength      = character.Stats.Actuals.Strength;
+        character.Stats.Fights.Constitution  = character.Stats.Actuals.Constitution;
+        character.Stats.Fights.Agility       = character.Stats.Actuals.Agility;
+        character.Stats.Fights.Willpower     = character.Stats.Actuals.Willpower;
+        character.Stats.Fights.Abstract      = character.Stats.Actuals.Abstract;
         // skills
-        character.Stats.Fight.Melee         = character.Stats.Actual.Melee;
-        character.Stats.Fight.Arcane        = character.Stats.Actual.Arcane;
-        character.Stats.Fight.Psionics      = character.Stats.Actual.Psionics;
-        character.Stats.Fight.Social        = character.Stats.Actual.Social;
-        character.Stats.Fight.Hide          = character.Stats.Actual.Hide;
-        character.Stats.Fight.Survival      = character.Stats.Actual.Survival;
-        character.Stats.Fight.Tactics       = character.Stats.Actual.Tactics;
-        character.Stats.Fight.Aid           = character.Stats.Actual.Aid;
-        character.Stats.Fight.Crafting      = character.Stats.Actual.Crafting;
-        character.Stats.Fight.Perception    = character.Stats.Actual.Perception;
+        character.Stats.Fights.Melee         = character.Stats.Actuals.Melee;
+        character.Stats.Fights.Arcane        = character.Stats.Actuals.Arcane;
+        character.Stats.Fights.Psionics      = character.Stats.Actuals.Psionics;
+        character.Stats.Fights.Social        = character.Stats.Actuals.Social;
+        character.Stats.Fights.Hide          = character.Stats.Actuals.Hide;
+        character.Stats.Fights.Survival      = character.Stats.Actuals.Survival;
+        character.Stats.Fights.Tactics       = character.Stats.Actuals.Tactics;
+        character.Stats.Fights.Aid           = character.Stats.Actuals.Aid;
+        character.Stats.Fights.Crafting      = character.Stats.Actuals.Crafting;
+        character.Stats.Fights.Perception    = character.Stats.Actuals.Perception;
         // assets
-        character.Stats.Fight.Defense       = character.Stats.Actual.Defense;
-        character.Stats.Fight.Actions       = character.Stats.Actual.Actions;
-        character.Stats.Fight.Hitpoints     = character.Stats.Actual.Hitpoints;
-        character.Stats.Fight.Mana          = character.Stats.Actual.Mana;
+        character.Stats.Fights.Defense       = character.Stats.Actuals.Defense;
+        character.Stats.Fights.Actions       = character.Stats.Actuals.Actions;
+        character.Stats.Fights.Hitpoints     = character.Stats.Actuals.Hitpoints;
+        character.Stats.Fights.Mana          = character.Stats.Actuals.Mana;
     }
 
     #region private methods
     private static void CalculateActuals(Character character)
     {
         // stats
-        character.Stats.Actual.Strength     = character.Stats.Base.Strength     + character.Inventory.Select(s => s.Bonuses.Strength).Sum()      + character.Regalia.Select(s => s.Bonuses.Strength).Sum();
-        character.Stats.Actual.Constitution = character.Stats.Base.Constitution + character.Inventory.Select(s => s.Bonuses.Constitution).Sum()  + character.Regalia.Select(s => s.Bonuses.Constitution).Sum();
-        character.Stats.Actual.Agility      = character.Stats.Base.Agility      + character.Inventory.Select(s => s.Bonuses.Agility).Sum()       + character.Regalia.Select(s => s.Bonuses.Agility).Sum();
-        character.Stats.Actual.Willpower    = character.Stats.Base.Willpower    + character.Inventory.Select(s => s.Bonuses.Willpower).Sum()     + character.Regalia.Select(s => s.Bonuses.Willpower).Sum();
-        character.Stats.Actual.Abstract     = character.Stats.Base.Abstract     + character.Inventory.Select(s => s.Bonuses.Abstract).Sum()      + character.Regalia.Select(s => s.Bonuses.Abstract).Sum();
+        character.Stats.Actuals.Strength     = character.Stats.Base.Strength     + character.Inventory.Select(s => s.Bonuses.Strength).Sum()      + character.Regalia.Select(s => s.Bonuses.Strength).Sum();
+        character.Stats.Actuals.Constitution = character.Stats.Base.Constitution + character.Inventory.Select(s => s.Bonuses.Constitution).Sum()  + character.Regalia.Select(s => s.Bonuses.Constitution).Sum();
+        character.Stats.Actuals.Agility      = character.Stats.Base.Agility      + character.Inventory.Select(s => s.Bonuses.Agility).Sum()       + character.Regalia.Select(s => s.Bonuses.Agility).Sum();
+        character.Stats.Actuals.Willpower    = character.Stats.Base.Willpower    + character.Inventory.Select(s => s.Bonuses.Willpower).Sum()     + character.Regalia.Select(s => s.Bonuses.Willpower).Sum();
+        character.Stats.Actuals.Abstract     = character.Stats.Base.Abstract     + character.Inventory.Select(s => s.Bonuses.Abstract).Sum()      + character.Regalia.Select(s => s.Bonuses.Abstract).Sum();
         // skills
-        character.Stats.Actual.Melee        = character.Stats.Base.Melee        + character.Inventory.Select(s => s.Bonuses.Melee).Sum()         + character.Regalia.Select(s => s.Bonuses.Melee).Sum();
-        character.Stats.Actual.Arcane       = character.Stats.Base.Arcane       + character.Inventory.Select(s => s.Bonuses.Arcane).Sum()        + character.Regalia.Select(s => s.Bonuses.Arcane).Sum();
-        character.Stats.Actual.Psionics     = character.Stats.Base.Psionics     + character.Inventory.Select(s => s.Bonuses.Psionics).Sum()      + character.Regalia.Select(s => s.Bonuses.Psionics).Sum();
-        character.Stats.Actual.Social       = character.Stats.Base.Social       + character.Inventory.Select(s => s.Bonuses.Social).Sum()        + character.Regalia.Select(s => s.Bonuses.Social).Sum();
-        character.Stats.Actual.Hide         = character.Stats.Base.Hide         + character.Inventory.Select(s => s.Bonuses.Hide).Sum()          + character.Regalia.Select(s => s.Bonuses.Hide).Sum();
-        character.Stats.Actual.Survival     = character.Stats.Base.Survival     + character.Inventory.Select(s => s.Bonuses.Survival).Sum()      + character.Regalia.Select(s => s.Bonuses.Survival).Sum();
-        character.Stats.Actual.Tactics      = character.Stats.Base.Tactics      + character.Inventory.Select(s => s.Bonuses.Tactics).Sum()       + character.Regalia.Select(s => s.Bonuses.Tactics).Sum();
-        character.Stats.Actual.Aid          = character.Stats.Base.Aid          + character.Inventory.Select(s => s.Bonuses.Aid).Sum()           + character.Regalia.Select(s => s.Bonuses.Aid).Sum();
-        character.Stats.Actual.Crafting     = character.Stats.Base.Crafting     + character.Inventory.Select(s => s.Bonuses.Crafting).Sum()      + character.Regalia.Select(s => s.Bonuses.Crafting).Sum();
-        character.Stats.Actual.Perception         = character.Stats.Base.Perception         + character.Inventory.Select(s => s.Bonuses.Perception).Sum()          + character.Regalia.Select(s => s.Bonuses.Perception).Sum();
+        character.Stats.Actuals.Melee        = character.Stats.Base.Melee        + character.Inventory.Select(s => s.Bonuses.Melee).Sum()         + character.Regalia.Select(s => s.Bonuses.Melee).Sum();
+        character.Stats.Actuals.Arcane       = character.Stats.Base.Arcane       + character.Inventory.Select(s => s.Bonuses.Arcane).Sum()        + character.Regalia.Select(s => s.Bonuses.Arcane).Sum();
+        character.Stats.Actuals.Psionics     = character.Stats.Base.Psionics     + character.Inventory.Select(s => s.Bonuses.Psionics).Sum()      + character.Regalia.Select(s => s.Bonuses.Psionics).Sum();
+        character.Stats.Actuals.Social       = character.Stats.Base.Social       + character.Inventory.Select(s => s.Bonuses.Social).Sum()        + character.Regalia.Select(s => s.Bonuses.Social).Sum();
+        character.Stats.Actuals.Hide         = character.Stats.Base.Hide         + character.Inventory.Select(s => s.Bonuses.Hide).Sum()          + character.Regalia.Select(s => s.Bonuses.Hide).Sum();
+        character.Stats.Actuals.Survival     = character.Stats.Base.Survival     + character.Inventory.Select(s => s.Bonuses.Survival).Sum()      + character.Regalia.Select(s => s.Bonuses.Survival).Sum();
+        character.Stats.Actuals.Tactics      = character.Stats.Base.Tactics      + character.Inventory.Select(s => s.Bonuses.Tactics).Sum()       + character.Regalia.Select(s => s.Bonuses.Tactics).Sum();
+        character.Stats.Actuals.Aid          = character.Stats.Base.Aid          + character.Inventory.Select(s => s.Bonuses.Aid).Sum()           + character.Regalia.Select(s => s.Bonuses.Aid).Sum();
+        character.Stats.Actuals.Crafting     = character.Stats.Base.Crafting     + character.Inventory.Select(s => s.Bonuses.Crafting).Sum()      + character.Regalia.Select(s => s.Bonuses.Crafting).Sum();
+        character.Stats.Actuals.Perception         = character.Stats.Base.Perception         + character.Inventory.Select(s => s.Bonuses.Perception).Sum()          + character.Regalia.Select(s => s.Bonuses.Perception).Sum();
         // assets
-        character.Stats.Actual.Defense      = character.Stats.Base.Defense      + character.Inventory.Select(s => s.Bonuses.Defense).Sum()       + character.Regalia.Select(s => s.Bonuses.Defense).Sum();
-        character.Stats.Actual.Actions      = character.Stats.Base.Actions      + character.Inventory.Select(s => s.Bonuses.Actions).Sum()       + character.Regalia.Select(s => s.Bonuses.Actions).Sum();
-        character.Stats.Actual.Hitpoints    = character.Stats.Base.Hitpoints    + character.Inventory.Select(s => s.Bonuses.Hitpoints).Sum()     + character.Regalia.Select(s => s.Bonuses.Hitpoints).Sum();
-        character.Stats.Actual.Mana         = character.Stats.Base.Mana         + character.Inventory.Select(s => s.Bonuses.Mana).Sum()          + character.Regalia.Select(s => s.Bonuses.Mana).Sum();
+        character.Stats.Actuals.Defense      = character.Stats.Base.Defense      + character.Inventory.Select(s => s.Bonuses.Defense).Sum()       + character.Regalia.Select(s => s.Bonuses.Defense).Sum();
+        character.Stats.Actuals.Actions      = character.Stats.Base.Actions      + character.Inventory.Select(s => s.Bonuses.Actions).Sum()       + character.Regalia.Select(s => s.Bonuses.Actions).Sum();
+        character.Stats.Actuals.Hitpoints    = character.Stats.Base.Hitpoints    + character.Inventory.Select(s => s.Bonuses.Hitpoints).Sum()     + character.Regalia.Select(s => s.Bonuses.Hitpoints).Sum();
+        character.Stats.Actuals.Mana         = character.Stats.Base.Mana         + character.Inventory.Select(s => s.Bonuses.Mana).Sum()          + character.Regalia.Select(s => s.Bonuses.Mana).Sum();
     }
 
     private static void SetStats(CreateCharacter create, Character character)

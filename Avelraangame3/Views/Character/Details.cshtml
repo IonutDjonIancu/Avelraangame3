@@ -1,6 +1,9 @@
 ﻿@model Characters
 
-@* Character/Details *@
+@{
+    ViewData["Title"] = "Details";
+}
+
 <div class="row">
     <div class="col-8">
         <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
@@ -64,8 +67,5 @@ else
     }
 
     // run logic
-    $(document).ready(() => {
-        hideLoading();
-        logModel();
-    });
+    
 </script>

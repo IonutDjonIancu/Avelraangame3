@@ -228,7 +228,7 @@ public static class Statics
             // assets
             public const int Defense        = 1;
             public const int Actions        = 1;
-            public const int Hitpoints      = 2;
+            public const int Hitpoints      = 3;
             public const int Mana           = 0;
         }
 
@@ -255,7 +255,7 @@ public static class Statics
             // assets
             public const int Defense        = 1;
             public const int Actions        = 1;
-            public const int Hitpoints      = 1;
+            public const int Hitpoints      = 2;
             public const int Mana           = 5;
         }
 
@@ -282,7 +282,7 @@ public static class Statics
             // assets
             public const int Defense        = 3;
             public const int Actions        = 1;
-            public const int Hitpoints      = 3;
+            public const int Hitpoints      = 4;
             public const int Mana           = 0;
         }
 
@@ -346,7 +346,7 @@ public static class Statics
             // assets
             public const int Defense        = 0;
             public const int Actions        = 0;
-            public const int Hitpoints      = 1;
+            public const int Hitpoints      = 2;
             public const int Mana           = 3;
         }
 
@@ -373,7 +373,7 @@ public static class Statics
             // assets
             public const int Defense        = 5;
             public const int Actions        = 0;
-            public const int Hitpoints      = 2;
+            public const int Hitpoints      = 3;
             public const int Mana           = 0;
         }
 
@@ -410,7 +410,7 @@ public static class Statics
             // assets
             public const int Defense        = 5;
             public const int Actions        = 1;
-            public const int Hitpoints      = 3;
+            public const int Hitpoints      = 5;
             public const int Mana           = 0;
         }
 
@@ -437,7 +437,7 @@ public static class Statics
             // assets
             public const int Defense        = 0;
             public const int Actions        = 0;
-            public const int Hitpoints      = 1;
+            public const int Hitpoints      = 2;
             public const int Mana           = 5;
         }
 
@@ -464,7 +464,7 @@ public static class Statics
             // assets
             public const int Defense        = 2;
             public const int Actions        = 0;
-            public const int Hitpoints      = 2;
+            public const int Hitpoints      = 3;
             public const int Mana           = 0;
         }
 

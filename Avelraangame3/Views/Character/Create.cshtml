@@ -1,7 +1,20 @@
-﻿@* Character/Create *@
-<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-    <button class="btn btn-secondary">Create</button>
-    <button class="btn btn-outline-secondary" onclick="navigateTo('/Character/Details/' + getPlayerId())">Characters</button>
+﻿
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="row">
+    <div class="col-8">
+        <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+            <button class="btn btn-secondary">Create</button>
+            <button class="btn btn-outline-secondary" onclick="navigateTo('/Character/Details/' + getPlayerId())">Characters</button>
+        </div>
+    </div>
+    <div class="col-4">
+        <div id="spinner" class="spinner-grow text-secondary float-end" role="status" title="Loading...">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 </div>
 
 <div class="container mt-3 footer-border">

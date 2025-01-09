@@ -88,7 +88,7 @@
 
     const deselectCharItem = () => {
         localStorage.removeItem("selectedItem");
-        localStorage.removeItem("selectedCharacter");
+        localStorage.removeItem("selectedCharacter"); 
         localStorage.removeItem("selectedTarget");
     }
 
@@ -103,7 +103,13 @@
     }
 
     const getModel = () => {
-        return JSON.parse(localStorage.getItem("model"));
+        var model = JSON.parse(localStorage.getItem("model"));
+
+        if(model) {
+            return model; 
+        } else {
+            return;
+        }
     }
 
     const logModel = () => {
@@ -130,5 +136,8 @@
     // run on load
     $(document).ready(() => {
         hideNavbar();
+        hideLoading();
+        deselectCharItem();
+        logModel();
     });
 </script>

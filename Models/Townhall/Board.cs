@@ -3,12 +3,13 @@
 public class Board
 {
     public Guid Id { get; set; }
+    public Guid PlayerId { get; set; }
     public string Type { get; set; }
     public string EffortLevelName { get; set; }
 
     // party leader is always player character starting from index 0
-    public List<Character> GoodGuys { get; set; } = [];
-    public List<Character> BadGuys { get; set; } = [];
+    public List<CharacterVm> GoodGuys { get; set; } = [];
+    public List<CharacterVm> BadGuys { get; set; } = [];
 
     public string Message { get; set; }
 

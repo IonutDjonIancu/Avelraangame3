@@ -48,11 +48,11 @@ body {
 }
 
 .text-100 {
-    color: #215e21;
+    color: #429342;
 }
 
 .text-100-m {
-    color: #2b2ba7;
+    color: #5d5d91;
 }
 
 .text-50 {
@@ -91,6 +91,30 @@ body {
     color: darkorange;
 }
 
+.entity-1 {
+    color: darkslategray
+}
+
+.entity-2 {
+    color: green
+}
+
+.entity-3 {
+    color: darkorange
+}
+
+.entity-4 {
+    color: yellow
+}
+
+.entity-5 {
+    color: red
+}
+
+.entity-6 {
+    color: darkorchid
+}
+
 .pointer {
     cursor: pointer;
 }
@@ -114,6 +138,11 @@ body {
     transition: opacity 0.3s ease;
 }
 
+.item:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
 .item-char {
     width: 60px;
     height: 60px;
@@ -121,12 +150,19 @@ body {
     transition: opacity 0.3s ease;
 }
 
-.item:hover {
+.item-char:hover {
     opacity: 1;
     cursor: pointer;
 }
 
-.item-char:hover {
+.item-char-small {
+    width: 40px;
+    height: 40px;
+    opacity: 0.75;
+    transition: opacity 0.3s ease;
+}
+
+.item-char-small:hover {
     opacity: 1;
     cursor: pointer;
 }
