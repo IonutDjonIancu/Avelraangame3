@@ -43,6 +43,13 @@ public interface IDiceService
     /// <param name="canLevelup"></param>
     /// <returns></returns>
     int Rolld20Character(Character character, string stat, bool canLevelup = false);
+
+    /// <summary>
+    /// Returns an effort roll based on effort level name.
+    /// </summary>
+    /// <param name="effortLevelName"></param>
+    /// <returns></returns>
+    int RollEffortRoll(Board board, string stat);
 }
 
 public class DiceService : IDiceService
@@ -54,6 +61,66 @@ public class DiceService : IDiceService
     public DiceService(IValidatorService validator)
     {
         _validator = validator; 
+    }
+
+    public int RollEffortRoll(Board board, string stat)
+    {
+        if (board.EffortLevelName == Statics.EffortLevelNames.Easy)
+        {
+            return Roll1dN(20);
+        }
+        else if (board.EffortLevelName == Statics.EffortLevelNames.Normal)
+        {
+            return stat switch
+            {
+                Statics.Stats.Strength      => Roll1dN(board.GoodGuys.Select(s => s.Stats.Fight.Strength).Sum() / board.GoodGuys.Count),
+                Statics.Stats.Constitution  => Roll1dN(board.GoodGuys.Select(s => s.Stats.Fight.Constitution).Sum() / board.GoodGuys.Count),
+                Statics.Stats.Agility       => Roll1dN(board.GoodGuys.Select(s => s.Stats.Fight.Agility).Sum() / board.GoodGuys.Count),
+                Statics.Stats.Willpower     => Roll1dN(board.GoodGuys.Select(s => s.Stats.Fight.Willpower).Sum() / board.GoodGuys.Count),
+                Statics.Stats.Abstract      => Roll1dN(board.GoodGuys.Select(s => s.Stats.Fight.Abstract).Sum() / board.GoodGuys.Count),
+                Statics.Stats.Melee         => Roll1dN(board.GoodGuys.Select(s => s.Stats.Fight.Melee).Sum() / board.GoodGuys.Count),
+                Statics.Stats.Arcane        => Roll1dN(board.GoodGuys.Select(s => s.Stats.Fight.Arcane).Sum() / board.GoodGuys.Count),
+                Statics.Stats.Psionics      => Roll1dN(board.GoodGuys.Select(s => s.Stats.Fight.Psionics).Sum() / board.GoodGuys.Count),
+                Statics.Stats.Social        => Roll1dN(board.GoodGuys.Select(s => s.Stats.Fight.Social).Sum() / board.GoodGuys.Count),
+                Statics.Stats.Hide          => Roll1dN(board.GoodGuys.Select(s => s.Stats.Fight.Hide).Sum() / board.GoodGuys.Count),
+                Statics.Stats.Survival      => Roll1dN(board.GoodGuys.Select(s => s.Stats.Fight.Survival).Sum() / board.GoodGuys.Count),
+                Statics.Stats.Tactics       => Roll1dN(board.GoodGuys.Select(s => s.Stats.Fight.Tactics).Sum() / board.GoodGuys.Count),
+                Statics.Stats.Aid           => Roll1dN(board.GoodGuys.Select(s => s.Stats.Fight.Aid).Sum() / board.GoodGuys.Count),
+                Statics.Stats.Crafting      => Roll1dN(board.GoodGuys.Select(s => s.Stats.Fight.Crafting).Sum() / board.GoodGuys.Count),
+                Statics.Stats.Perception    => Roll1dN(board.GoodGuys.Select(s => s.Stats.Fight.Perception).Sum() / board.GoodGuys.Count),
+                Statics.Stats.Defense       => Roll1dN(board.GoodGuys.Select(s => s.Stats.Fight.Defense).Sum() / board.GoodGuys.Count),
+                Statics.Stats.Actions       => Roll1dN(board.GoodGuys.Select(s => s.Stats.Fight.Actions).Sum() / board.GoodGuys.Count),
+                Statics.Stats.Hitpoints     => Roll1dN(board.GoodGuys.Select(s => s.Stats.Fight.Hitpoints).Sum() / board.GoodGuys.Count),
+                Statics.Stats.Mana          => Roll1dN(board.GoodGuys.Select(s => s.Stats.Fight.Mana).Sum() / board.GoodGuys.Count),
+                _ => throw new NotImplementedException()
+            };
+        }
+        else // for core
+        {
+            return stat switch
+            {
+                Statics.Stats.Strength      => RollMdN(board.GoodGuys.Select(s => s.Stats.Fight.Strength    ).Min() / 2, board.GoodGuys.Select(s => s.Stats.Fight.Strength    ).Max() + board.GoodGuys.Select(s => s.Stats.Fight.Strength    ).Max() / 2),
+                Statics.Stats.Constitution  => RollMdN(board.GoodGuys.Select(s => s.Stats.Fight.Constitution).Min() / 2, board.GoodGuys.Select(s => s.Stats.Fight.Constitution).Max() + board.GoodGuys.Select(s => s.Stats.Fight.Constitution).Max() / 2),
+                Statics.Stats.Agility       => RollMdN(board.GoodGuys.Select(s => s.Stats.Fight.Agility     ).Min() / 2, board.GoodGuys.Select(s => s.Stats.Fight.Agility     ).Max() + board.GoodGuys.Select(s => s.Stats.Fight.Agility     ).Max() / 2),
+                Statics.Stats.Willpower     => RollMdN(board.GoodGuys.Select(s => s.Stats.Fight.Willpower   ).Min() / 2, board.GoodGuys.Select(s => s.Stats.Fight.Willpower   ).Max() + board.GoodGuys.Select(s => s.Stats.Fight.Willpower   ).Max() / 2),
+                Statics.Stats.Abstract      => RollMdN(board.GoodGuys.Select(s => s.Stats.Fight.Abstract    ).Min() / 2, board.GoodGuys.Select(s => s.Stats.Fight.Abstract    ).Max() + board.GoodGuys.Select(s => s.Stats.Fight.Abstract    ).Max() / 2),
+                Statics.Stats.Melee         => RollMdN(board.GoodGuys.Select(s => s.Stats.Fight.Melee       ).Min() / 2, board.GoodGuys.Select(s => s.Stats.Fight.Melee       ).Max() + board.GoodGuys.Select(s => s.Stats.Fight.Melee       ).Max() / 2),
+                Statics.Stats.Arcane        => RollMdN(board.GoodGuys.Select(s => s.Stats.Fight.Arcane      ).Min() / 2, board.GoodGuys.Select(s => s.Stats.Fight.Arcane      ).Max() + board.GoodGuys.Select(s => s.Stats.Fight.Arcane      ).Max() / 2),
+                Statics.Stats.Psionics      => RollMdN(board.GoodGuys.Select(s => s.Stats.Fight.Psionics    ).Min() / 2, board.GoodGuys.Select(s => s.Stats.Fight.Psionics    ).Max() + board.GoodGuys.Select(s => s.Stats.Fight.Psionics    ).Max() / 2),
+                Statics.Stats.Social        => RollMdN(board.GoodGuys.Select(s => s.Stats.Fight.Social      ).Min() / 2, board.GoodGuys.Select(s => s.Stats.Fight.Social      ).Max() + board.GoodGuys.Select(s => s.Stats.Fight.Social      ).Max() / 2),
+                Statics.Stats.Hide          => RollMdN(board.GoodGuys.Select(s => s.Stats.Fight.Hide        ).Min() / 2, board.GoodGuys.Select(s => s.Stats.Fight.Hide        ).Max() + board.GoodGuys.Select(s => s.Stats.Fight.Hide        ).Max() / 2),
+                Statics.Stats.Survival      => RollMdN(board.GoodGuys.Select(s => s.Stats.Fight.Survival    ).Min() / 2, board.GoodGuys.Select(s => s.Stats.Fight.Survival    ).Max() + board.GoodGuys.Select(s => s.Stats.Fight.Survival    ).Max() / 2),
+                Statics.Stats.Tactics       => RollMdN(board.GoodGuys.Select(s => s.Stats.Fight.Tactics     ).Min() / 2, board.GoodGuys.Select(s => s.Stats.Fight.Tactics     ).Max() + board.GoodGuys.Select(s => s.Stats.Fight.Tactics     ).Max() / 2),
+                Statics.Stats.Aid           => RollMdN(board.GoodGuys.Select(s => s.Stats.Fight.Aid         ).Min() / 2, board.GoodGuys.Select(s => s.Stats.Fight.Aid         ).Max() + board.GoodGuys.Select(s => s.Stats.Fight.Aid         ).Max() / 2),
+                Statics.Stats.Crafting      => RollMdN(board.GoodGuys.Select(s => s.Stats.Fight.Crafting    ).Min() / 2, board.GoodGuys.Select(s => s.Stats.Fight.Crafting    ).Max() + board.GoodGuys.Select(s => s.Stats.Fight.Crafting    ).Max() / 2),
+                Statics.Stats.Perception    => RollMdN(board.GoodGuys.Select(s => s.Stats.Fight.Perception  ).Min() / 2, board.GoodGuys.Select(s => s.Stats.Fight.Perception  ).Max() + board.GoodGuys.Select(s => s.Stats.Fight.Perception  ).Max() / 2),
+                Statics.Stats.Defense       => RollMdN(board.GoodGuys.Select(s => s.Stats.Fight.Defense     ).Min() / 2, board.GoodGuys.Select(s => s.Stats.Fight.Defense     ).Max() + board.GoodGuys.Select(s => s.Stats.Fight.Defense     ).Max() / 2),
+                Statics.Stats.Actions       => RollMdN(board.GoodGuys.Select(s => s.Stats.Fight.Actions     ).Min() / 2, board.GoodGuys.Select(s => s.Stats.Fight.Actions     ).Max() + board.GoodGuys.Select(s => s.Stats.Fight.Actions     ).Max() / 2),
+                Statics.Stats.Hitpoints     => RollMdN(board.GoodGuys.Select(s => s.Stats.Fight.Hitpoints   ).Min() / 2, board.GoodGuys.Select(s => s.Stats.Fight.Hitpoints   ).Max() + board.GoodGuys.Select(s => s.Stats.Fight.Hitpoints   ).Max() / 2),
+                Statics.Stats.Mana          => RollMdN(board.GoodGuys.Select(s => s.Stats.Fight.Mana        ).Min() / 2, board.GoodGuys.Select(s => s.Stats.Fight.Mana        ).Max() + board.GoodGuys.Select(s => s.Stats.Fight.Mana        ).Max() / 2),
+                _ => throw new NotImplementedException()
+            };
+        }
     }
 
     public int Rolld20Character(Character character, string stat, bool canLevelup = false)

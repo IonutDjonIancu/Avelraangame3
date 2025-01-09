@@ -6,19 +6,21 @@ public class Board
     public string Type { get; set; }
     public string EffortLevelName { get; set; }
 
-    // party leader is the first who joins
+    // party leader is always player character starting from index 0
     public List<Character> GoodGuys { get; set; } = [];
     public List<Character> BadGuys { get; set; } = [];
 
     public string Message { get; set; }
 
     public Rewards Rewards { get; set; } = new();
+
+    public List<CharacterVm> Battlequeue { get; set; } = [];
+
+    public int RoundNr { get; set; }
 }
 
 public class Duel : Board
 {
-    public List<Guid> Battlequeue { get; set; } = [];
-    public int RoundNr { get; set; }
 }
 
 public class Rewards

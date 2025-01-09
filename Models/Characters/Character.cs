@@ -37,6 +37,7 @@ public class CharacterVm
     public string Portrait { get; set; }
     public int Wealth { get; set; }
     public bool IsLocked { get; set; }
+    public int Roll { get; set; }
 }
 
 public class CharacterIdentity

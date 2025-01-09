@@ -62,8 +62,16 @@
         var playerId = localStorage.getItem("playerId");
 
         if(playerId) {
-            return localStorage.getItem("playerId");
+            return playerId;
         }   
+    }
+
+    const getCharacterId = () => {
+        var characterId = localStorage.getItem("selectedCharacter");
+
+        if(characterId) {
+            return characterId;
+        }
     }
 
     const selectCharacter = (characterId) => {
@@ -81,6 +89,7 @@
     const deselectCharItem = () => {
         localStorage.removeItem("selectedItem");
         localStorage.removeItem("selectedCharacter");
+        localStorage.removeItem("selectedTarget");
     }
 
     const hideLoading = () => {

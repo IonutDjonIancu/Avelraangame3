@@ -29,6 +29,7 @@
                     if (character.IsLocked)
                     {
                         <img class="rounded-3 m-1 pointer item-char item-7 character-img"
+                             onclick="navigateTo('/Townhall/Duel/' + getPlayerId() + '/' + '@character.Id' + '/' + 'Easy')"
                              id="character-@character.Id"
                              src="@character.Portrait"
                              title="@character.Name" />
@@ -36,7 +37,7 @@
                     else 
                     {
                         <img class="rounded-3 m-1 pointer item-char item-1 character-img"
-                             onclick="selectCharacter('@character.Id')"
+                             onclick="selectCharacterLocal('@character.Id')"
                              id="character-@character.Id"
                              src="@character.Portrait"
                              title="@character.Name" />
@@ -46,8 +47,13 @@
         </div>
     </div>
     <div class="container mt-3 footer-border" id="characters">
-        <div class="row d-flex flex-wrap justify-content-between mt-1">
-            add duel buttons here
+        <div class="row d-flex flex-wrap justify-content-between mt-3">
+            <div class="col">
+                <button onclick="duel('Easy')" class="btn btn-outline-secondary">easy challenger</button>
+                <button class="btn btn-outline-secondary text-green">normal challeger</button>
+                <button class="btn btn-outline-secondary text-orange">core challenger</button>
+
+            </div>
         </div>
     </div>
 }
@@ -64,7 +70,26 @@ else
 
 
 <script>
-    
+    const selectCharacterLocal = (characterId) => {
+        selectCharacter(characterId);
+
+        $('.selected-character1').each(function() {
+            $(this).removeClass('selected-character1');
+        });
+        $('#character-' + characterId).addClass('selected-character1');
+    }
+
+    const duel = (difficulty) => {
+        var characterId = getCharacterId();
+        var playerId = getPlayerId();
+
+        if(!characterId) {
+            alert("Select a character first.");
+            return;
+        } else {
+            navigateTo(`/Townhall/Duel/${playerId}/${characterId}/${difficulty}`)
+        }
+    }
 
     // run logic
     $(document).ready(() => {

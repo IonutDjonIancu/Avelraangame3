@@ -281,7 +281,7 @@ public class CharacterService : ICharacterService
         character.Stats.Fight.Tactics       = character.Stats.Actual.Tactics;
         character.Stats.Fight.Aid           = character.Stats.Actual.Aid;
         character.Stats.Fight.Crafting      = character.Stats.Actual.Crafting;
-        character.Stats.Fight.Perception          = character.Stats.Actual.Perception;
+        character.Stats.Fight.Perception    = character.Stats.Actual.Perception;
         // assets
         character.Stats.Fight.Defense       = character.Stats.Actual.Defense;
         character.Stats.Fight.Actions       = character.Stats.Actual.Actions;

@@ -52,7 +52,7 @@
     <div class="container mt-3 footer-border">
         <div class="row mt-2">
             <div class="col d-flex justify-content-center align-items-center">
-                <p class="mb-0 text-muted">No characters to show...</p>
+                <p class="mb-0 text-muted">No available characters...</p>
             </div>
         </div>
     </div>
@@ -149,7 +149,7 @@ else
     }
 
     const buyItem = () => {
-        var characterId = localStorage.getItem("selectedCharacter");
+        var characterId = getCharacterId();
         var itemId = localStorage.getItem("selectedItem");
         var playerId = getPlayerId();
 

@@ -60,6 +60,26 @@ public class TownhallController : Controller
         }
     }
 
+    // GET: Townhall/Duel/123/456/easy
+    [HttpGet("Duel/{playerId}/{characterId}/{effortLevelName}")]
+    public IActionResult Duel(Guid playerId, Guid characterId, string effortLevelName)
+    {
+        try
+        {
+            var duel = _townhallService.GetOrGenerateDuel(new CharacterIdentity
+            {
+                PlayerId = playerId,
+                Id = characterId,
+            }, effortLevelName, Statics.Boards.Types.Duel);
+
+            return View(duel);
+        }
+        catch (Exception ex)
+        {
+            return Error(ex.Message);
+        }
+    }
+
     // GET: Character/Error?info=infoToDisplay
     public IActionResult Error(string info)
     {

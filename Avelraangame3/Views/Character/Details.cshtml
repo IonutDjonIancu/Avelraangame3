@@ -22,11 +22,22 @@
             <div class="col col-12 d-flex justify-content-start">
                 @foreach (var character in Model.CharactersList)
                 {
-                    <img class="rounded-3 item-1 item-char m-1 pointer"
-                        onclick="loadCharacter('@character.Id')"
-                        id="@character.Id"
-                        src="@character.Portrait"
-                        title="@character.Name" />
+                    if (character.IsLocked)
+                    {
+                        <img class="rounded-3 item-7 item-char m-1 pointer"
+                            onclick="loadCharacter('@character.Id')"
+                            id="@character.Id"
+                            src="@character.Portrait"
+                            title="@character.Name" />
+                    }
+                    else 
+                    {
+                        <img class="rounded-3 item-1 item-char m-1 pointer"
+                             onclick="loadCharacter('@character.Id')"
+                             id="@character.Id"
+                             src="@character.Portrait"
+                             title="@character.Name" />
+                    }
                 }
             </div>
         </div>

@@ -4,13 +4,9 @@ namespace Services;
 
 public interface ITownhallService
 {
-    #region Boards
-    Board GetBoard(CharacterIdentity characterIdentity);
-    Duel GenerateDuelVsNpc(CharacterIdentity characterIdentity, string effortLevelName);
-    #endregion
+    Duel GetOrGenerateDuel(CharacterIdentity characterIdentity, string effortLevelName, string boardType);
 
     MarketForPlayer GetMarket(Guid playerId);
-    void GenerateItemsForMarket();
 }
 
 public class TownhallService : ITownhallService
@@ -40,59 +36,18 @@ public class TownhallService : ITownhallService
         GenerateItemsForMarket();
     }
 
-    public Board GetBoard(CharacterIdentity characterIdentity)
+    public Duel GetOrGenerateDuel(CharacterIdentity characterIdentity, string effortLevelName, string boardType)
     {
-        var board = _validatorService.ValidateCharacterOnGetBoard(characterIdentity);
+        var character = _validatorService.ValidateCharacterExists(characterIdentity);
 
-        return board.Type switch
+        if (character.Details.IsLocked)
         {
-            Statics.Boards.Types.Duel => (Duel)board,
-            _ => throw new NotImplementedException(),
-        };
-    }
-
-    public Duel GenerateDuelVsNpc(CharacterIdentity characterIdentity, string effortLevelName)
-    {
-        var character = _validatorService.ValidateCharacterOnJoiningBoard(characterIdentity);
-        _characterService.SetCharacterFights(character);
-
-        var boardId = Guid.NewGuid();
-
-        character.Details.IsLocked = true;
-        character.Details.BoardId = boardId;
-        character.Details.BoardType = Statics.Boards.Types.Duel;
-
-        var npc = _npcService.GenerateNpc([character]);
-
-        var duel = new Duel
+            return (Duel)GetBoard(character.Details.BoardId);
+        }
+        else
         {
-            Id = boardId,
-            GoodGuys =
-            [
-                character,
-            ],
-            BadGuys =
-            [
-                npc,
-            ],
-            RoundNr = 1,
-            Type = Statics.Boards.Types.Duel
-        };
-
-        character.Details.BoardId = boardId;
-        character.Details.BoardType = Statics.Boards.Types.Duel;
-        character.Details.IsHidden = false;
-        character.Details.IsLocked = true;
-
-        npc.Details.BoardId = boardId;
-        npc.Details.BoardType = Statics.Boards.Types.Duel;
-        npc.Details.IsHidden = false;
-        npc.Details.IsLocked = true;
-
-        PrepareForFight_nonCore(duel);
-        _snapshot.Boards.Add(duel);
-
-        return duel;
+            return (Duel)GenerateBoard(characterIdentity, effortLevelName, boardType);
+        }
     }
 
     public MarketForPlayer GetMarket(Guid playerId)
@@ -120,7 +75,61 @@ public class TownhallService : ITownhallService
         return market;
     }
 
-    public void GenerateItemsForMarket()
+    #region private methods
+    private Board GenerateBoard(CharacterIdentity characterIdentity, string effortLevelName, string boardType)
+    {
+        return boardType switch
+        {
+            Statics.Boards.Types.Duel => GenerateDuel(characterIdentity, effortLevelName),
+            Statics.Boards.Types.Quest => throw new NotImplementedException(),
+            Statics.Boards.Types.Tourney => throw new NotImplementedException(),
+            _ => throw new Exception($"Unrecognized board type to generate: {boardType}")
+        };
+    }
+
+    private Board GetBoard(Guid boardId)
+    {
+        return _snapshot.Boards.Find(s => s.Id == boardId) ?? throw new Exception($"Board with id: {boardId} not found.");
+    }
+
+    private Duel GenerateDuel(CharacterIdentity characterIdentity, string effortLevelName)
+    {
+        var character = _validatorService.ValidateCharacterOnJoiningBoard(characterIdentity);
+        var boardId = Guid.NewGuid();
+        
+        var board = new Duel
+        {
+            Id = boardId,
+            RoundNr = 1,
+            Type = Statics.Boards.Types.Duel,
+            EffortLevelName = effortLevelName
+        };
+
+        character.Details.IsLocked = true;
+        character.Details.IsHidden = false;
+        character.Details.BoardId = boardId;
+        character.Details.BoardType = Statics.Boards.Types.Duel;
+        board.GoodGuys.Add(character);
+
+        var npc = _npcService.GenerateNpc([character], board);
+        npc.Details.IsLocked = true;
+        npc.Details.IsHidden = false;
+        npc.Details.BoardId = boardId;
+        npc.Details.BoardType = Statics.Boards.Types.Duel;
+        board.BadGuys.Add(npc);
+
+        _characterService.SetCharacterFights(character);
+        _characterService.SetCharacterFights(npc);
+
+        PrepareFight(board);
+        PrepareBattlequeue(board);
+
+        _snapshot.Boards.Add(board);
+
+        return board;
+    }
+
+    private void GenerateItemsForMarket()
     {
         // TODO: this should change every day, unless the item is reserved
 
@@ -133,61 +142,98 @@ public class TownhallService : ITownhallService
         }
     }
 
-
-    #region private methods
-    private void PrepareForFight_nonCore(Board board)
+    private void PrepareBattlequeue(Board board)
     {
-        throw new NotImplementedException("Needs to be redone");
+        var allParticipants = new List<CharacterVm>();
 
-        //var effortLevelTop = board.EffortLevelName == Statics.EffortLevelNames.Easy ? Statics.EffortLevels.Easy : Statics.EffortLevels.Normal;
-        //var effortLevel = _diceService.Roll1dN(effortLevelTop);
-        //var effort = _diceService.Roll1dN(effortLevel);
+        board.GoodGuys.ForEach(s =>
+        {
+            allParticipants.Add(new CharacterVm
+            {
+                Id = s.Identity.Id,
+                Name = s.Details.Name,
+                IsLocked = s.Details.IsLocked,
+                Portrait = s.Details.Portrait,
+                Roll = _diceService.Rolld20Character(s, Statics.Stats.Perception, true),
+                Wealth = s.Details.Wealth,
+            });
+        });
 
-        //// gg = goodGuy
-        //// bg = badGuy
+        board.BadGuys.ForEach(s =>
+        {
+            allParticipants.Add(new CharacterVm
+            {
+                Id = s.Identity.Id,
+                Name = s.Details.Name,
+                IsLocked = s.Details.IsLocked,
+                Portrait = s.Details.Portrait,
+                Roll = _diceService.Rolld20Character(s, Statics.Stats.Perception, true),
+                Wealth = s.Details.Wealth,
+            });
+        });
 
-        //var ggChar = board.GoodGuys.OrderBy(s => s.Stats.Actual.Tactics).First();
-        //var bgChar = board.BadGuys.OrderBy(s => s.Stats.Actual.Tactics).First();
-
-        //var (ggIsSave, ggRoll) = _diceService.RollVsEffort(ggChar, Statics.Stats.Tactics, effortLevel, true);
-        //var (bgIsSave, bgRoll) = _diceService.RollVsEffort(bgChar, Statics.Stats.Tactics, effortLevel, true);
-
-        //if (ggIsSave && !bgIsSave)
-        //{
-        //    board.Message = "Major tactical advantage.";
-
-        //    bgChar.Stats.Fight.Defense   = (int)(bgChar.Actuals.Defense * 0.5);
-        //    bgChar.Stats.Fight.Actions -= 1;
-        //}
-        //else if (ggIsSave && bgIsSave && ggRoll > bgRoll)
-        //{
-        //    board.Message = "Moderate tactical advantage.";
-
-        //    bgChar.Fights.Defense   = (int)(bgChar.Actuals.Defense * 0.75);
-        //}
-        //else if (ggIsSave && bgIsSave && ggRoll == bgRoll)
-        //{
-        //    board.Message = "Tactical stalemate.";
-        //}
-        //else if (ggIsSave && bgIsSave && ggRoll < bgRoll)
-        //{
-        //    board.Message = "Moderate tactical disadvantage.";
-
-        //    ggChar.Fights.Defense   = (int)(ggChar.Actuals.Defense * 0.75);
-        //}
-        //else if (!ggIsSave && bgIsSave)
-        //{
-        //    board.Message = "Major tactical disadvantage.";
-
-        //    ggChar.Fights.Defense   = (int)(ggChar.Actuals.Defense * 0.5);
-        //    ggChar.Fights.Actions -= 1;
-        //} 
-        //else
-        //{
-        //    board.Message = "Tactically inconclusive.";
-        //}
+        board.Battlequeue = [.. allParticipants.OrderByDescending(s => s.Roll)];
     }
 
-    
+    private void PrepareFight(Board board)
+    {
+        var goodGuysTactician = board.GoodGuys.OrderBy(s => s.Stats.Actual.Tactics).First();
+        var badGuysTactician = board.BadGuys.OrderBy(s => s.Stats.Actual.Tactics).First();
+
+        var effortRoll = _diceService.RollEffortRoll(board, Statics.Stats.Tactics);
+
+        var goodGuyRoll = _diceService.Rolld20Character(goodGuysTactician, Statics.Stats.Tactics, true);
+        var badGuyRoll = _diceService.Rolld20Character(badGuysTactician, Statics.Stats.Tactics, true);
+
+        var isGoodGuySaveVs = goodGuyRoll > effortRoll;
+        var isBadGuySaveVs = badGuyRoll > effortRoll;
+
+        if (isGoodGuySaveVs && !isBadGuySaveVs)
+        {
+            board.Message = "Major tactical advantage.";
+
+            foreach (var guy in board.BadGuys)
+            {
+                guy.Stats.Fight.Defense = (int)(guy.Stats.Actual.Defense * 0.5);
+                guy.Stats.Fight.Actions -= (int)(guy.Stats.Actual.Actions * 0.5);
+            }
+        }
+        else if (isGoodGuySaveVs && isBadGuySaveVs && goodGuyRoll > badGuyRoll)
+        {
+            board.Message = "Moderate tactical advantage.";
+
+            foreach (var guy in board.BadGuys)
+            {
+                guy.Stats.Fight.Defense = (int)(guy.Stats.Actual.Defense * 0.75);
+            }
+        }
+        else if (isGoodGuySaveVs && isBadGuySaveVs && goodGuyRoll == badGuyRoll)
+        {
+            board.Message = "Tactical stalemate.";
+        }
+        else if (isGoodGuySaveVs && isBadGuySaveVs && goodGuyRoll < badGuyRoll)
+        {
+            board.Message = "Moderate tactical disadvantage.";
+
+            foreach (var guy in board.GoodGuys)
+            {
+                guy.Stats.Fight.Defense = (int)(guy.Stats.Actual.Defense * 0.75);
+            }
+        }
+        else if (!isGoodGuySaveVs && isBadGuySaveVs)
+        {
+            board.Message = "Major tactical disadvantage.";
+
+            foreach (var guy in board.GoodGuys)
+            {
+                guy.Stats.Fight.Defense = (int)(guy.Stats.Actual.Defense * 0.5);
+                guy.Stats.Fight.Actions -= (int)(guy.Stats.Actual.Actions * 0.5);
+            }
+        }
+        else
+        {
+            board.Message = "Tactically inconclusive.";
+        }
+    }
     #endregion
 }

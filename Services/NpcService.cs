@@ -4,7 +4,7 @@ namespace Services;
 
 public interface INpcService
 {
-    Character GenerateNpc(List<Character> characters);
+    Character GenerateNpc(List<Character> characters, Board board);
 }
 
 public class NpcService : INpcService
@@ -23,7 +23,7 @@ public class NpcService : INpcService
         _validatorService = validatorService;
     }
 
-    public Character GenerateNpc(List<Character> characters)
+    public Character GenerateNpc(List<Character> characters, Board board)
     {
         _validatorService.ValidateListOfCharacters(characters);
 
@@ -49,14 +49,14 @@ public class NpcService : INpcService
                 Name = $"npc_{DateTime.Now.Ticks.ToString()[..5]}",
                 Portrait = "https://i.pinimg.com/originals/29/32/63/293263670b8780146ab0c4e40a2ea890.gif",
                 Worth = 0,
-                BoardId = character.Details.BoardId,
-                BoardType = character.Details.BoardType,
+                BoardId = board.Id,
+                BoardType = board.Type,
             },
         };
 
         SetNpcSpec(npc);
         SetNpcWealth(npc);
-        SetNpcActuals(npc, characters);
+        SetNpcActuals(npc, characters, board);
 
         _snapshot.Npcs.Add(npc);
 
@@ -86,13 +86,11 @@ public class NpcService : INpcService
 
     private void SetNpcWealth(Character npc)
     {
-        npc.Details.Wealth += _diceService.Roll1dN(50);
+        npc.Details.Wealth += _diceService.Roll1dN(10);
     }
 
-    private void SetNpcActuals(Character npc, List<Character> characters)
+    private void SetNpcActuals(Character npc, List<Character> characters, Board board)
     {
-        var board = _snapshot.Boards.Find(s => s.Id == npc.Details.BoardId)!;
-
         if (board.EffortLevelName == Statics.EffortLevelNames.Easy)
         {
             SetNpcActualsToEasy(npc);
@@ -125,7 +123,7 @@ public class NpcService : INpcService
         npc.Stats.Actual.Tactics        = _diceService.RollMdN(characters.Select(s => s.Stats.Actual.Tactics).Min() / 2, characters.Select(s => s.Stats.Actual.Tactics).Max() + characters.Select(s => s.Stats.Actual.Tactics).Max() / 2);
         npc.Stats.Actual.Aid            = _diceService.RollMdN(characters.Select(s => s.Stats.Actual.Aid).Min() / 2, characters.Select(s => s.Stats.Actual.Aid).Max() + characters.Select(s => s.Stats.Actual.Aid).Max() / 2);
         npc.Stats.Actual.Crafting       = _diceService.RollMdN(characters.Select(s => s.Stats.Actual.Crafting).Min() / 2, characters.Select(s => s.Stats.Actual.Crafting).Max() + characters.Select(s => s.Stats.Actual.Crafting).Max() / 2);
-        npc.Stats.Actual.Perception           = _diceService.RollMdN(characters.Select(s => s.Stats.Actual.Perception).Min() / 2, characters.Select(s => s.Stats.Actual.Perception).Max() + characters.Select(s => s.Stats.Actual.Perception).Max() / 2);
+        npc.Stats.Actual.Perception     = _diceService.RollMdN(characters.Select(s => s.Stats.Actual.Perception).Min() / 2, characters.Select(s => s.Stats.Actual.Perception).Max() + characters.Select(s => s.Stats.Actual.Perception).Max() / 2);
         // assets                                                                       Stats.Actual
         npc.Stats.Actual.Defense        = _diceService.RollMdN(characters.Select(s => s.Stats.Actual.Defense).Min() / 2, characters.Select(s => s.Stats.Actual.Defense).Max() + characters.Select(s => s.Stats.Actual.Defense).Max() / 2);
         npc.Stats.Actual.Actions        = _diceService.RollMdN(characters.Select(s => s.Stats.Actual.Actions).Min() / 2, characters.Select(s => s.Stats.Actual.Actions).Max() + characters.Select(s => s.Stats.Actual.Actions).Max() / 2);
@@ -151,7 +149,7 @@ public class NpcService : INpcService
         npc.Stats.Actual.Tactics        = _diceService.Roll1dN(characters.Select(s => s.Stats.Actual.Tactics).Sum() / characters.Count);
         npc.Stats.Actual.Aid            = _diceService.Roll1dN(characters.Select(s => s.Stats.Actual.Aid).Sum() / characters.Count);
         npc.Stats.Actual.Crafting       = _diceService.Roll1dN(characters.Select(s => s.Stats.Actual.Crafting).Sum() / characters.Count);
-        npc.Stats.Actual.Perception           = _diceService.Roll1dN(characters.Select(s => s.Stats.Actual.Perception).Sum() / characters.Count);
+        npc.Stats.Actual.Perception     = _diceService.Roll1dN(characters.Select(s => s.Stats.Actual.Perception).Sum() / characters.Count);
         // assets                                                                       Stats.Actual
         npc.Stats.Actual.Defense        = _diceService.Roll1dN(characters.Select(s => s.Stats.Actual.Defense).Sum() / characters.Count);
         npc.Stats.Actual.Actions        = _diceService.Roll1dN(characters.Select(s => s.Stats.Actual.Actions).Sum() / characters.Count); 
@@ -162,27 +160,27 @@ public class NpcService : INpcService
     private void SetNpcActualsToEasy(Character npc)
     {
         // main
-        npc.Stats.Actual.Strength       = _diceService.Roll1dN(5);
-        npc.Stats.Actual.Constitution   = _diceService.Roll1dN(5);
-        npc.Stats.Actual.Agility        = _diceService.Roll1dN(5);
-        npc.Stats.Actual.Willpower      = _diceService.Roll1dN(5);
-        npc.Stats.Actual.Abstract       = _diceService.Roll1dN(5);
-        // skills                                              5
-        npc.Stats.Actual.Melee          = _diceService.Roll1dN(5);
-        npc.Stats.Actual.Arcane         = _diceService.Roll1dN(5);
-        npc.Stats.Actual.Psionics       = _diceService.Roll1dN(5);
-        npc.Stats.Actual.Social         = _diceService.Roll1dN(5);
-        npc.Stats.Actual.Hide           = _diceService.Roll1dN(5);
-        npc.Stats.Actual.Survival       = _diceService.Roll1dN(5);
-        npc.Stats.Actual.Tactics        = _diceService.Roll1dN(5);
-        npc.Stats.Actual.Aid            = _diceService.Roll1dN(5);
-        npc.Stats.Actual.Crafting       = _diceService.Roll1dN(5);
-        npc.Stats.Actual.Perception           = _diceService.Roll1dN(5);
-        // assets                                              5
-        npc.Stats.Actual.Defense        = _diceService.Roll1dN(5);
+        npc.Stats.Actual.Strength       = _diceService.Roll1dN(10);
+        npc.Stats.Actual.Constitution   = _diceService.Roll1dN(10);
+        npc.Stats.Actual.Agility        = _diceService.Roll1dN(10);
+        npc.Stats.Actual.Willpower      = _diceService.Roll1dN(10);
+        npc.Stats.Actual.Abstract       = _diceService.Roll1dN(10);
+        // skills                                              10
+        npc.Stats.Actual.Melee          = _diceService.Roll1dN(10);
+        npc.Stats.Actual.Arcane         = _diceService.Roll1dN(10);
+        npc.Stats.Actual.Psionics       = _diceService.Roll1dN(10);
+        npc.Stats.Actual.Social         = _diceService.Roll1dN(10);
+        npc.Stats.Actual.Hide           = _diceService.Roll1dN(10);
+        npc.Stats.Actual.Survival       = _diceService.Roll1dN(10);
+        npc.Stats.Actual.Tactics        = _diceService.Roll1dN(10);
+        npc.Stats.Actual.Aid            = _diceService.Roll1dN(10);
+        npc.Stats.Actual.Crafting       = _diceService.Roll1dN(10);
+        npc.Stats.Actual.Perception     = _diceService.Roll1dN(10);
+        // assets                                              10
+        npc.Stats.Actual.Defense        = _diceService.Roll1dN(10);
         npc.Stats.Actual.Actions        = 1;                   
-        npc.Stats.Actual.Hitpoints      = _diceService.Roll1dN(5);
-        npc.Stats.Actual.Mana           = _diceService.Roll1dN(5);
+        npc.Stats.Actual.Hitpoints      = _diceService.Roll1dN(10);
+        npc.Stats.Actual.Mana           = _diceService.Roll1dN(10);
     }
 
 
