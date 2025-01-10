@@ -20,14 +20,16 @@ public static class Statics
 
         public static class ActionTypes
         {
-            public const string Attack  = "Attack";
-            public const string Cast    = "Cast";
-            public const string Mend    = "Mend";
-            public const string Rest    = "Rest";
+            public const string Melee       = "Melee";
+            public const string Arcane      = "Arcane";
+            public const string Psionics    = "Psionics";
+            public const string Aid         = "Aid";
+            public const string Hide        = "Hide";
+            public const string Traps       = "Traps";
             
             public static readonly List<string> All =
             [
-                Attack, Cast, Mend, Rest
+                Melee, Arcane, Psionics, Aid, Hide, Traps
             ];
         }
     }
@@ -40,9 +42,9 @@ public static class Statics
 
     public static class EffortLevelNames
     {
-        public const string Easy = "Easy";
-        public const string Normal = "Medium";
-        public const string Core = "Core";
+        public const string Easy    = "Easy";
+        public const string Normal  = "Medium";
+        public const string Core    = "Core";
 
         public static readonly List<string> All =
         [
@@ -433,7 +435,7 @@ public static class Statics
             public const int Tactics        = 0;
             public const int Aid            = 1;
             public const int Crafting       = 0;
-            public const int Perception     = 0;
+            public const int Perception     = 3;
             // assets
             public const int Defense        = 0;
             public const int Actions        = 0;

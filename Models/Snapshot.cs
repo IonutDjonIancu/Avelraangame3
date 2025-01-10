@@ -9,7 +9,9 @@ public interface ISnapshot
     
     List<Board> Boards { get; set; }
 
-    List<Item> MarketItems {  get; set; }    
+    List<Item> MarketItems {  get; set; }
+
+    List<Character> GetAllCharacters();
 }
 
 public class Snapshot : ISnapshot
@@ -25,4 +27,9 @@ public class Snapshot : ISnapshot
 
     [MaxLength (10000)]
     public List<Item> MarketItems { get; set; } = [];
+
+    public List<Character> GetAllCharacters()
+    {
+        return Players.SelectMany(p => p.Characters).ToList();
+    }
 }

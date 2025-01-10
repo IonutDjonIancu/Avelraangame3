@@ -125,7 +125,7 @@ else
         $('#character-' + characterId).addClass('selected-character1');
 
         var wealth = getModel().characters.charactersList.find(i => i.id === characterId).wealth;
-        $('#showWealth').append('Wealth: ' + wealth).show();
+        $('#showWealth').empty().append('Wealth: ' + wealth).show();
     }
 
     const selectItemLocal = (itemId) => {

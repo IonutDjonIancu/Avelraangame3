@@ -33,6 +33,25 @@
             }
         </div>
     </div>
+    <div class="row mt-3 text-center">
+        <p class="m-0 text-white-navajo">@Model.Message</p>
+    </div>
+    <div class="row d-flex flex-wrap justify-content-between mt-3">
+        <div class="col d-flex justify-content-center">
+            <div id="actionsbar" class="btn-group btn-group-sm" role="group" aria-label="Basic example" style="display:none">
+                <button onclick="runAction('Melee')" class="btn btn-outline-secondary text-green" title="Melee">Mel</button>
+                <button class="btn btn-outline-secondary text-green" title="Arcane">Arc</button>
+                <button class="btn btn-outline-secondary text-green" title="Psionics">Psi</button>
+                <button class="btn btn-outline-secondary text-green" title="Aid">Aid</button>
+                <button class="btn btn-outline-secondary text-green-dark" title="Hide">Hid</button>
+                <button class="btn btn-outline-secondary text-green-dark" title="Traps">Tra</button>
+                <button class="btn btn-outline-secondary text-orange" title="Use special skill">Sps</button>
+                <button class="btn btn-outline-secondary text-white-dirty" title="Let Ai move">Aim</button>
+                <button class="btn btn-outline-secondary text-dark" title="Rest">Res</button>
+                <button class="btn btn-outline-secondary text-dark" title="Pass turn">Pas</button>
+            </div>
+        </div>
+    </div>
     @* Characters *@
     <div class="row mt-3">
         @* Goodguys *@
@@ -40,13 +59,34 @@
             <div class="float-end d-flex">
                 @foreach (var character in Model.GoodGuys)
                 {
-                    <div onclick="selectCharacterLocal('@character.Id')" id="character-@character.Id" class="d-flex flex-column bd-highlight mb-3 pointer character">
+                    <div onclick="selectSourceOrTarget('@character.Id')" id="character-@character.Id" class="d-flex flex-column bd-highlight mb-3 pointer character">
                         <div class="align-self-center">
                             <img class="rounded-3 m-2 item-1 alive-@character.IsAlive"
                                  src="@character.Portrait"
                                  width="60"
                                  height="80"
-                                 title="@character.Name" />
+                                 title="@character.Name
+*** stats ***
+HPS @character.Fights.Hitpoints
+DEF @character.Fights.Defense
+MAN @character.Fights.Mana
+ACT @character.Fights.Actions
+STR @character.Fights.Strength
+CNS @character.Fights.Constitution
+AGL @character.Fights.Agility
+WIL @character.Fights.Willpower
+ABS @character.Fights.Abstract
+*** skills ***
+MEL @character.Fights.Melee
+ARC @character.Fights.Arcane
+PSI @character.Fights.Psionics
+SOC @character.Fights.Social
+HID @character.Fights.Hide
+SUR @character.Fights.Survival
+TAC @character.Fights.Tactics
+AID @character.Fights.Aid
+CRA @character.Fights.Crafting
+PER @character.Fights.Perception" />
                         </div>
                         <div>
                             <div class="px-2 text-center" style="font-size: small">
@@ -65,14 +105,35 @@
             <div class="float-start d-flex">
                 @foreach (var character in Model.BadGuys)
                 {
-                    <div onclick="selectTargetLocal('@character.Id')" id="character-@character.Id" class="d-flex flex-column bd-highlight mb-3 pointer character">
+                    <div onclick="selectSourceOrTarget('@character.Id')" id="character-@character.Id" class="d-flex flex-column bd-highlight mb-3 pointer character">
                         <div class="align-self-center">
                             <img class="rounded-3 m-2 item-1 alive-@character.IsAlive"
                                  style="transform: scaleX(-1);"
                                  src="@character.Portrait"
                                  width="60"
                                  height="80"
-                                 title="@character.Name" />
+                                 title="@character.Name
+*** stats ***
+HPS @character.Fights.Hitpoints
+DEF @character.Fights.Defense
+MAN @character.Fights.Mana
+ACT @character.Fights.Actions
+STR @character.Fights.Strength
+CNS @character.Fights.Constitution
+AGL @character.Fights.Agility
+WIL @character.Fights.Willpower
+ABS @character.Fights.Abstract
+*** skills ***
+MEL @character.Fights.Melee
+ARC @character.Fights.Arcane
+PSI @character.Fights.Psionics
+SOC @character.Fights.Social
+HID @character.Fights.Hide
+SUR @character.Fights.Survival
+TAC @character.Fights.Tactics
+AID @character.Fights.Aid
+CRA @character.Fights.Crafting
+PER @character.Fights.Perception" />
                         </div>
                         <div>
                             <div class="px-2 text-center" style="font-size: small">
@@ -92,35 +153,66 @@
 
 
 <script>
-    const selectCharacterLocal = (characterId) => {
-         selectCharacter(characterId);
+    const selectSourceOrTarget = (characterId) => {
+        var source = localStorage.getItem("selectedCharacter");
 
-         $('.selected-character1').each(function() {
-             $(this).removeClass('selected-character1');
-         });
-         $('#character-' + characterId).addClass('selected-character1');
-    }
-
-    const selectTargetLocal = (characterId) => {
-         selectTarget(characterId);
-
-         $('.selected-character2').each(function() {
-             $(this).removeClass('selected-character2');
-         });
-         $('#character-' + characterId).addClass('selected-character2');
-    }
-
-    document.addEventListener('keydown', function(event) {
-        if (event.key === "Escape") {
+        if(!source) {
+            selectCharacter(characterId);
             $('.selected-character1').each(function() {
                 $(this).removeClass('selected-character1');
             });
+            $('#character-' + characterId).addClass('selected-character1');
+        } else {
+            selectTarget(characterId);
             $('.selected-character2').each(function() {
                 $(this).removeClass('selected-character2');
             });
-        }
-    });
+            $('#character-' + characterId).addClass('selected-character2');
 
+            $('#actionsbar').slideDown(150);
+        }
+    }
+
+    const runAction = (actionType) => {
+        var characterId = getCharacterId();
+        var targetId = getTargetId();
+        var playerId = getPlayerId();
+        var boardId = getModel().id;
+
+        if(!characterId) {
+            alert("Select an action initiator, such as your character.");
+            return;
+        }
+        if(!targetId) {
+            alert("Select a target for your action, such as your enemy.");
+            return;
+        }
+        if(!playerId || !boardId) return;
+
+
+        var url = "/Actions/RunAction";
+
+        $.ajax({
+            type: 'PUT',
+            url: url,
+            contentType: "application/json",
+            data: JSON.stringify({
+                playerId: playerId,
+                sourceId: characterId,
+                targetId: targetId,
+                boardId: boardId,
+                actionType: actionType
+            }),
+            success: function (response) {
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                alert(xhr.responseText);
+                hideLoading();
+            }
+        });
+    }
+    
     // run logic
    
 </script>

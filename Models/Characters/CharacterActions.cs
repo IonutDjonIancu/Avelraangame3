@@ -6,7 +6,6 @@ public class CharacterActions
     public Guid SourceId { get; set; }
     public Guid TargetId { get; set; }
     public Guid BoardId { get; set; }
-    public string BoardType { get; set; }
 
     public string ActionType { get; set; }
 }

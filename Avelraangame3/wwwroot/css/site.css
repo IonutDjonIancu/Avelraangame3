@@ -83,8 +83,20 @@ body {
     color: #fff;
 }
 
+.text-white-navajo {
+    color: #9b8971;
+}
+
+.text-white-dirty {
+    color: burlywood;
+}
+
 .text-green {
     color: forestgreen;
+}
+
+.text-green-dark {
+    color: green;
 }
 
 .text-orange {
@@ -201,13 +213,13 @@ body {
 }
 
 .selected-character1 {
-    border: 3px solid beige;
+    border: 3px solid navajowhite;
     border-radius: 5px;
     opacity: 1;
 }
 
 .selected-character2 {
-    border: 3px solid navajowhite;
+    border: 3px solid #ebab4c;
     border-radius: 5px;
     opacity: 1;
 }

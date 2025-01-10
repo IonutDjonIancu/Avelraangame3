@@ -39,6 +39,7 @@ public class CharacterVm
     public int Wealth { get; set; }
     public bool IsLocked { get; set; }
     public bool IsAlive { get; set; }
+    public bool IsHidden { get; set; }
     public int Roll { get; set; }
     public int EntityLevel { get; set; }
     public CharacterStats Actuals { get; set; }

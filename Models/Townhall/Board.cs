@@ -18,6 +18,11 @@ public class Board
     public List<CharacterVm> Battlequeue { get; set; } = [];
 
     public int RoundNr { get; set; }
+
+    public List<CharacterVm> GetAll()
+    {
+        return GoodGuys.Union(BadGuys).ToList();
+    }
 }
 
 public class Duel : Board

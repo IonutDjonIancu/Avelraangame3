@@ -43,6 +43,10 @@ public interface IValidatorService
     Board ValidateCharacterOnGetBoard(CharacterIdentity identity);
     Character ValidateCharacterOnJoiningBoard(CharacterIdentity identity);
     #endregion
+
+    #region actions
+    void ValidateOnRunActionLogic(CharacterActions actions);
+    #endregion
 }
 
 public class ValidatorService : IValidatorService
@@ -379,5 +383,46 @@ public class ValidatorService : IValidatorService
 
         return character;
     }
+    #endregion
+
+    #region actions
+    public void ValidateOnRunActionLogic(CharacterActions actions)
+    {
+        ValidateAgainstNull(actions);
+        ValidateGuid(actions.SourceId);
+        ValidateGuid(actions.PlayerId);
+        ValidateGuid(actions.TargetId);
+        ValidateGuid(actions.BoardId);
+
+        if (actions.ActionType == Statics.Boards.ActionTypes.Melee && actions.SourceId == actions.TargetId)
+            throw new Exception("You cannot attack yourself.");
+
+        var allCharacters = _snapshot.GetAllCharacters();
+
+        var sourceCharacter = allCharacters.Find(s => s.Identity.Id == actions.SourceId) ?? throw new Exception("Source character not found.");
+        var targetCharacter = allCharacters.Find(s => s.Identity.Id == actions.TargetId) ?? _snapshot.Npcs.Find(s => s.Identity.Id == actions.TargetId) ?? throw new Exception("Target character not found.");
+
+        var board = _snapshot.Boards.Find(s => s.Id == actions.BoardId) ?? throw new Exception("Board not found.");
+
+        var source = board.GetAll().Find(s => s.Id == actions.SourceId)! ?? throw new Exception("Source character not found on board.");
+        if (!source.IsAlive)
+            throw new Exception("This character is critically wounded and cannot perform any actions at the time.");
+
+        if (board.Battlequeue.First().Id != source.Id)
+            throw new Exception("It is not your turn.");
+
+        if (source.Fights.Actions <= 0)
+            throw new Exception("No more actions to perform for this character.");
+
+        var target = board.GetAll().Find(s => s.Id == actions.TargetId)! ?? throw new Exception("Target character not found on board.");
+        if (!target.IsAlive)
+            throw new Exception("The target is critically wounded and is out combat.");
+
+        ValidateString(actions.ActionType, "Wrong action type provided.");
+        if (!Statics.Boards.ActionTypes.All.Contains(actions.ActionType))
+            throw new Exception("Action type not found in all action types.");
+    }
+
+
     #endregion
 }
