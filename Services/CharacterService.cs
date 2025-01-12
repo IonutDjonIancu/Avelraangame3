@@ -4,15 +4,10 @@ namespace Services;
 
 public interface ICharacterService
 {
-    /// <summary>
-    /// Includes character actuals.
-    /// </summary>
-    /// <param name="identity"></param>
-    /// <returns></returns>
-    Character GetCharacter(CharacterIdentity identity);
-    Characters GetAllCharacters(Guid playerId);
-    Characters GetAllLockedCharacters(Guid playerId);
-    Characters GetAllDuelistCharacters(Guid playerId);
+    public Character GetCharacterByPlayerId(Guid characterId, Guid playerId);
+    Characters GetAllCharactersByPlayerId(Guid playerId);
+
+    CharacterVm CharacterToCharacterVm(Character character);
 
     void CreateCharacter(CreateCharacter create);
     void DeleteCharacter(CharacterIdentity identity);
@@ -22,8 +17,6 @@ public interface ICharacterService
     void SellItem(EquipItem equipItem);
     void Levelup(CharacterLevelup levelup);
     void BuyItemFromTown(EquipItem equipItem);
-
-    void SetCharacterFights(Character character);
 }
 
 public class CharacterService : ICharacterService
@@ -47,13 +40,13 @@ public class CharacterService : ICharacterService
 
     public void CreateCharacter(CreateCharacter create)
     {
-        _validator.ValidateOnCreateCharacter(create);
+        _validator.ValidateOnCharacterCreate(create);
 
         var character = new Character
         {
             Identity = new CharacterIdentity
             {
-                Id = Guid.NewGuid(),
+                CharacterId = Guid.NewGuid(),
                 PlayerId = create.PlayerId,
             },
         };
@@ -62,107 +55,57 @@ public class CharacterService : ICharacterService
         SetStats(create, character);
         SetInventory(character);
         SetWorth(character);
+        SetActuals(character);
 
-        _snapshot.Players.First(s => s.Id == create.PlayerId).Characters.Add(character);
+        _snapshot.Characters.Add(character);
     }
 
     public void DeleteCharacter(CharacterIdentity identity)
     {
-        var character = _validator.ValidateCharacterExists(identity)!;
+        var character = _validator.ValidateOnCharacterDelete(identity)!;
 
-        _snapshot.Players.First(s => s.Id == identity.PlayerId).Characters.Remove(character);
+        _snapshot.Characters.Remove(character);
     }
 
-    public Characters GetAllCharacters(Guid playerId)
+    public Character GetCharacterByPlayerId(Guid characterId, Guid playerId)
     {
-        _validator.ValidateOnGetCharacters(playerId);
-
-        var listOfCharacters = new Characters();
-
-        _snapshot.Players.First(s => s.Id == playerId)
-            .Characters
-            .Where(s => !s.Details.IsNpc).ToList()
-            .ForEach(s =>
-            {
-                listOfCharacters.CharactersList.Add(new CharacterVm
-                {
-                    Id = s.Identity.Id,
-                    Name = s.Details.Name,
-                    Portrait = s.Details.Portrait,
-                    Wealth = s.Details.Wealth,
-                    IsLocked = s.Details.IsLocked,
-                });
-            });
-
-        return listOfCharacters;
-    }
-
-    public Characters GetAllLockedCharacters(Guid playerId)
-    {
-        _validator.ValidateOnGetCharacters(playerId);
-
-        var listOfCharacters = new Characters();
-        var allPlayerCharacters = _snapshot.Players.First(s => s.Id == playerId).Characters.Where(s => !s.Details.IsNpc && s.Details.IsAlive && s.Details.IsLocked).ToList();
-
-        if (allPlayerCharacters is null)
-            return listOfCharacters;
-
-        foreach (var character in allPlayerCharacters)
-        {
-            if (!character.Details.IsNpc && character.Details.IsAlive && character.Details.IsLocked)
-                listOfCharacters.CharactersList.Add(new CharacterVm
-                {
-                    Id = character.Identity.Id,
-                    Name = character.Details.Name,
-                    Portrait = character.Details.Portrait
-                });
-        }
-        //_snapshot.Players.First(s => s.Id == playerId)
-        //    .Characters
-        //    .Where(s => !s.Details.IsNpc && s.Details.IsAlive && s.Details.IsLocked).ToList()
-        //    .ForEach(s =>
-        //    {
-        //        listOfCharacters.CharactersList.Add(new CharacterVm
-        //        {
-        //            Id = s.Identity.Id,
-        //            Name = s.Details.Name,
-        //            Portrait = s.Details.Portrait
-        //        });
-        //    });
-
-        return listOfCharacters;
-    }
-
-    public Characters GetAllDuelistCharacters(Guid playerId)
-    {
-        _validator.ValidateOnGetCharacters(playerId);
-
-        var listOfCharacters = new Characters();
-
-        _snapshot.Players.First(s => s.Id == playerId)
-            .Characters
-            .Where(s => !s.Details.IsNpc && s.Details.BoardType == Statics.Boards.Types.Duel).ToList()
-            .ForEach(s =>
-            {
-                listOfCharacters.CharactersList.Add(new CharacterVm
-                {
-                    Id = s.Identity.Id,
-                    Name = s.Details.Name,
-                    Portrait = s.Details.Portrait
-                });
-            });
-
-        return listOfCharacters;
-    }
-
-    public Character GetCharacter(CharacterIdentity identity)
-    {
-        var character = _validator.ValidateOnGetCharacter(identity);
-
-        CalculateActuals(character);
+        _validator.ValidatePlayerExists(playerId);
+        var character = _validator.ValidateCharacterExists(characterId);
+        _validator.ValidateCharacterPlayerCombination(characterId, playerId);
         SetWorth(character);
 
         return character;
+    }
+
+    public CharacterVm CharacterToCharacterVm(Character character)
+    {
+        return new CharacterVm
+        {
+            Id = character.Identity.CharacterId,
+            Roll = 0,
+            Details = character.Details,
+            Stats = new Stats
+            {
+                Base = character.Stats.Actuals,
+                Fights = character.Stats.Actuals,
+            }
+        };
+    }
+
+    public Characters GetAllCharactersByPlayerId(Guid playerId)
+    {
+        _validator.ValidatePlayerExists(playerId);
+
+        var listOfCharacters = new Characters();
+
+        _snapshot.Characters
+            .Where(s => s.Identity.PlayerId == playerId).ToList()
+            .ForEach(s =>
+            {
+                listOfCharacters.CharactersList.Add(CharacterToCharacterVm(s));
+            });
+
+        return listOfCharacters;
     }
 
     public void EquipItem(EquipItem equipItem)
@@ -233,7 +176,7 @@ public class CharacterService : ICharacterService
             }
 
             var effort = _dice.Roll1dN(Statics.EffortLevels.Easy);
-            var roll = _dice.Rolld20Character(character.Identity, Statics.Stats.Social);
+            var roll = _dice.RollCharacter(character, Statics.Stats.Social);
 
             character.Details.Wealth -= roll > effort ? item.Value - (int)(item.Value * 0.25) : item.Value;
             
@@ -263,57 +206,60 @@ public class CharacterService : ICharacterService
         character.Details.Levelup -= valueToAdd;
     }
 
-    public void SetCharacterFights(Character character)
+    public static CharacterStats GetCharacterFights(Character character)
     {
-        // main
-        character.Stats.Fights.Strength      = character.Stats.Actuals.Strength;
-        character.Stats.Fights.Constitution  = character.Stats.Actuals.Constitution;
-        character.Stats.Fights.Agility       = character.Stats.Actuals.Agility;
-        character.Stats.Fights.Willpower     = character.Stats.Actuals.Willpower;
-        character.Stats.Fights.Abstract      = character.Stats.Actuals.Abstract;
-        // skills
-        character.Stats.Fights.Melee         = character.Stats.Actuals.Melee;
-        character.Stats.Fights.Arcane        = character.Stats.Actuals.Arcane;
-        character.Stats.Fights.Psionics      = character.Stats.Actuals.Psionics;
-        character.Stats.Fights.Social        = character.Stats.Actuals.Social;
-        character.Stats.Fights.Hide          = character.Stats.Actuals.Hide;
-        character.Stats.Fights.Survival      = character.Stats.Actuals.Survival;
-        character.Stats.Fights.Tactics       = character.Stats.Actuals.Tactics;
-        character.Stats.Fights.Aid           = character.Stats.Actuals.Aid;
-        character.Stats.Fights.Crafting      = character.Stats.Actuals.Crafting;
-        character.Stats.Fights.Perception    = character.Stats.Actuals.Perception;
-        // assets
-        character.Stats.Fights.Defense       = character.Stats.Actuals.Defense;
-        character.Stats.Fights.Actions       = character.Stats.Actuals.Actions;
-        character.Stats.Fights.Hitpoints     = character.Stats.Actuals.Hitpoints;
-        character.Stats.Fights.Mana          = character.Stats.Actuals.Mana;
+        return new CharacterStats
+        {
+            // main
+            Strength        = character.Stats.Actuals.Strength,
+            Constitution    = character.Stats.Actuals.Constitution,
+            Agility         = character.Stats.Actuals.Agility,
+            Willpower       = character.Stats.Actuals.Willpower,
+            Abstract        = character.Stats.Actuals.Abstract,
+            // skills
+            Melee           = character.Stats.Actuals.Melee,
+            Arcane          = character.Stats.Actuals.Arcane,
+            Psionics        = character.Stats.Actuals.Psionics,
+            Social          = character.Stats.Actuals.Social,
+            Hide            = character.Stats.Actuals.Hide,
+            Survival        = character.Stats.Actuals.Survival,
+            Tactics         = character.Stats.Actuals.Tactics,
+            Aid             = character.Stats.Actuals.Aid,
+            Crafting        = character.Stats.Actuals.Crafting,
+            Perception      = character.Stats.Actuals.Perception,
+            // assets
+            Defense         = character.Stats.Actuals.Defense,
+            Actions         = character.Stats.Actuals.Actions,
+            Endurance       = character.Stats.Actuals.Endurance,
+            Accretion       = character.Stats.Actuals.Accretion
+        };
     }
 
     #region private methods
-    private static void CalculateActuals(Character character)
+    private static void SetActuals(Character character)
     {
         // stats
-        character.Stats.Actuals.Strength     = character.Stats.Base.Strength     + character.Inventory.Select(s => s.Bonuses.Strength).Sum()      + character.Regalia.Select(s => s.Bonuses.Strength).Sum();
-        character.Stats.Actuals.Constitution = character.Stats.Base.Constitution + character.Inventory.Select(s => s.Bonuses.Constitution).Sum()  + character.Regalia.Select(s => s.Bonuses.Constitution).Sum();
-        character.Stats.Actuals.Agility      = character.Stats.Base.Agility      + character.Inventory.Select(s => s.Bonuses.Agility).Sum()       + character.Regalia.Select(s => s.Bonuses.Agility).Sum();
-        character.Stats.Actuals.Willpower    = character.Stats.Base.Willpower    + character.Inventory.Select(s => s.Bonuses.Willpower).Sum()     + character.Regalia.Select(s => s.Bonuses.Willpower).Sum();
-        character.Stats.Actuals.Abstract     = character.Stats.Base.Abstract     + character.Inventory.Select(s => s.Bonuses.Abstract).Sum()      + character.Regalia.Select(s => s.Bonuses.Abstract).Sum();
+        character.Stats.Actuals.Strength        = character.Stats.Base.Strength     + character.Inventory.Select(s => s.Bonuses.Strength).Sum()     + character.Regalia.Select(s => s.Bonuses.Strength).Sum();
+        character.Stats.Actuals.Constitution    = character.Stats.Base.Constitution + character.Inventory.Select(s => s.Bonuses.Constitution).Sum() + character.Regalia.Select(s => s.Bonuses.Constitution).Sum();
+        character.Stats.Actuals.Agility         = character.Stats.Base.Agility      + character.Inventory.Select(s => s.Bonuses.Agility).Sum()      + character.Regalia.Select(s => s.Bonuses.Agility).Sum();
+        character.Stats.Actuals.Willpower       = character.Stats.Base.Willpower    + character.Inventory.Select(s => s.Bonuses.Willpower).Sum()    + character.Regalia.Select(s => s.Bonuses.Willpower).Sum();
+        character.Stats.Actuals.Abstract        = character.Stats.Base.Abstract     + character.Inventory.Select(s => s.Bonuses.Abstract).Sum()     + character.Regalia.Select(s => s.Bonuses.Abstract).Sum();
         // skills
-        character.Stats.Actuals.Melee        = character.Stats.Base.Melee        + character.Inventory.Select(s => s.Bonuses.Melee).Sum()         + character.Regalia.Select(s => s.Bonuses.Melee).Sum();
-        character.Stats.Actuals.Arcane       = character.Stats.Base.Arcane       + character.Inventory.Select(s => s.Bonuses.Arcane).Sum()        + character.Regalia.Select(s => s.Bonuses.Arcane).Sum();
-        character.Stats.Actuals.Psionics     = character.Stats.Base.Psionics     + character.Inventory.Select(s => s.Bonuses.Psionics).Sum()      + character.Regalia.Select(s => s.Bonuses.Psionics).Sum();
-        character.Stats.Actuals.Social       = character.Stats.Base.Social       + character.Inventory.Select(s => s.Bonuses.Social).Sum()        + character.Regalia.Select(s => s.Bonuses.Social).Sum();
-        character.Stats.Actuals.Hide         = character.Stats.Base.Hide         + character.Inventory.Select(s => s.Bonuses.Hide).Sum()          + character.Regalia.Select(s => s.Bonuses.Hide).Sum();
-        character.Stats.Actuals.Survival     = character.Stats.Base.Survival     + character.Inventory.Select(s => s.Bonuses.Survival).Sum()      + character.Regalia.Select(s => s.Bonuses.Survival).Sum();
-        character.Stats.Actuals.Tactics      = character.Stats.Base.Tactics      + character.Inventory.Select(s => s.Bonuses.Tactics).Sum()       + character.Regalia.Select(s => s.Bonuses.Tactics).Sum();
-        character.Stats.Actuals.Aid          = character.Stats.Base.Aid          + character.Inventory.Select(s => s.Bonuses.Aid).Sum()           + character.Regalia.Select(s => s.Bonuses.Aid).Sum();
-        character.Stats.Actuals.Crafting     = character.Stats.Base.Crafting     + character.Inventory.Select(s => s.Bonuses.Crafting).Sum()      + character.Regalia.Select(s => s.Bonuses.Crafting).Sum();
-        character.Stats.Actuals.Perception         = character.Stats.Base.Perception         + character.Inventory.Select(s => s.Bonuses.Perception).Sum()          + character.Regalia.Select(s => s.Bonuses.Perception).Sum();
+        character.Stats.Actuals.Melee           = character.Stats.Base.Melee        + character.Inventory.Select(s => s.Bonuses.Melee).Sum()        + character.Regalia.Select(s => s.Bonuses.Melee).Sum();
+        character.Stats.Actuals.Arcane          = character.Stats.Base.Arcane       + character.Inventory.Select(s => s.Bonuses.Arcane).Sum()       + character.Regalia.Select(s => s.Bonuses.Arcane).Sum();
+        character.Stats.Actuals.Psionics        = character.Stats.Base.Psionics     + character.Inventory.Select(s => s.Bonuses.Psionics).Sum()     + character.Regalia.Select(s => s.Bonuses.Psionics).Sum();
+        character.Stats.Actuals.Social          = character.Stats.Base.Social       + character.Inventory.Select(s => s.Bonuses.Social).Sum()       + character.Regalia.Select(s => s.Bonuses.Social).Sum();
+        character.Stats.Actuals.Hide            = character.Stats.Base.Hide         + character.Inventory.Select(s => s.Bonuses.Hide).Sum()         + character.Regalia.Select(s => s.Bonuses.Hide).Sum();
+        character.Stats.Actuals.Survival        = character.Stats.Base.Survival     + character.Inventory.Select(s => s.Bonuses.Survival).Sum()     + character.Regalia.Select(s => s.Bonuses.Survival).Sum();
+        character.Stats.Actuals.Tactics         = character.Stats.Base.Tactics      + character.Inventory.Select(s => s.Bonuses.Tactics).Sum()      + character.Regalia.Select(s => s.Bonuses.Tactics).Sum();
+        character.Stats.Actuals.Aid             = character.Stats.Base.Aid          + character.Inventory.Select(s => s.Bonuses.Aid).Sum()          + character.Regalia.Select(s => s.Bonuses.Aid).Sum();
+        character.Stats.Actuals.Crafting        = character.Stats.Base.Crafting     + character.Inventory.Select(s => s.Bonuses.Crafting).Sum()     + character.Regalia.Select(s => s.Bonuses.Crafting).Sum();
+        character.Stats.Actuals.Perception      = character.Stats.Base.Perception   + character.Inventory.Select(s => s.Bonuses.Perception).Sum()   + character.Regalia.Select(s => s.Bonuses.Perception).Sum();
         // assets
-        character.Stats.Actuals.Defense      = character.Stats.Base.Defense      + character.Inventory.Select(s => s.Bonuses.Defense).Sum()       + character.Regalia.Select(s => s.Bonuses.Defense).Sum();
-        character.Stats.Actuals.Actions      = character.Stats.Base.Actions      + character.Inventory.Select(s => s.Bonuses.Actions).Sum()       + character.Regalia.Select(s => s.Bonuses.Actions).Sum();
-        character.Stats.Actuals.Hitpoints    = character.Stats.Base.Hitpoints    + character.Inventory.Select(s => s.Bonuses.Hitpoints).Sum()     + character.Regalia.Select(s => s.Bonuses.Hitpoints).Sum();
-        character.Stats.Actuals.Mana         = character.Stats.Base.Mana         + character.Inventory.Select(s => s.Bonuses.Mana).Sum()          + character.Regalia.Select(s => s.Bonuses.Mana).Sum();
+        character.Stats.Actuals.Defense         = character.Stats.Base.Defense      + character.Inventory.Select(s => s.Bonuses.Defense).Sum()      + character.Regalia.Select(s => s.Bonuses.Defense).Sum();
+        character.Stats.Actuals.Actions         = character.Stats.Base.Actions      + character.Inventory.Select(s => s.Bonuses.Actions).Sum()      + character.Regalia.Select(s => s.Bonuses.Actions).Sum();
+        character.Stats.Actuals.Endurance       = character.Stats.Base.Endurance    + character.Inventory.Select(s => s.Bonuses.Endurance).Sum()    + character.Regalia.Select(s => s.Bonuses.Endurance).Sum();
+        character.Stats.Actuals.Accretion       = character.Stats.Base.Accretion    + character.Inventory.Select(s => s.Bonuses.Accretion).Sum()    + character.Regalia.Select(s => s.Bonuses.Accretion).Sum();
     }
 
     private static void SetStats(CreateCharacter create, Character character)
@@ -337,12 +283,12 @@ public class CharacterService : ICharacterService
             character.Stats.Base.Tactics        += Statics.Races.Humans.Tactics;
             character.Stats.Base.Aid            += Statics.Races.Humans.Aid;
             character.Stats.Base.Crafting       += Statics.Races.Humans.Crafting;
-            character.Stats.Base.Perception           += Statics.Races.Humans.Perception;
+            character.Stats.Base.Perception     += Statics.Races.Humans.Perception;
             // assets                                            Humans
             character.Stats.Base.Defense        += Statics.Races.Humans.Defense;
             character.Stats.Base.Actions        += Statics.Races.Humans.Actions;
-            character.Stats.Base.Hitpoints      += Statics.Races.Humans.Hitpoints;
-            character.Stats.Base.Mana           += Statics.Races.Humans.Mana;
+            character.Stats.Base.Endurance      += Statics.Races.Humans.Endurance;
+            character.Stats.Base.Accretion      += Statics.Races.Humans.Accretion;
         }
         else if (create.Race == Statics.Races.Elf)
         {
@@ -362,12 +308,12 @@ public class CharacterService : ICharacterService
             character.Stats.Base.Tactics        += Statics.Races.Elfs.Tactics;
             character.Stats.Base.Aid            += Statics.Races.Elfs.Aid;
             character.Stats.Base.Crafting       += Statics.Races.Elfs.Crafting;
-            character.Stats.Base.Perception           += Statics.Races.Elfs.Perception;
+            character.Stats.Base.Perception     += Statics.Races.Elfs.Perception;
             // assets                                            Elfs
             character.Stats.Base.Defense        += Statics.Races.Elfs.Defense;
             character.Stats.Base.Actions        += Statics.Races.Elfs.Actions;
-            character.Stats.Base.Hitpoints      += Statics.Races.Elfs.Hitpoints;
-            character.Stats.Base.Mana           += Statics.Races.Elfs.Mana;
+            character.Stats.Base.Endurance      += Statics.Races.Elfs.Endurance;
+            character.Stats.Base.Accretion      += Statics.Races.Elfs.Accretion;
         }
         else if (create.Race == Statics.Races.Dwarf)
         {
@@ -387,12 +333,12 @@ public class CharacterService : ICharacterService
             character.Stats.Base.Tactics        += Statics.Races.Dwarfs.Tactics;
             character.Stats.Base.Aid            += Statics.Races.Dwarfs.Aid;
             character.Stats.Base.Crafting       += Statics.Races.Dwarfs.Crafting;
-            character.Stats.Base.Perception           += Statics.Races.Dwarfs.Perception;
+            character.Stats.Base.Perception     += Statics.Races.Dwarfs.Perception;
             // assets                                            Dwarfs
             character.Stats.Base.Defense        += Statics.Races.Dwarfs.Defense;
             character.Stats.Base.Actions        += Statics.Races.Dwarfs.Actions;
-            character.Stats.Base.Hitpoints      += Statics.Races.Dwarfs.Hitpoints;
-            character.Stats.Base.Mana           += Statics.Races.Dwarfs.Mana;
+            character.Stats.Base.Endurance      += Statics.Races.Dwarfs.Endurance;
+            character.Stats.Base.Accretion      += Statics.Races.Dwarfs.Accretion;
         }
         else
         {
@@ -418,12 +364,12 @@ public class CharacterService : ICharacterService
             character.Stats.Base.Tactics        += Statics.Cultures.Danarians.Tactics;
             character.Stats.Base.Aid            += Statics.Cultures.Danarians.Aid;
             character.Stats.Base.Crafting       += Statics.Cultures.Danarians.Crafting;
-            character.Stats.Base.Perception           += Statics.Cultures.Danarians.Perception;
+            character.Stats.Base.Perception     += Statics.Cultures.Danarians.Perception;
             // assets                                      Cultures Danarians
             character.Stats.Base.Defense        += Statics.Cultures.Danarians.Defense;
             character.Stats.Base.Actions        += Statics.Cultures.Danarians.Actions;
-            character.Stats.Base.Hitpoints      += Statics.Cultures.Danarians.Hitpoints;
-            character.Stats.Base.Mana           += Statics.Cultures.Danarians.Mana;
+            character.Stats.Base.Endurance      += Statics.Cultures.Danarians.Endurance;
+            character.Stats.Base.Accretion      += Statics.Cultures.Danarians.Accretion;
         }
         else if (create.Culture == Statics.Cultures.Highborn)
         {
@@ -443,12 +389,12 @@ public class CharacterService : ICharacterService
             character.Stats.Base.Tactics        += Statics.Cultures.Highborns.Tactics;
             character.Stats.Base.Aid            += Statics.Cultures.Highborns.Aid;
             character.Stats.Base.Crafting       += Statics.Cultures.Highborns.Crafting;
-            character.Stats.Base.Perception           += Statics.Cultures.Highborns.Perception;
+            character.Stats.Base.Perception     += Statics.Cultures.Highborns.Perception;
             // assets                                      Cultures Highborns
             character.Stats.Base.Defense        += Statics.Cultures.Highborns.Defense;
             character.Stats.Base.Actions        += Statics.Cultures.Highborns.Actions;
-            character.Stats.Base.Hitpoints      += Statics.Cultures.Highborns.Hitpoints;
-            character.Stats.Base.Mana           += Statics.Cultures.Highborns.Mana;
+            character.Stats.Base.Endurance      += Statics.Cultures.Highborns.Endurance;
+            character.Stats.Base.Accretion      += Statics.Cultures.Highborns.Accretion;
         }
         else if (create.Culture == Statics.Cultures.Undermountain)
         {
@@ -468,12 +414,12 @@ public class CharacterService : ICharacterService
             character.Stats.Base.Tactics        += Statics.Cultures.Undermountains.Tactics;
             character.Stats.Base.Aid            += Statics.Cultures.Undermountains.Aid;
             character.Stats.Base.Crafting       += Statics.Cultures.Undermountains.Crafting;
-            character.Stats.Base.Perception           += Statics.Cultures.Undermountains.Perception;
+            character.Stats.Base.Perception     += Statics.Cultures.Undermountains.Perception;
             // assets                                      Cultures Undermountains
             character.Stats.Base.Defense        += Statics.Cultures.Undermountains.Defense;
             character.Stats.Base.Actions        += Statics.Cultures.Undermountains.Actions;
-            character.Stats.Base.Hitpoints      += Statics.Cultures.Undermountains.Hitpoints;
-            character.Stats.Base.Mana           += Statics.Cultures.Undermountains.Mana;
+            character.Stats.Base.Endurance      += Statics.Cultures.Undermountains.Endurance;
+            character.Stats.Base.Accretion      += Statics.Cultures.Undermountains.Accretion;
         }
         else
         {
@@ -499,12 +445,12 @@ public class CharacterService : ICharacterService
             character.Stats.Base.Tactics        += Statics.Specs.Warrings.Tactics;
             character.Stats.Base.Aid            += Statics.Specs.Warrings.Aid;
             character.Stats.Base.Crafting       += Statics.Specs.Warrings.Crafting;
-            character.Stats.Base.Perception           += Statics.Specs.Warrings.Perception;
+            character.Stats.Base.Perception     += Statics.Specs.Warrings.Perception;
             // assets                                      Specs.Warrings
             character.Stats.Base.Defense        += Statics.Specs.Warrings.Defense;
             character.Stats.Base.Actions        += Statics.Specs.Warrings.Actions;
-            character.Stats.Base.Hitpoints      += Statics.Specs.Warrings.Hitpoints;
-            character.Stats.Base.Mana           += Statics.Specs.Warrings.Mana;
+            character.Stats.Base.Endurance      += Statics.Specs.Warrings.Endurance;
+            character.Stats.Base.Accretion      += Statics.Specs.Warrings.Accretion;
         }
         else if (create.Spec == Statics.Specs.Sorcery)
         {
@@ -524,12 +470,12 @@ public class CharacterService : ICharacterService
             character.Stats.Base.Tactics        += Statics.Specs.Sorcerys.Tactics;
             character.Stats.Base.Aid            += Statics.Specs.Sorcerys.Aid;
             character.Stats.Base.Crafting       += Statics.Specs.Sorcerys.Crafting;
-            character.Stats.Base.Perception           += Statics.Specs.Sorcerys.Perception;
+            character.Stats.Base.Perception     += Statics.Specs.Sorcerys.Perception;
             // assets                                      Specs.Sorcerys
             character.Stats.Base.Defense        += Statics.Specs.Sorcerys.Defense;
             character.Stats.Base.Actions        += Statics.Specs.Sorcerys.Actions;
-            character.Stats.Base.Hitpoints      += Statics.Specs.Sorcerys.Hitpoints;
-            character.Stats.Base.Mana           += Statics.Specs.Sorcerys.Mana;
+            character.Stats.Base.Endurance      += Statics.Specs.Sorcerys.Endurance;
+            character.Stats.Base.Accretion      += Statics.Specs.Sorcerys.Accretion;
         }
         else if (create.Spec == Statics.Specs.Tracking)
         {
@@ -549,12 +495,12 @@ public class CharacterService : ICharacterService
             character.Stats.Base.Tactics        += Statics.Specs.Trackings.Tactics;
             character.Stats.Base.Aid            += Statics.Specs.Trackings.Aid;
             character.Stats.Base.Crafting       += Statics.Specs.Trackings.Crafting;
-            character.Stats.Base.Perception           += Statics.Specs.Trackings.Perception;
+            character.Stats.Base.Perception     += Statics.Specs.Trackings.Perception;
             // assets                                      Specs.Trackings
             character.Stats.Base.Defense        += Statics.Specs.Trackings.Defense;
             character.Stats.Base.Actions        += Statics.Specs.Trackings.Actions;
-            character.Stats.Base.Hitpoints      += Statics.Specs.Trackings.Hitpoints;
-            character.Stats.Base.Mana           += Statics.Specs.Trackings.Mana;
+            character.Stats.Base.Endurance      += Statics.Specs.Trackings.Endurance;
+            character.Stats.Base.Accretion      += Statics.Specs.Trackings.Accretion;
         }
         else
         {
@@ -573,7 +519,7 @@ public class CharacterService : ICharacterService
         character.Details.IsHidden = false;
         character.Details.IsLocked = false;
         character.Details.IsNpc = false;
-        character.Details.Entitylevel = 1;
+        character.Details.EntityLevel = 1;
         character.Details.Levelup = 10;
         character.Details.Wealth = 10;
         character.Details.BoardId = Guid.Empty;
@@ -609,8 +555,8 @@ public class CharacterService : ICharacterService
             character.Stats.Base.Perception +
             character.Stats.Base.Defense +
             character.Stats.Base.Actions +
-            character.Stats.Base.Hitpoints +
-            character.Stats.Base.Mana)/10 +
+            character.Stats.Base.Endurance +
+            character.Stats.Base.Accretion)/10 +
             (int)(character.Details.Wealth * 0.1);
     }
 

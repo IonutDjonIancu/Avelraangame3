@@ -31,7 +31,7 @@ public class NpcService : INpcService
         {
             Identity = new CharacterIdentity
             {
-                Id = Guid.NewGuid(),
+                CharacterId = Guid.NewGuid(),
                 PlayerId = Guid.Empty,
             },
             Details = new CharacterDetails
@@ -40,7 +40,7 @@ public class NpcService : INpcService
                 Race = "npc",
                 Culture = "npc",
                 IsHidden = false,
-                Entitylevel = 1,
+                EntityLevel = 1,
                 IsLocked = true,
                 IsNpc = true,
                 Levelup = 0,
@@ -127,8 +127,8 @@ public class NpcService : INpcService
         // assets                                                                       Stats.Actual
         npc.Stats.Actuals.Defense        = _diceService.RollMdN(characters.Select(s => s.Stats.Actuals.Defense).Min() / 2, characters.Select(s => s.Stats.Actuals.Defense).Max() + characters.Select(s => s.Stats.Actuals.Defense).Max() / 2);
         npc.Stats.Actuals.Actions        = _diceService.RollMdN(characters.Select(s => s.Stats.Actuals.Actions).Min() / 2, characters.Select(s => s.Stats.Actuals.Actions).Max() + characters.Select(s => s.Stats.Actuals.Actions).Max() / 2);
-        npc.Stats.Actuals.Hitpoints      = _diceService.RollMdN(characters.Select(s => s.Stats.Actuals.Hitpoints).Min() / 2, characters.Select(s => s.Stats.Actuals.Hitpoints).Max() + characters.Select(s => s.Stats.Actuals.Hitpoints).Max() / 2);
-        npc.Stats.Actuals.Mana           = _diceService.RollMdN(characters.Select(s => s.Stats.Actuals.Mana).Min() / 2, characters.Select(s => s.Stats.Actuals.Mana).Max() + characters.Select(s => s.Stats.Actuals.Mana).Max() / 2);
+        npc.Stats.Actuals.Endurance      = _diceService.RollMdN(characters.Select(s => s.Stats.Actuals.Endurance).Min() / 2, characters.Select(s => s.Stats.Actuals.Endurance).Max() + characters.Select(s => s.Stats.Actuals.Endurance).Max() / 2);
+        npc.Stats.Actuals.Accretion           = _diceService.RollMdN(characters.Select(s => s.Stats.Actuals.Accretion).Min() / 2, characters.Select(s => s.Stats.Actuals.Accretion).Max() + characters.Select(s => s.Stats.Actuals.Accretion).Max() / 2);
     }
 
     private void SetNpcActualsToNormal(Character npc, List<Character> characters)
@@ -153,8 +153,8 @@ public class NpcService : INpcService
         // assets                                                                       Stats.Actual
         npc.Stats.Actuals.Defense        = _diceService.Roll1dN(characters.Select(s => s.Stats.Actuals.Defense).Sum() / characters.Count);
         npc.Stats.Actuals.Actions        = _diceService.Roll1dN(characters.Select(s => s.Stats.Actuals.Actions).Sum() / characters.Count); 
-        npc.Stats.Actuals.Hitpoints      = _diceService.Roll1dN(characters.Select(s => s.Stats.Actuals.Hitpoints).Sum() / characters.Count);
-        npc.Stats.Actuals.Mana           = _diceService.Roll1dN(characters.Select(s => s.Stats.Actuals.Mana).Sum() / characters.Count);
+        npc.Stats.Actuals.Endurance      = _diceService.Roll1dN(characters.Select(s => s.Stats.Actuals.Endurance).Sum() / characters.Count);
+        npc.Stats.Actuals.Accretion           = _diceService.Roll1dN(characters.Select(s => s.Stats.Actuals.Accretion).Sum() / characters.Count);
     }
 
     private void SetNpcActualsToEasy(Character npc)
@@ -179,8 +179,8 @@ public class NpcService : INpcService
         // assets                                              10
         npc.Stats.Actuals.Defense        = _diceService.Roll1dN(10);
         npc.Stats.Actuals.Actions        = 1;                   
-        npc.Stats.Actuals.Hitpoints      = _diceService.Roll1dN(10);
-        npc.Stats.Actuals.Mana           = _diceService.Roll1dN(10);
+        npc.Stats.Actuals.Endurance      = _diceService.Roll1dN(10);
+        npc.Stats.Actuals.Accretion           = _diceService.Roll1dN(10);
     }
 
 

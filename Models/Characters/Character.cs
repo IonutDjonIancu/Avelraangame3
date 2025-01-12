@@ -7,15 +7,13 @@ public class Character
     public CharacterIdentity Identity { get; set; } = new();
     public CharacterDetails Details { get; set; } = new();
     public Stats Stats { get; set; } = new();
-
+    public List<string> SpecialSkills { get; set; } = [];
     [MaxLength(4)]
     public List<Item> Inventory { get; set; } = [];
     [MaxLength(10)]
     public List<Trinket> Regalia { get; set; } = [];
 
     public CharacterSupplies Supplies { get; set; } = new();
-
-    public List<string> SpecialSkills { get; set; } = [];
 }
 
 public class Stats
@@ -33,28 +31,15 @@ public class Characters
 public class CharacterVm
 {
     public Guid Id { get; set; }
-    public string Name { get; set; }
-    public string Portrait { get; set; }
-    public string Spec { get; set; }
-    public int Wealth { get; set; }
-    public bool IsLocked { get; set; }
-    public bool IsAlive { get; set; }
-    public bool IsHidden { get; set; }
-    public int Roll { get; set; }
-    public int EntityLevel { get; set; }
-    public CharacterStats Actuals { get; set; }
-    public CharacterStats Fights { get; set; }
+    public int Roll { get; set; } = 0;
+    public CharacterDetails Details { get; set; }
+    public Stats Stats { get; set; }
 }
 
 public class CharacterIdentity
 {
-    public Guid Id { get; set; }
+    public Guid CharacterId { get; set; }
     public Guid PlayerId { get; set; }
-}
-
-public class CharacterIdentityVm
-{
-    public Guid Id { get; set; }
 }
 
 public class CharacterDetails
@@ -64,7 +49,7 @@ public class CharacterDetails
     public string Culture { get; set; }
     public string Spec { get; set; }
     public string Portrait { get; set; }
-    public int Entitylevel { get; set; }
+    public int EntityLevel { get; set; }
     public int Levelup { get; set; }
     public int Wealth { get; set; }
     public int Worth { get; set; }
@@ -104,8 +89,8 @@ public class CharacterStats
     // assets
     public int Defense { get; set; }
     public int Actions { get; set; }
-    public int Hitpoints { get; set; }
-    public int Mana { get; set; }
+    public int Endurance { get; set; }
+    public int Accretion { get; set; }
 }
 
 public class CharacterSupplies
@@ -113,4 +98,3 @@ public class CharacterSupplies
     public List<Item> Items { get; set; } = [];
     public List<Trinket> Regalia { get; set; } = [];
 }
-

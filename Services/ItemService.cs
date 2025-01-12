@@ -388,10 +388,10 @@ public class ItemService : IItemService
                     item.Bonuses.Actions += bonus;
                     break;
                 case 18:
-                    item.Bonuses.Hitpoints += bonus;
+                    item.Bonuses.Endurance += bonus;
                     break;
                 case 19:
-                    item.Bonuses.Mana += bonus;
+                    item.Bonuses.Accretion += bonus;
                     break;
                 default:
                     break;
@@ -438,12 +438,12 @@ public class ItemService : IItemService
         else // trinkets
         {
             item.Bonuses.Social += _diceService.Roll1dN(5) * item.Level;
-            if (item.Name == Statics.Items.Trinkets.OrbOfStars) item.Bonuses.Mana += _diceService.Roll1dN(5) * item.Level;
+            if (item.Name == Statics.Items.Trinkets.OrbOfStars) item.Bonuses.Accretion += _diceService.Roll1dN(5) * item.Level;
             else if (item.Name == Statics.Items.Trinkets.AmuletOfBlackraveny) item.Bonuses.Survival += _diceService.Roll1dN(5) * item.Level;
             else if (item.Name == Statics.Items.Trinkets.RingOfTheDjinn) item.Bonuses.Psionics += _diceService.Roll1dN(5) * item.Level;
             else if (item.Name == Statics.Items.Trinkets.SashOfDeirmaidun) item.Bonuses.Hide += _diceService.Roll1dN(5) * item.Level;
             else if (item.Name == Statics.Items.Trinkets.SealOfLotharius) item.Bonuses.Tactics += _diceService.Roll1dN(5) * item.Level;
-            else if (item.Name == Statics.Items.Trinkets.SealOfSojourn) item.Bonuses.Hitpoints += _diceService.Roll1dN(5) * item.Level;
+            else if (item.Name == Statics.Items.Trinkets.SealOfSojourn) item.Bonuses.Endurance += _diceService.Roll1dN(5) * item.Level;
             else if (item.Name == Statics.Items.Trinkets.ArmbandOfAsriedor) item.Bonuses.Melee += _diceService.Roll1dN(2) * item.Level;
             else if (item.Name == Statics.Items.Trinkets.ScarfOfFearuinar) item.Bonuses.Arcane += _diceService.Roll1dN(5) * item.Level;
             else if (item.Name == Statics.Items.Trinkets.OakleafOfCedricon) item.Bonuses.Aid += _diceService.Roll1dN(5) * item.Level;

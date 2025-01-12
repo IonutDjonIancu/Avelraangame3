@@ -62,9 +62,9 @@ public class ActionService : IActionService
         if (target.IsHidden)
             throw new Exception("Unable to engage your target in melee, your enemy is hidden.");
 
-        var sourceIdentity = _snapshot.GetAllCharacters().Find(s => s.Identity.Id == source.Id)!.Identity;
+        var sourceIdentity = _snapshot.GetAllPlayersCharacters().Find(s => s.Identity.Id == source.Id)!.Identity;
 
-        var targetIdentity = (_snapshot.GetAllCharacters().Find(s => s.Identity.Id == target.Id) ?? _snapshot.Npcs.Find(s => s.Identity.Id == target.Id))!.Identity;
+        var targetIdentity = (_snapshot.GetAllPlayersCharacters().Find(s => s.Identity.Id == target.Id) ?? _snapshot.Npcs.Find(s => s.Identity.Id == target.Id))!.Identity;
 
         var sourceRoll = _diceService.Rolld20Character(sourceIdentity, Statics.Stats.Melee, true);
         var targetRoll = _diceService.Rolld20Character(targetIdentity, Statics.Stats.Melee, true);
@@ -81,14 +81,14 @@ public class ActionService : IActionService
                 target.Fights.Defense = 0;
                 board.Message = $"{source.Name} scored a hit, removing {target.Name}'s Defense.";
             }
-            else if (target.Fights.Hitpoints > 1)
+            else if (target.Fights.Endurance > 1)
             {
-                target.Fights.Hitpoints = (int)(target.Fights.Hitpoints * 0.5);
+                target.Fights.Endurance = (int)(target.Fights.Endurance * 0.5);
                 board.Message = $"{source.Name} scored a hit, substantially reducing {target.Name}'s Endurance.";
             }
             else
             {
-                target.Fights.Hitpoints = 0;
+                target.Fights.Endurance = 0;
                 target.IsAlive = false;
                 board.Message = $"{source.Name} scored a hit, dropping {target.Name}'s to the ground.";
             }

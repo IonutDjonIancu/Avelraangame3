@@ -39,7 +39,7 @@ public class CharacterController : Controller
     {
         _validatorService.ValidateGuid(playerId, "Player id is in wrong format.");
 
-        var character = _characterService.GetAllCharacters(Guid.Parse(playerId));
+        var character = _characterService.GetAllCharactersByPlayerId(Guid.Parse(playerId));
 
         return View(character);
     }
@@ -55,7 +55,7 @@ public class CharacterController : Controller
 
             var character = _characterService.GetCharacter(new CharacterIdentity
             {
-                Id = Guid.Parse(characterId),
+                CharacterId = Guid.Parse(characterId),
                 PlayerId = Guid.Parse(playerId)
             });
 
@@ -80,7 +80,7 @@ public class CharacterController : Controller
 
             var character = _characterService.GetCharacter(new CharacterIdentity
             {
-                Id = Guid.Parse(characterId),
+                CharacterId = Guid.Parse(characterId),
                 PlayerId = Guid.Parse(playerId)
             });
 
@@ -100,7 +100,7 @@ public class CharacterController : Controller
         {
             _validatorService.ValidateGuid(playerId, "Player id is in wrong format.");
 
-            var character = _characterService.GetAllCharacters(Guid.Parse(playerId));
+            var character = _characterService.GetAllCharactersByPlayerId(Guid.Parse(playerId));
 
             return Ok(character);
         }
@@ -118,7 +118,7 @@ public class CharacterController : Controller
         {
             _validatorService.ValidateGuid(playerId, "Player id is in wrong format.");
 
-            var character = _characterService.GetAllLockedCharacters(Guid.Parse(playerId));
+            var character = _characterService.GetAllLockedCharactersByPlayerId(Guid.Parse(playerId));
 
             return Ok(character);
         }
@@ -136,7 +136,7 @@ public class CharacterController : Controller
         {
             _validatorService.ValidateGuid(playerId, "Player id is in wrong format.");
 
-            var character = _characterService.GetAllDuelistCharacters(Guid.Parse(playerId));
+            var character = _characterService.GetAllDuelistCharactersByPlayerId(Guid.Parse(playerId));
 
             return Ok(character);
         }

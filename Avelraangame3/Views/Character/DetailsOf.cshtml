@@ -45,7 +45,7 @@
                     specialization: <span class="primary-green">@Model.Details.Spec</span>
                 </li>
                 <li class="text-gray">
-                    entity level: <span class="primary-green">@Model.Details.Entitylevel</span>
+                    entity level: <span class="primary-green">@Model.Details.EntityLevel</span>
                 </li>
                 @if (Model.Details.Levelup > 0)
                 {
@@ -82,12 +82,12 @@
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Hitpoints')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Hitpoints:
-                    <span class="primary-green">@Model.Stats.Actuals.Hitpoints</span>
+                    <span class="primary-green">@Model.Stats.Actuals.Endurance</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Mana')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
                     Mana:
-                    <span class="primary-green">@Model.Stats.Actuals.Mana</span>
+                    <span class="primary-green">@Model.Stats.Actuals.Accretion</span>
                 </li>
                 <li class="text-gray">
                     @if (Model.Details.Levelup > 0) { <button onclick="levelup('Actions')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
@@ -207,9 +207,9 @@ level @item.Level
 @item.Type.ToLower()
 value @item.Value
 *** stats ***
-HPS @item.Bonuses.Hitpoints
+HPS @item.Bonuses.Endurance
 DEF @item.Bonuses.Defense
-MAN @item.Bonuses.Mana
+MAN @item.Bonuses.Accretion
 ACT @item.Bonuses.Actions
 STR @item.Bonuses.Strength
 CNS @item.Bonuses.Constitution
@@ -246,9 +246,9 @@ level @trinket.Level
 @trinket.Type.ToLower()
 value @trinket.Value
 *** stats ***
-HPS @trinket.Bonuses.Hitpoints
+HPS @trinket.Bonuses.Endurance
 DEF @trinket.Bonuses.Defense
-MAN @trinket.Bonuses.Mana
+MAN @trinket.Bonuses.Accretion
 ACT @trinket.Bonuses.Actions
 STR @trinket.Bonuses.Strength
 CNS @trinket.Bonuses.Constitution
@@ -286,9 +286,9 @@ PER @trinket.Bonuses.Perception " />
 level @suppliesItem.Level
 value @suppliesItem.Value
 *** stats ***
-HPS @suppliesItem.Bonuses.Hitpoints
+HPS @suppliesItem.Bonuses.Endurance
 DEF @suppliesItem.Bonuses.Defense
-MAN @suppliesItem.Bonuses.Mana
+MAN @suppliesItem.Bonuses.Accretion
 ACT @suppliesItem.Bonuses.Actions
 STR @suppliesItem.Bonuses.Strength
 CNS @suppliesItem.Bonuses.Constitution
@@ -322,9 +322,9 @@ PER @suppliesItem.Bonuses.Perception " />
 level @suppliesTrinket.Level
 value @suppliesTrinket.Value
 *** stats ***
-HPS @suppliesTrinket.Bonuses.Hitpoints
+HPS @suppliesTrinket.Bonuses.Endurance
 DEF @suppliesTrinket.Bonuses.Defense
-MAN @suppliesTrinket.Bonuses.Mana
+MAN @suppliesTrinket.Bonuses.Accretion
 ACT @suppliesTrinket.Bonuses.Actions
 STR @suppliesTrinket.Bonuses.Strength
 CNS @suppliesTrinket.Bonuses.Constitution

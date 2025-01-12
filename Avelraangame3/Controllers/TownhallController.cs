@@ -50,7 +50,7 @@ public class TownhallController : Controller
     {
         try
         {
-            var characters = _characterService.GetAllCharacters(playerId);
+            var characters = _characterService.GetAllCharactersByPlayerId(playerId);
 
             return View(characters);
         }
@@ -69,7 +69,7 @@ public class TownhallController : Controller
             var duel = _townhallService.GetOrGenerateDuel(new CharacterIdentity
             {
                 PlayerId = playerId,
-                Id = characterId,
+                CharacterId = characterId,
             }, effortLevelName, Statics.Boards.Types.Duel);
 
             return View(duel);

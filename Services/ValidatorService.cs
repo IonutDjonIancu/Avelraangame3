@@ -1,5 +1,4 @@
 ﻿using Models;
-using Newtonsoft.Json;
 
 namespace Services;
 
@@ -15,19 +14,21 @@ public interface IValidatorService
     #region dice
     void ValidatePostiveNumber(int number, string message);
     void ValidateGreaterNumber(int number1, int number2, string message = "");
-    void ValidateRollCharacter(Character character, string stat);
+    void ValidateRollCharacter(Guid characterId, string stat);
     #endregion
 
     #region player
-    void ValidateOnCreatePlayer(string playerName);
+    void ValidateOnPlayerCreate(string playerName);
+    Player ValidateOnPlayerLogin(Guid playerId);
     void ValidatePlayerExists(Guid playerId);
+    void ValidateCharacterPlayerCombination(Guid characterId, Guid playerId);
     #endregion
 
     #region character
     void ValidateOnGetCharacters(Guid playerId);
-    void ValidateOnCreateCharacter(CreateCharacter character);
-    Character ValidateCharacterExists(CharacterIdentity identity);
-    Character ValidateOnGetCharacter(CharacterIdentity identity);
+    void ValidateOnCharacterCreate(CreateCharacter character);
+    Character ValidateOnCharacterDelete(CharacterIdentity identity);
+    Character ValidateCharacterExists(Guid characterId);
     (Item, Character) ValidateEquipItem(EquipItem equipItem);
     (Item, Character) ValidateUnequipItem(EquipItem equipItem);
     (Item, Character) ValidateSellItem(EquipItem equipItem);
@@ -36,7 +37,6 @@ public interface IValidatorService
     #endregion
 
     #region npc
-    void ValidateListOfCharacters(List<Character> characters);    
     #endregion
 
     #region board
@@ -97,9 +97,9 @@ public class ValidatorService : IValidatorService
             throw new Exception(string.IsNullOrWhiteSpace(message) ? $"First number: {number1} cannot be equal or smaller than second number: {number2}" : message);
     }
 
-    public void ValidateRollCharacter(Character character, string stat)
+    public void ValidateRollCharacter(Guid characterId, string stat)
     {
-        ValidateAgainstNull(character);
+        ValidateCharacterExists(characterId);
         ValidateString(stat, "Stat string cannot be null or empty.");
 
         if (!Statics.Stats.All.Contains(stat))
@@ -114,10 +114,27 @@ public class ValidatorService : IValidatorService
         if (playerId == Guid.Empty) return;
 
         if (!_snapshot.Players.Any(s => s.Id == playerId))
-            throw new Exception($"Invalid player id: {playerId}");
+            throw new Exception("Player not found.");
     }
 
-    public void ValidateOnCreatePlayer(string playerName)
+    public void ValidateCharacterPlayerCombination(Guid characterId, Guid playerId)
+    {
+        ValidateCharacterExists(characterId);
+
+        var charactersPlayerId = _snapshot.Characters.Find(s => s.Identity.CharacterId == characterId)!.Identity.PlayerId;
+
+        if (charactersPlayerId != playerId)
+            throw new Exception("Character player mistmatch.");
+    }
+
+    public Player ValidateOnPlayerLogin(Guid playerId)
+    {
+        ValidateGuid(playerId);
+
+        return _snapshot.Players.Find(s => s.Id == playerId) ?? throw new Exception("Player not found.");
+    }
+
+    public void ValidateOnPlayerCreate(string playerName)
     {
         ValidateString(playerName, "Player name cannot be empty.");
 
@@ -134,15 +151,6 @@ public class ValidatorService : IValidatorService
     #endregion
 
     #region character
-    public Character ValidateOnGetCharacter(CharacterIdentity identity)
-    {
-        ValidateAgainstNull(identity, "Identity object cannot be null.");
-        ValidateGuid(identity.Id, "Id is either missing or invalid.");
-        ValidateGuid(identity.PlayerId, "Session id is either missing or invalid.");
-
-        return ValidateCharacterExists(identity);
-    }
-
     public (Item, Character) ValidateEquipItem(EquipItem equipItem)
     {
         ValidateAgainstNull(equipItem, "Equip item cannot be null.");
@@ -150,11 +158,8 @@ public class ValidatorService : IValidatorService
         ValidateGuid(equipItem.CharacterId);
         ValidateGuid(equipItem.ItemId);
 
-        var character = ValidateCharacterExists(new CharacterIdentity
-        {
-            Id = equipItem.CharacterId,
-            PlayerId = equipItem.PlayerId,
-        });
+        var character = ValidateCharacterExists(equipItem.CharacterId);
+        ValidateCharacterPlayerCombination(equipItem.CharacterId, equipItem.PlayerId);
 
         if (character.Details.IsLocked)
             throw new Exception("Character is locked.");
@@ -194,11 +199,8 @@ public class ValidatorService : IValidatorService
         ValidateGuid(equipItem.CharacterId);
         ValidateGuid(equipItem.ItemId);
 
-        var character = ValidateCharacterExists(new CharacterIdentity
-        {
-            Id = equipItem.CharacterId,
-            PlayerId = equipItem.PlayerId,
-        });
+        var character = ValidateCharacterExists(equipItem.CharacterId);
+        ValidateCharacterPlayerCombination(equipItem.CharacterId, equipItem.PlayerId);
 
         if (character.Details.IsLocked)
             throw new Exception("Character is locked.");
@@ -219,11 +221,8 @@ public class ValidatorService : IValidatorService
         ValidateGuid(equipItem.CharacterId);
         ValidateGuid(equipItem.ItemId);
 
-        var character = ValidateCharacterExists(new CharacterIdentity
-        {
-            Id = equipItem.CharacterId,
-            PlayerId = equipItem.PlayerId,
-        });
+        var character = ValidateCharacterExists(equipItem.CharacterId);
+        ValidateCharacterPlayerCombination(equipItem.CharacterId, equipItem.PlayerId);
 
         if (character.Details.IsLocked)
             throw new Exception("Character is locked.");
@@ -240,11 +239,12 @@ public class ValidatorService : IValidatorService
     public (Item, Character) ValidateBuyItem(EquipItem itemToBuy)
     {
         ValidateAgainstNull(itemToBuy, "Equip item cannot be null.");
-        var character = ValidateCharacterExists(new CharacterIdentity
-        {
-            Id = itemToBuy.CharacterId,
-            PlayerId = itemToBuy.PlayerId,
-        });
+        ValidateGuid(itemToBuy.PlayerId);
+        ValidateGuid(itemToBuy.CharacterId);
+        ValidateGuid(itemToBuy.ItemId);
+
+        var character = ValidateCharacterExists(itemToBuy.CharacterId);
+        ValidateCharacterPlayerCombination(itemToBuy.CharacterId, itemToBuy.PlayerId);
 
         if (character.Details.IsLocked)
             throw new Exception("Character is locked.");
@@ -267,11 +267,8 @@ public class ValidatorService : IValidatorService
         if (!Statics.Stats.All.Contains(levelup.Stat))
             throw new Exception("Unable to find stat in list of stats.");
 
-        var character = ValidateCharacterExists(new CharacterIdentity
-        {
-            Id = levelup.CharacterId,
-            PlayerId = levelup.PlayerId,
-        });
+        var character = ValidateCharacterExists(levelup.CharacterId);
+        ValidateCharacterPlayerCombination(levelup.CharacterId, levelup.PlayerId);
 
         if (character.Details.IsLocked)
             throw new Exception("Character is locked.");
@@ -291,20 +288,11 @@ public class ValidatorService : IValidatorService
         return character;
     }
 
-    public Character ValidateCharacterExists(CharacterIdentity identity)
+    public Character ValidateCharacterExists(Guid characterId)
     {
-        ValidateAgainstNull(identity, "Identity cannot be null.");
-        ValidateGuid(identity.Id);
-        ValidatePlayerExists(identity.PlayerId);
+        ValidateGuid(characterId);
 
-        if (identity.PlayerId == Guid.Empty)
-        {
-            return _snapshot.Npcs.First(s => s.Identity.Id == identity.Id);
-        }
-        else
-        {
-            return _snapshot.Players.First(s => s.Id == identity.PlayerId).Characters.FirstOrDefault(s => s.Identity.Id == identity.Id) ?? throw new Exception("Character not found.");
-        }
+        return _snapshot.Characters.Find(s => s.Identity.CharacterId == characterId) ?? throw new Exception("Character not found.");
     }
 
     public void ValidateOnGetCharacters(Guid playerId)
@@ -315,7 +303,21 @@ public class ValidatorService : IValidatorService
             throw new Exception("Player not found.");
     }
 
-    public void ValidateOnCreateCharacter(CreateCharacter create)
+    public Character ValidateOnCharacterDelete(CharacterIdentity identity)
+    {
+        ValidateAgainstNull(identity);
+        var character = ValidateCharacterExists(identity.CharacterId);
+
+        if (character.Details.IsNpc)
+            throw new Exception("Cannot delete an NPC character.");
+
+        if (character.Identity.PlayerId != identity.PlayerId)
+            throw new Exception("Character player mismatch.");
+
+        return character;
+    }
+
+    public void ValidateOnCharacterCreate(CreateCharacter create)
     {
         ValidateAgainstNull(create, "Create character is either missing or invalid.");
         ValidatePlayerExists(create.PlayerId);
@@ -325,8 +327,8 @@ public class ValidatorService : IValidatorService
         ValidateString(create.Culture, "Culture cannot be empty.");
         ValidateString(create.Spec, "Spec cannot be empty.");
 
-        if (_snapshot.Players.First(s => s.Id == create.PlayerId).Characters.Where(s => s.Details.IsAlive).ToList().Count >= 10)
-            throw new Exception("You can only have a maximum of 10 alive characters at any time.");
+        if (_snapshot.Characters.Where(s => s.Identity.PlayerId == create.PlayerId && s.Details.IsAlive).Count() >= 10)
+            throw new Exception("You can only have a maximum of 10 playable characters at any time.");
 
         if (create.Name.Length > 30)
             throw new Exception("Name too long, 30 characters max.");
@@ -341,42 +343,39 @@ public class ValidatorService : IValidatorService
     #endregion
 
     #region npc
-    public void ValidateListOfCharacters(List<Character> characters)
-    {
-        ValidateAgainstNull(characters);
-
-        if (characters.Count == 0)
-            throw new Exception("List of characters on generate npc cannot be empty.");
-    }
+    
     #endregion
 
     #region townhall
     public Board ValidateCharacterOnGetBoard(CharacterIdentity identity)
     {
-        var character = ValidateCharacterExists(identity);
-        var board = _snapshot.Boards.Find(s => s.Id == character.Details.BoardId);
+        ValidateAgainstNull(identity);
+        var character = ValidateCharacterExists(identity.CharacterId);
+        ValidateCharacterPlayerCombination(identity.CharacterId, identity.PlayerId);
 
-        if (character.Details.BoardId != Guid.Empty
-            || board is null)
-            throw new Exception("Unable to find board for character.");
-
-        character.Details.IsLocked = true;
+        if (character.Details.IsLocked)
+            throw new Exception("Character is locked.");
 
         if (!character.Details.IsAlive)
             throw new Exception("Your character is dead.");
 
-        return board;
+        if (character.Details.BoardId != Guid.Empty)
+            throw new Exception("Unable to find board for character.");
+        
+        return _snapshot.Boards.Find(s => s.Id == character.Details.BoardId) ?? throw new Exception("Unable to find board for character.");
     }
 
     public Character ValidateCharacterOnJoiningBoard(CharacterIdentity identity)
     {
-        var character = ValidateCharacterExists(identity);
+        ValidateAgainstNull(identity);
+        var character = ValidateCharacterExists(identity.CharacterId);
+        ValidateCharacterPlayerCombination(identity.CharacterId, identity.PlayerId);
 
         if (character.Details.BoardId != Guid.Empty)
             throw new Exception("Character is already present on a board.");
 
         if (!character.Details.IsAlive)
-            throw new Exception("Character is dead and cannot join a board.");
+            throw new Exception("Character is dead.");
 
         if (character.Details.IsLocked)
             throw new Exception("Character is locked.");
@@ -394,33 +393,31 @@ public class ValidatorService : IValidatorService
         ValidateGuid(actions.TargetId);
         ValidateGuid(actions.BoardId);
 
+        ValidateString(actions.ActionType, "Wrong action type provided.");
+        if (!Statics.Boards.ActionTypes.All.Contains(actions.ActionType))
+            throw new Exception("Action type not found in all action types.");
+
         if (actions.ActionType == Statics.Boards.ActionTypes.Melee && actions.SourceId == actions.TargetId)
             throw new Exception("You cannot attack yourself.");
 
-        var allCharacters = _snapshot.GetAllCharacters();
-
-        var sourceCharacter = allCharacters.Find(s => s.Identity.Id == actions.SourceId) ?? throw new Exception("Source character not found.");
-        var targetCharacter = allCharacters.Find(s => s.Identity.Id == actions.TargetId) ?? _snapshot.Npcs.Find(s => s.Identity.Id == actions.TargetId) ?? throw new Exception("Target character not found.");
+        var sourceCharacter = _snapshot.Characters.Find(s => s.Identity.CharacterId == actions.SourceId) ?? throw new Exception("Source character not found.");
+        var targetCharacter = _snapshot.Characters.Find(s => s.Identity.CharacterId == actions.TargetId) ?? throw new Exception("Target character not found.");
 
         var board = _snapshot.Boards.Find(s => s.Id == actions.BoardId) ?? throw new Exception("Board not found.");
 
         var source = board.GetAll().Find(s => s.Id == actions.SourceId)! ?? throw new Exception("Source character not found on board.");
-        if (!source.IsAlive)
+        if (!source.Details.IsAlive)
             throw new Exception("This character is critically wounded and cannot perform any actions at the time.");
 
         if (board.Battlequeue.First().Id != source.Id)
             throw new Exception("It is not your turn.");
 
-        if (source.Fights.Actions <= 0)
+        if (source.Stats.Fights.Actions <= 0)
             throw new Exception("No more actions to perform for this character.");
 
         var target = board.GetAll().Find(s => s.Id == actions.TargetId)! ?? throw new Exception("Target character not found on board.");
-        if (!target.IsAlive)
+        if (!target.Details.IsAlive)
             throw new Exception("The target is critically wounded and is out combat.");
-
-        ValidateString(actions.ActionType, "Wrong action type provided.");
-        if (!Statics.Boards.ActionTypes.All.Contains(actions.ActionType))
-            throw new Exception("Action type not found in all action types.");
     }
 
 

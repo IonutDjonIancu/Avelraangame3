@@ -5,6 +5,8 @@ namespace Services;
 public interface IPlayerService
 {
     Player CreatePlayer(string name);
+
+    Player LoginPlayer(Guid playerId);
 }
 
 public class PlayerService : IPlayerService
@@ -22,7 +24,7 @@ public class PlayerService : IPlayerService
 
     public Player CreatePlayer(string name)
     {
-        _validatorService.ValidateOnCreatePlayer(name);
+        _validatorService.ValidateOnPlayerCreate(name);
 
         var player = new Player
         {
@@ -35,6 +37,8 @@ public class PlayerService : IPlayerService
         return player;
     }
 
-
-
+    public Player LoginPlayer(Guid playerId)
+    {
+        return _validatorService.ValidateOnPlayerLogin(playerId);
+    }
 }
