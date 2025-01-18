@@ -29,20 +29,20 @@
             <div class="col col-12 d-flex flex-wrap justify-content-start">
                 @foreach (var character in Model.Characters.CharactersList)
                 {
-                    if (character.IsLocked)
+                    if (character.Details.IsLocked)
                     {
                         <img class="rounded-3 m-1 pointer item-char item-7 character-img"
-                             id="character-@character.Id"
-                             src="@character.Portrait"
+                             id="character-@character.CharacterId"
+                             src="@character.Details.Portrait"
                              title="This character is busy..." />
                     }
                     else
                     {
                         <img class="rounded-3 m-1 pointer item-char item-1 character-img"
-                             onclick="selectCharacterLocal('@character.Id')"
-                             id="character-@character.Id"
-                             src="@character.Portrait"
-                             title="@character.Name" />
+                             onclick="selectCharacterLocal('@character.CharacterId')"
+                             id="character-@character.CharacterId"
+                             src="@character.Details.Portrait"
+                             title="@character.Details.Name" />
                     }
                 }
             </div>
@@ -124,7 +124,7 @@ else
         });
         $('#character-' + characterId).addClass('selected-character1');
 
-        var wealth = getModel().characters.charactersList.find(i => i.id === characterId).wealth;
+        var wealth = getModel().characters.charactersList.find(i => i.characterId === characterId).details.wealth;
         $('#showWealth').empty().append('Wealth: ' + wealth).show();
     }
 

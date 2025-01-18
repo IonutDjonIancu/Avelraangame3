@@ -28,8 +28,8 @@
             @foreach (var character in Model.Battlequeue)
             {
                 <img class="rounded-circle m-1 pointer item-char-small item-1 character-img"
-                        src="@character.Portrait"
-                        title="@character.Name" />
+                    src="@character.Details.Portrait"
+                    title="@character.Details.Name" />
             }
         </div>
     </div>
@@ -59,41 +59,41 @@
             <div class="float-end d-flex">
                 @foreach (var character in Model.GoodGuys)
                 {
-                    <div onclick="selectSourceOrTarget('@character.Id')" id="character-@character.Id" class="d-flex flex-column bd-highlight mb-3 pointer character">
+                    <div onclick="selectSourceOrTarget('@character.CharacterId')" id="character-@character.CharacterId" class="d-flex flex-column bd-highlight mb-3 pointer character">
                         <div class="align-self-center">
-                            <img class="rounded-3 m-2 item-1 alive-@character.IsAlive"
-                                 src="@character.Portrait"
+                            <img class="rounded-3 m-2 item-1 alive-@character.Details.IsAlive"
+                                 src="@character.Details.Portrait"
                                  width="60"
                                  height="80"
-                                 title="@character.Name
+                                 title="@character.Details.Name
 *** stats ***
-HPS @character.Fights.Endurance
-DEF @character.Fights.Defense
-MAN @character.Fights.Accretion
-ACT @character.Fights.Actions
-STR @character.Fights.Strength
-CNS @character.Fights.Constitution
-AGL @character.Fights.Agility
-WIL @character.Fights.Willpower
-ABS @character.Fights.Abstract
+HPS @character.Stats.Fights.Endurance
+DEF @character.Stats.Fights.Defense
+MAN @character.Stats.Fights.Accretion
+ACT @character.Stats.Fights.Actions
+STR @character.Stats.Fights.Strength
+CNS @character.Stats.Fights.Constitution
+AGL @character.Stats.Fights.Agility
+WIL @character.Stats.Fights.Willpower
+ABS @character.Stats.Fights.Abstract
 *** skills ***
-MEL @character.Fights.Melee
-ARC @character.Fights.Arcane
-PSI @character.Fights.Psionics
-SOC @character.Fights.Social
-HID @character.Fights.Hide
-SUR @character.Fights.Survival
-TAC @character.Fights.Tactics
-AID @character.Fights.Aid
-CRA @character.Fights.Crafting
-PER @character.Fights.Perception" />
+MEL @character.Stats.Fights.Melee
+ARC @character.Stats.Fights.Arcane
+PSI @character.Stats.Fights.Psionics
+SOC @character.Stats.Fights.Social
+HID @character.Stats.Fights.Hide
+SUR @character.Stats.Fights.Survival
+TAC @character.Stats.Fights.Tactics
+AID @character.Stats.Fights.Aid
+CRA @character.Stats.Fights.Crafting
+PER @character.Stats.Fights.Perception" />
                         </div>
                         <div>
                             <div class="px-2 text-center" style="font-size: small">
-                                <span title="hitpoints" class="text-100">@character.Fights.Endurance</span> | <span title="defense" class="text-gray">@character.Fights.Defense</span> &#9830; <span class="text-gray" title="actions">@character.Fights.Actions</span>
+                                <span title="endurance" class="text-100">@character.Stats.Fights.Endurance</span> | <span title="defense" class="text-gray">@character.Stats.Fights.Defense</span> &#9830; <span class="text-gray" title="actions">@character.Stats.Fights.Actions</span>
                             </div>
                             <div class="px-2 text-center mb-1" style="font-size: small">
-                                <span title="mana" class="text-100-m">@character.Fights.Accretion</span> | <span title="entity level" class="entity-@character.EntityLevel">@character.EntityLevel</span> &#9824; <span style="font-size:x-small" title="specialization">@character.Spec.Substring(0, 3)</span>
+                                <span title="accretion" class="text-100-m">@character.Stats.Fights.Accretion</span> | <span title="entity level" class="entity-@character.Details.EntityLevel">@character.Details.EntityLevel</span> &#9824; <span style="font-size:x-small" title="specialization">@character.Details.Spec.Substring(0, 3)</span>
                             </div>
                         </div>
                     </div>
@@ -105,42 +105,42 @@ PER @character.Fights.Perception" />
             <div class="float-start d-flex">
                 @foreach (var character in Model.BadGuys)
                 {
-                    <div onclick="selectSourceOrTarget('@character.Id')" id="character-@character.Id" class="d-flex flex-column bd-highlight mb-3 pointer character">
+                    <div onclick="selectSourceOrTarget('@character.CharacterId')" id="character-@character.CharacterId" class="d-flex flex-column bd-highlight mb-3 pointer character">
                         <div class="align-self-center">
-                            <img class="rounded-3 m-2 item-1 alive-@character.IsAlive"
+                            <img class="rounded-3 m-2 item-1 alive-@character.Details.IsAlive"
                                  style="transform: scaleX(-1);"
-                                 src="@character.Portrait"
+                                 src="@character.Details.Portrait"
                                  width="60"
                                  height="80"
-                                 title="@character.Name
+                                 title="@character.Details.Name
 *** stats ***
-HPS @character.Fights.Endurance
-DEF @character.Fights.Defense
-MAN @character.Fights.Accretion
-ACT @character.Fights.Actions
-STR @character.Fights.Strength
-CNS @character.Fights.Constitution
-AGL @character.Fights.Agility
-WIL @character.Fights.Willpower
-ABS @character.Fights.Abstract
+HPS @character.Stats.Fights.Endurance
+DEF @character.Stats.Fights.Defense
+MAN @character.Stats.Fights.Accretion
+ACT @character.Stats.Fights.Actions
+STR @character.Stats.Fights.Strength
+CNS @character.Stats.Fights.Constitution
+AGL @character.Stats.Fights.Agility
+WIL @character.Stats.Fights.Willpower
+ABS @character.Stats.Fights.Abstract
 *** skills ***
-MEL @character.Fights.Melee
-ARC @character.Fights.Arcane
-PSI @character.Fights.Psionics
-SOC @character.Fights.Social
-HID @character.Fights.Hide
-SUR @character.Fights.Survival
-TAC @character.Fights.Tactics
-AID @character.Fights.Aid
-CRA @character.Fights.Crafting
-PER @character.Fights.Perception" />
+MEL @character.Stats.Fights.Melee
+ARC @character.Stats.Fights.Arcane
+PSI @character.Stats.Fights.Psionics
+SOC @character.Stats.Fights.Social
+HID @character.Stats.Fights.Hide
+SUR @character.Stats.Fights.Survival
+TAC @character.Stats.Fights.Tactics
+AID @character.Stats.Fights.Aid
+CRA @character.Stats.Fights.Crafting
+PER @character.Stats.Fights.Perception" />
                         </div>
                         <div>
                             <div class="px-2 text-center" style="font-size: small">
-                                <span title="hitpoints" class="text-100">@character.Fights.Endurance</span> | <span title="defense" class="text-gray">@character.Fights.Defense</span> &#9830; <span class="text-gray" title="actions">@character.Fights.Actions</span>
+                                <span title="endurance" class="text-100">@character.Stats.Fights.Endurance</span> | <span title="defense" class="text-gray">@character.Stats.Fights.Defense</span> &#9830; <span class="text-gray" title="actions">@character.Stats.Fights.Actions</span>
                             </div>
                             <div class="px-2 text-center mb-1" style="font-size: small">
-                                <span title="mana" class="text-100-m">@character.Fights.Accretion</span> | <span title="entity level" class="entity-@character.EntityLevel">@character.EntityLevel</span> &#9824; <span style="font-size:x-small" title="specialization">@character.Spec.Substring(0, 3)</span>
+                                <span title="accretion" class="text-100-m">@character.Stats.Fights.Accretion</span> | <span title="entity level" class="entity-@character.Details.EntityLevel">@character.Details.EntityLevel</span> &#9824; <span style="font-size:x-small" title="specialization">@character.Details.Spec.Substring(0, 3)</span>
                             </div>
                         </div>
                     </div>

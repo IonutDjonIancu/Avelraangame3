@@ -42,7 +42,7 @@ public interface IDiceService
     /// <param name="stat"></param>
     /// <param name="canLevelup"></param>
     /// <returns></returns>
-    int RollCharacter(Character character, string stat, bool canLevelup = false);
+    int RollForCharacter(Character character, string stat, bool canLevelup = false);
 
     /// <summary>
     /// Character roll d20 using Fights.
@@ -51,7 +51,9 @@ public interface IDiceService
     /// <param name="stat"></param>
     /// <param name="canLevelup"></param>
     /// <returns></returns>
-    int RollCharacterVm(CharacterVm character, string stat, bool canLevelup = false);
+    int RollForCharacterVm(CharacterVm character, string stat, bool canLevelup = false);
+
+    int RollForEffort(Board board, string stat);
 
 }
 
@@ -66,7 +68,7 @@ public class DiceService : IDiceService
         _validator = validator; 
     }
 
-    public int RollCharacter(Character character, string stat, bool canLevelup = false)
+    public int RollForCharacter(Character character, string stat, bool canLevelup = false)
     {
         var roll = Rolld20();
 
@@ -101,7 +103,7 @@ public class DiceService : IDiceService
         };
     }
 
-    public int RollCharacterVm(CharacterVm characterVm, string stat, bool canLevelup = false)
+    public int RollForCharacterVm(CharacterVm characterVm, string stat, bool canLevelup = false)
     {
         var roll = Rolld20();
 
@@ -134,6 +136,66 @@ public class DiceService : IDiceService
             Statics.Stats.Accretion     => roll + characterVm.Stats.Fights.Accretion,
             _ => throw new Exception("Wrong stat provided.")
         };
+    }
+
+    public int RollForEffort(Board board, string stat)
+    {
+        if (string.IsNullOrWhiteSpace(board.EffortLevelName) || board.EffortLevelName == Statics.EffortLevelNames.Easy)
+        {
+            return Rolld20NoReroll();
+        }
+        else if (board.EffortLevelName == Statics.EffortLevelNames.Normal)
+        {
+            return stat switch
+            {
+                Statics.Stats.Strength     => Roll1dN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Strength    ).Sum()),
+                Statics.Stats.Constitution => Roll1dN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Constitution).Sum()),
+                Statics.Stats.Agility      => Roll1dN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Agility     ).Sum()),
+                Statics.Stats.Willpower    => Roll1dN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Willpower   ).Sum()),
+                Statics.Stats.Abstract     => Roll1dN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Abstract    ).Sum()),
+                Statics.Stats.Melee        => Roll1dN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Melee       ).Sum()),
+                Statics.Stats.Arcane       => Roll1dN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Arcane      ).Sum()),
+                Statics.Stats.Psionics     => Roll1dN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Psionics    ).Sum()),
+                Statics.Stats.Social       => Roll1dN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Social      ).Sum()),
+                Statics.Stats.Hide         => Roll1dN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Hide        ).Sum()),
+                Statics.Stats.Survival     => Roll1dN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Survival    ).Sum()),
+                Statics.Stats.Tactics      => Roll1dN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Tactics     ).Sum()),
+                Statics.Stats.Aid          => Roll1dN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Aid         ).Sum()),
+                Statics.Stats.Crafting     => Roll1dN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Crafting    ).Sum()),
+                Statics.Stats.Perception   => Roll1dN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Perception  ).Sum()),
+                Statics.Stats.Defense      => Roll1dN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Defense     ).Sum()),
+                Statics.Stats.Actions      => Roll1dN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Actions     ).Sum()),
+                Statics.Stats.Endurance    => Roll1dN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Endurance   ).Sum()),
+                Statics.Stats.Accretion    => Roll1dN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Accretion   ).Sum()),
+                _ => throw new Exception("Wrong stat provided."),
+            };
+        }
+        else // core rules
+        {
+            return stat switch
+            {
+                Statics.Stats.Strength     => RollMdN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Strength     ).Sum() / 2, board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Strength     + board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Strength     ).Sum() / 2).Sum() ),
+                Statics.Stats.Constitution => RollMdN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Constitution ).Sum() / 2, board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Constitution + board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Constitution ).Sum() / 2).Sum() ),
+                Statics.Stats.Agility      => RollMdN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Agility      ).Sum() / 2, board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Agility      + board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Agility      ).Sum() / 2).Sum() ),
+                Statics.Stats.Willpower    => RollMdN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Willpower    ).Sum() / 2, board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Willpower    + board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Willpower    ).Sum() / 2).Sum() ),
+                Statics.Stats.Abstract     => RollMdN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Abstract     ).Sum() / 2, board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Abstract     + board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Abstract     ).Sum() / 2).Sum() ),
+                Statics.Stats.Melee        => RollMdN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Melee        ).Sum() / 2, board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Melee        + board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Melee        ).Sum() / 2).Sum() ),
+                Statics.Stats.Arcane       => RollMdN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Arcane       ).Sum() / 2, board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Arcane       + board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Arcane       ).Sum() / 2).Sum() ),
+                Statics.Stats.Psionics     => RollMdN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Psionics     ).Sum() / 2, board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Psionics     + board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Psionics     ).Sum() / 2).Sum() ),
+                Statics.Stats.Social       => RollMdN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Social       ).Sum() / 2, board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Social       + board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Social       ).Sum() / 2).Sum() ),
+                Statics.Stats.Hide         => RollMdN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Hide         ).Sum() / 2, board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Hide         + board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Hide         ).Sum() / 2).Sum() ),
+                Statics.Stats.Survival     => RollMdN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Survival     ).Sum() / 2, board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Survival     + board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Survival     ).Sum() / 2).Sum() ),
+                Statics.Stats.Tactics      => RollMdN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Tactics      ).Sum() / 2, board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Tactics      + board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Tactics      ).Sum() / 2).Sum() ),
+                Statics.Stats.Aid          => RollMdN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Aid          ).Sum() / 2, board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Aid          + board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Aid          ).Sum() / 2).Sum() ),
+                Statics.Stats.Crafting     => RollMdN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Crafting     ).Sum() / 2, board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Crafting     + board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Crafting     ).Sum() / 2).Sum() ),
+                Statics.Stats.Perception   => RollMdN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Perception   ).Sum() / 2, board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Perception   + board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Perception   ).Sum() / 2).Sum() ),
+                Statics.Stats.Defense      => RollMdN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Defense      ).Sum() / 2, board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Defense      + board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Defense      ).Sum() / 2).Sum() ),
+                Statics.Stats.Actions      => RollMdN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Actions      ).Sum() / 2, board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Actions      + board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Actions      ).Sum() / 2).Sum() ),
+                Statics.Stats.Endurance    => RollMdN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Endurance    ).Sum() / 2, board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Endurance    + board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Endurance    ).Sum() / 2).Sum() ),
+                Statics.Stats.Accretion    => RollMdN(board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Accretion    ).Sum() / 2, board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Accretion    + board.GetAllBoardCharacters().Select(s => s.Stats.Actuals.Accretion    ).Sum() / 2).Sum() ),
+                _ => throw new Exception("Wrong stat provided."),
+            };
+        }
     }
 
     public int Roll1d4()

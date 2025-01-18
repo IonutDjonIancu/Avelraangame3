@@ -25,21 +25,21 @@
             <div class="col col-12 d-flex justify-content-start">
                 @foreach (var character in Model.CharactersList)
                 {
-                    if (character.IsLocked)
+                    if (character.Details.IsLocked)
                     {
                         <img class="rounded-3 item-7 item-char m-1 pointer"
-                            onclick="loadCharacter('@character.Id')"
-                            id="@character.Id"
-                            src="@character.Portrait"
-                            title="@character.Name" />
+                            onclick="loadCharacter('@character.CharacterId')"
+                            id="@character.CharacterId"
+                            src="@character.Details.Portrait"
+                            title="@character.Details.Name" />
                     }
                     else 
                     {
                         <img class="rounded-3 item-1 item-char m-1 pointer"
-                             onclick="loadCharacter('@character.Id')"
-                             id="@character.Id"
-                             src="@character.Portrait"
-                             title="@character.Name" />
+                             onclick="loadCharacter('@character.CharacterId')"
+                             id="@character.CharacterId"
+                             src="@character.Details.Portrait"
+                             title="@character.Details.Name" />
                     }
                 }
             </div>

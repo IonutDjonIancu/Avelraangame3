@@ -30,7 +30,7 @@ public class Characters
 
 public class CharacterVm
 {
-    public Guid Id { get; set; }
+    public Guid CharacterId { get; set; }
     public int Roll { get; set; } = 0;
     public CharacterDetails Details { get; set; }
     public Stats Stats { get; set; }

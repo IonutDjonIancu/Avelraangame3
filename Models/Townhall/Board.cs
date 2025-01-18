@@ -19,7 +19,7 @@ public class Board
 
     public int RoundNr { get; set; }
 
-    public List<CharacterVm> GetAll()
+    public List<CharacterVm> GetAllBoardCharacters()
     {
         return GoodGuys.Union(BadGuys).ToList();
     }

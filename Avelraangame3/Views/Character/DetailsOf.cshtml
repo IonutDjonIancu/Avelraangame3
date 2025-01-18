@@ -80,13 +80,13 @@
                     <span class="primary-green">@Model.Stats.Actuals.Defense</span>
                 </li>
                 <li class="text-gray">
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Hitpoints')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    Hitpoints:
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Endurance')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Endurance:
                     <span class="primary-green">@Model.Stats.Actuals.Endurance</span>
                 </li>
                 <li class="text-gray">
-                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Mana')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
-                    Mana:
+                    @if (Model.Details.Levelup > 0) { <button onclick="levelup('Accretion')" class="btn btn-outline-dark py-0 px-1" style="opacity: 0.3">+</button> } 
+                    Accretion:
                     <span class="primary-green">@Model.Stats.Actuals.Accretion</span>
                 </li>
                 <li class="text-gray">
@@ -376,7 +376,7 @@ PER @suppliesTrinket.Bonuses.Perception " />
 
     const equipItem = () => {
 
-        var characterId = JSON.parse('@Html.Raw(Json.Serialize(Model))').identity.id;
+        var characterId = JSON.parse('@Html.Raw(Json.Serialize(Model))').identity.characterId;
         var playerId = getPlayerId();
         var itemId = localStorage.getItem("selectedItem");
 
@@ -406,7 +406,7 @@ PER @suppliesTrinket.Bonuses.Perception " />
 
     const unequipItem = () => {
 
-        var characterId = JSON.parse('@Html.Raw(Json.Serialize(Model))').identity.id;
+        var characterId = JSON.parse('@Html.Raw(Json.Serialize(Model))').identity.characterId;
         var playerId = getPlayerId();
         var itemId = localStorage.getItem("selectedItem");
 
@@ -436,7 +436,7 @@ PER @suppliesTrinket.Bonuses.Perception " />
 
     const sellItem = () => {
 
-        var characterId = JSON.parse('@Html.Raw(Json.Serialize(Model))').identity.id;
+        var characterId = JSON.parse('@Html.Raw(Json.Serialize(Model))').identity.characterId;
         var playerId = getPlayerId();
         var itemId = localStorage.getItem("selectedItem");
 
@@ -469,7 +469,7 @@ PER @suppliesTrinket.Bonuses.Perception " />
         const playerId = getPlayerId();
         if(!playerId) return;
 
-        var characterId = JSON.parse('@Html.Raw(Json.Serialize(Model))').identity.id;
+        var characterId = JSON.parse('@Html.Raw(Json.Serialize(Model))').identity.characterId;
 
         showLoading();
 

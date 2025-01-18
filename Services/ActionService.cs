@@ -56,49 +56,45 @@ public class ActionService : IActionService
     private void RunMeleeLogic(CharacterActions actions)
     {
         var board = _snapshot.Boards.Find(s => s.Id == actions.BoardId)!;
-        var source = board.GetAll().Find(s => s.Id == actions.SourceId)!;
-        var target = board.GetAll().Find(s => s.Id == actions.TargetId)!;
+        var source = board.GetAllBoardCharacters().Find(s => s.CharacterId == actions.SourceId)!;
+        var target = board.GetAllBoardCharacters().Find(s => s.CharacterId == actions.TargetId)!;
 
-        if (target.IsHidden)
+        if (target.Details.IsHidden)
             throw new Exception("Unable to engage your target in melee, your enemy is hidden.");
 
-        var sourceIdentity = _snapshot.GetAllPlayersCharacters().Find(s => s.Identity.Id == source.Id)!.Identity;
-
-        var targetIdentity = (_snapshot.GetAllPlayersCharacters().Find(s => s.Identity.Id == target.Id) ?? _snapshot.Npcs.Find(s => s.Identity.Id == target.Id))!.Identity;
-
-        var sourceRoll = _diceService.Rolld20Character(sourceIdentity, Statics.Stats.Melee, true);
-        var targetRoll = _diceService.Rolld20Character(targetIdentity, Statics.Stats.Melee, true);
+        var sourceRoll = _diceService.RollForCharacterVm(source, Statics.Stats.Melee, true);
+        var targetRoll = _diceService.RollForCharacterVm(target, Statics.Stats.Melee, true);
 
         if (sourceRoll > targetRoll)
         {
-            if (target.Fights.Defense > 1)
+            if (target.Stats.Fights.Defense > 1)
             {
-                target.Fights.Defense = (int)(target.Fights.Defense * 0.5);
-                board.Message = $"{source.Name} scored a hit, substantially reducing {target.Name}'s Defense.";
+                target.Stats.Fights.Defense = (int)(target.Stats.Fights.Defense * 0.5);
+                board.Message = $"{source.Details.Name} scored a hit, substantially reducing {target.Details.Name}'s Defense.";
             }
-            else if (target.Fights.Defense == 1)
+            else if (target.Stats.Fights.Defense == 1)
             {
-                target.Fights.Defense = 0;
-                board.Message = $"{source.Name} scored a hit, removing {target.Name}'s Defense.";
+                target.Stats.Fights.Defense = 0;
+                board.Message = $"{source.Details.Name} scored a hit, removing {target.Details.Name}'s Defense.";
             }
-            else if (target.Fights.Endurance > 1)
+            else if (target.Stats.Fights.Endurance > 1)
             {
-                target.Fights.Endurance = (int)(target.Fights.Endurance * 0.5);
-                board.Message = $"{source.Name} scored a hit, substantially reducing {target.Name}'s Endurance.";
+                target.Stats.Fights.Endurance = (int)(target.Stats.Fights.Endurance * 0.5);
+                board.Message = $"{source.Details.Name} scored a hit, substantially reducing {target.Details.Name}'s Endurance.";
             }
             else
             {
-                target.Fights.Endurance = 0;
-                target.IsAlive = false;
-                board.Message = $"{source.Name} scored a hit, dropping {target.Name}'s to the ground.";
+                target.Stats.Fights.Endurance = 0;
+                target.Details.IsAlive = false;
+                board.Message = $"{source.Details.Name} scored a hit, dropping {target.Details.Name}'s to the ground.";
             }
         } 
         else
         {
-            board.Message = $"{source.Name} missed...";
+            board.Message = $"{source.Details.Name} missed...";
         }
 
-        source.Fights.Actions--;
+        source.Stats.Fights.Actions--;
     }
 
     #endregion

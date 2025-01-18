@@ -4,7 +4,8 @@ namespace Services;
 
 public interface ICharacterService
 {
-    public Character GetCharacterByPlayerId(Guid characterId, Guid playerId);
+    Character GetCharacterByPlayerId(Guid characterId, Guid playerId);
+    Character GetCharacterByPlayerId(CharacterIdentity identity);
     Characters GetAllCharactersByPlayerId(Guid playerId);
 
     CharacterVm CharacterToCharacterVm(Character character);
@@ -17,6 +18,8 @@ public interface ICharacterService
     void SellItem(EquipItem equipItem);
     void Levelup(CharacterLevelup levelup);
     void BuyItemFromTown(EquipItem equipItem);
+
+    CharacterStats ExtractCharacterFightsFromActuals(CharacterStats actuals);
 }
 
 public class CharacterService : ICharacterService
@@ -36,6 +39,32 @@ public class CharacterService : ICharacterService
         _validator = validatorService;
         _items = itemService;
         _dice = diceService;
+    }
+
+    public CharacterStats ExtractCharacterFightsFromActuals(CharacterStats actuals)
+    {
+        return new CharacterStats
+        {
+            Strength = actuals.Strength,
+            Constitution = actuals.Constitution,
+            Agility = actuals.Agility,
+            Willpower = actuals.Willpower,
+            Abstract = actuals.Abstract,
+            Melee = actuals.Melee,
+            Arcane = actuals.Arcane,
+            Psionics = actuals.Psionics,
+            Social = actuals.Social,
+            Hide = actuals.Hide,
+            Survival = actuals.Survival,
+            Tactics = actuals.Tactics,
+            Aid = actuals.Aid,
+            Crafting = actuals.Crafting,
+            Perception = actuals.Perception,
+            Defense = actuals.Defense,
+            Actions = actuals.Actions,
+            Endurance = actuals.Endurance,
+            Accretion = actuals.Accretion,
+        };
     }
 
     public void CreateCharacter(CreateCharacter create)
@@ -67,11 +96,19 @@ public class CharacterService : ICharacterService
         _snapshot.Characters.Remove(character);
     }
 
+    public Character GetCharacterByPlayerId(CharacterIdentity identity)
+    {
+        _validator.ValidateAgainstNull(identity);
+
+        return GetCharacterByPlayerId(identity.CharacterId, identity.PlayerId);
+    }
+
     public Character GetCharacterByPlayerId(Guid characterId, Guid playerId)
     {
         _validator.ValidatePlayerExists(playerId);
-        var character = _validator.ValidateCharacterExists(characterId);
         _validator.ValidateCharacterPlayerCombination(characterId, playerId);
+        var character = _validator.ValidateCharacterExists(characterId);
+        SetActuals(character);
         SetWorth(character);
 
         return character;
@@ -81,7 +118,7 @@ public class CharacterService : ICharacterService
     {
         return new CharacterVm
         {
-            Id = character.Identity.CharacterId,
+            CharacterId = character.Identity.CharacterId,
             Roll = 0,
             Details = character.Details,
             Stats = new Stats
@@ -176,7 +213,7 @@ public class CharacterService : ICharacterService
             }
 
             var effort = _dice.Roll1dN(Statics.EffortLevels.Easy);
-            var roll = _dice.RollCharacter(character, Statics.Stats.Social);
+            var roll = _dice.RollForCharacter(character, Statics.Stats.Social);
 
             character.Details.Wealth -= roll > effort ? item.Value - (int)(item.Value * 0.25) : item.Value;
             

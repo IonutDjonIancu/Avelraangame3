@@ -38,7 +38,8 @@ public class TownhallService : ITownhallService
 
     public Duel GetOrGenerateDuel(CharacterIdentity characterIdentity, string effortLevelName, string boardType)
     {
-        var character = _validatorService.ValidateCharacterExists(characterIdentity);
+        _validatorService.ValidateAgainstNull(characterIdentity, "Character identity for get or generate duel cannot be null.");
+        var character = _validatorService.ValidateCharacterExists(characterIdentity.CharacterId);
 
         if (character.Details.IsLocked)
         {
@@ -58,17 +59,13 @@ public class TownhallService : ITownhallService
 
         _snapshot.MarketItems.ForEach(s => market.Items.ItemsList.Add(s));
 
-        _snapshot.Players.First(s => s.Id == playerId)
-            .Characters.Where(s => s.Details.IsAlive && !s.Details.IsLocked).ToList()
+        _snapshot.Characters.Where(s => s.Details.IsAlive && !s.Details.IsLocked).ToList()
             .ForEach(d =>
             {
                 market.Characters.CharactersList.Add(new CharacterVm
                 {
-                    Id = d.Identity.Id,
-                    Name = d.Details.Name,
-                    Portrait = d.Details.Portrait,
-                    Wealth = d.Details.Wealth,
-                    IsLocked = d.Details.IsLocked,
+                    CharacterId = d.Identity.CharacterId,
+                    Details = d.Details,
                 });
             });
 
@@ -96,7 +93,7 @@ public class TownhallService : ITownhallService
     {
         _validatorService.ValidateCharacterOnJoiningBoard(identity);
 
-        var character = _characterService.GetCharacter(identity);
+        var character = _characterService.GetCharacterByPlayerId(identity);
         var boardId = Guid.NewGuid();
         
         var board = new Duel
@@ -112,43 +109,35 @@ public class TownhallService : ITownhallService
         character.Details.IsHidden = false;
         character.Details.BoardId = boardId;
         character.Details.BoardType = Statics.Boards.Types.Duel;
-        _characterService.GetCharacterFights(character);
         
         board.GoodGuys.Add(new CharacterVm
         {
-            Id = character.Identity.Id,
-            Name = character.Details.Name,
-            Spec = character.Details.Spec,
-            IsLocked = character.Details.IsLocked,
-            IsAlive = character.Details.IsAlive,
-            Portrait = character.Details.Portrait,
-            Roll = 1,
-            Wealth = character.Details.Wealth,
-            Actuals = character.Stats.Actuals,
-            Fights = character.Stats.Fights,
-            EntityLevel = character.Details.EntityLevel,
+            CharacterId = character.Identity.CharacterId,
+            Details = character.Details,
+            Roll = 0,
+            Stats = new Stats
+            {
+                Actuals = character.Stats.Actuals,
+                Fights = _characterService.ExtractCharacterFightsFromActuals(character.Stats.Actuals),
+            }
         });
 
-        var npc = _npcService.GenerateNpc([character], board);
+        var npc = _npcService.GenerateNpc(board);
         npc.Details.IsLocked = true;
         npc.Details.IsHidden = false;
         npc.Details.BoardId = boardId;
         npc.Details.BoardType = Statics.Boards.Types.Duel;
-        _characterService.GetCharacterFights(npc);
 
         board.BadGuys.Add(new CharacterVm
         {
-            Id = npc.Identity.CharacterId,
-            Name = npc.Details.Name,
-            Spec = npc.Details.Spec,
-            IsLocked = npc.Details.IsLocked,
-            IsAlive = npc.Details.IsAlive,
-            Portrait = npc.Details.Portrait,
-            Roll = 1,
-            Wealth = npc.Details.Wealth,
-            Actuals = npc.Stats.Actuals,
-            Fights = npc.Stats.Fights,
-            EntityLevel = npc.Details.EntityLevel,
+            CharacterId = npc.Identity.CharacterId,
+            Details = npc.Details,
+            Roll = 0,
+            Stats = new Stats
+            {
+                Actuals = npc.Stats.Actuals,
+                Fights = _characterService.ExtractCharacterFightsFromActuals(npc.Stats.Actuals),
+            }
         });
 
         PrepareFight(board, identity.PlayerId);
@@ -174,46 +163,23 @@ public class TownhallService : ITownhallService
 
     private void PrepareBattlequeue(Board board, Guid playerId)
     {
-        var allParticipants = new List<CharacterVm>();
-
-        board.GoodGuys.ForEach(s =>
+        board.GetAllBoardCharacters().ForEach(s =>
         {
-            allParticipants.Add(new CharacterVm
-            {
-                Id = s.Id,
-                Name = s.Name,
-                IsLocked = s.IsLocked,
-                Portrait = s.Portrait,
-                Roll = _diceService.Rolld20Character(new CharacterIdentity { CharacterId = s.Id, PlayerId = playerId }, Statics.Stats.Perception, true),
-                Wealth = s.Wealth,
-            });
+            s.Roll =  _diceService.RollForCharacterVm(s, Statics.Stats.Perception, true);
         });
 
-        board.BadGuys.ForEach(s =>
-        {
-            allParticipants.Add(new CharacterVm
-            {
-                Id = s.Id,
-                Name = s.Name,
-                IsLocked = s.IsLocked,
-                Portrait = s.Portrait,
-                Roll = _diceService.Rolld20Character(new CharacterIdentity { CharacterId = s.Id, PlayerId = Guid.Empty }, Statics.Stats.Perception, true),
-                Wealth = s.Wealth,
-            });
-        });
-
-        board.Battlequeue = [.. allParticipants.OrderByDescending(s => s.Roll)];
+        board.Battlequeue = [.. board.GetAllBoardCharacters().OrderByDescending(s => s.Roll)];
     }
 
     private void PrepareFight(Board board, Guid playerId)
     {
-        var goodGuysTactician = board.GoodGuys.OrderBy(s => s.Fights.Tactics).First();
-        var badGuysTactician = board.BadGuys.OrderBy(s => s.Fights.Tactics).First();
+        var goodGuysTactician = board.GoodGuys.OrderBy(s => s.Stats.Fights.Tactics).First();
+        var badGuysTactician = board.BadGuys.OrderBy(s => s.Stats.Fights.Tactics).First();
 
         var effortRoll = _diceService.RollForEffort(board, Statics.Stats.Tactics);
 
-        var goodGuyRoll = _diceService.Rolld20Character(new CharacterIdentity { CharacterId = goodGuysTactician.Id, PlayerId = playerId }, Statics.Stats.Tactics, true);
-        var badGuyRoll = _diceService.Rolld20Character(new CharacterIdentity { CharacterId = badGuysTactician.Id, PlayerId = Guid.Empty }, Statics.Stats.Tactics, true);
+        var goodGuyRoll = _diceService.RollForCharacterVm(goodGuysTactician, Statics.Stats.Tactics, true);
+        var badGuyRoll = _diceService.RollForCharacterVm(badGuysTactician, Statics.Stats.Tactics, true);
 
         var isGoodGuySaveVs = goodGuyRoll > effortRoll;
         var isBadGuySaveVs = badGuyRoll > effortRoll;
@@ -224,8 +190,8 @@ public class TownhallService : ITownhallService
 
             foreach (var guy in board.BadGuys)
             {
-                guy.Fights.Defense = (int)(guy.Fights.Defense * 0.5);
-                guy.Fights.Actions -= (int)(guy.Fights.Actions * 0.5);
+                guy.Stats.Fights.Defense = (int)(guy.Stats.Fights.Defense * 0.5);
+                guy.Stats.Fights.Actions -= (int)(guy.Stats.Fights.Actions * 0.5);
             }
         }
         else if (isGoodGuySaveVs && isBadGuySaveVs && goodGuyRoll > badGuyRoll)
@@ -234,7 +200,7 @@ public class TownhallService : ITownhallService
 
             foreach (var guy in board.BadGuys)
             {
-                guy.Fights.Defense = (int)(guy.Fights.Defense * 0.75);
+                guy.Stats.Fights.Defense = (int)(guy.Stats.Fights.Defense * 0.75);
             }
         }
         else if (isGoodGuySaveVs && isBadGuySaveVs && goodGuyRoll == badGuyRoll)
@@ -247,7 +213,7 @@ public class TownhallService : ITownhallService
 
             foreach (var guy in board.GoodGuys)
             {
-                guy.Fights.Defense = (int)(guy.Fights.Defense * 0.75);
+                guy.Stats.Fights.Defense = (int)(guy.Stats.Fights.Defense * 0.75);
             }
         }
         else if (!isGoodGuySaveVs && isBadGuySaveVs)
@@ -256,8 +222,8 @@ public class TownhallService : ITownhallService
 
             foreach (var guy in board.GoodGuys)
             {
-                guy.Fights.Defense = (int)(guy.Fights.Defense * 0.5);
-                guy.Fights.Actions -= (int)(guy.Fights.Actions * 0.5);
+                guy.Stats.Fights.Defense = (int)(guy.Stats.Fights.Defense * 0.5);
+                guy.Stats.Fights.Actions -= (int)(guy.Stats.Fights.Actions * 0.5);
             }
         }
         else

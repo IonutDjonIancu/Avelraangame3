@@ -53,7 +53,7 @@ public class CharacterController : Controller
             _validatorService.ValidateGuid(playerId, "Player id is in wrong format.");
             _validatorService.ValidateGuid(characterId, "Character id is in wrong format.");
 
-            var character = _characterService.GetCharacter(new CharacterIdentity
+            var character = _characterService.GetCharacterByPlayerId(new CharacterIdentity
             {
                 CharacterId = Guid.Parse(characterId),
                 PlayerId = Guid.Parse(playerId)
@@ -78,7 +78,7 @@ public class CharacterController : Controller
             _validatorService.ValidateGuid(playerId, "Player id is in wrong format.");
             _validatorService.ValidateGuid(characterId, "Character id is in wrong format.");
 
-            var character = _characterService.GetCharacter(new CharacterIdentity
+            var character = _characterService.GetCharacterByPlayerId(new CharacterIdentity
             {
                 CharacterId = Guid.Parse(characterId),
                 PlayerId = Guid.Parse(playerId)
@@ -101,42 +101,6 @@ public class CharacterController : Controller
             _validatorService.ValidateGuid(playerId, "Player id is in wrong format.");
 
             var character = _characterService.GetAllCharactersByPlayerId(Guid.Parse(playerId));
-
-            return Ok(character);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
-    // GET: Character/GetAllLockedCharacters/123
-    [HttpGet("GetAllLockedCharacters/{playerId}")]
-    public IActionResult GetAllLockedCharacters(string playerId)
-    {
-        try
-        {
-            _validatorService.ValidateGuid(playerId, "Player id is in wrong format.");
-
-            var character = _characterService.GetAllLockedCharactersByPlayerId(Guid.Parse(playerId));
-
-            return Ok(character);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
-    // GET: Character/GetAllDuelistCharacters/123
-    [HttpGet("GetAllDuelistCharacters/{playerId}")]
-    public IActionResult GetAllDuelistCharacters(string playerId)
-    {
-        try
-        {
-            _validatorService.ValidateGuid(playerId, "Player id is in wrong format.");
-
-            var character = _characterService.GetAllDuelistCharactersByPlayerId(Guid.Parse(playerId));
 
             return Ok(character);
         }

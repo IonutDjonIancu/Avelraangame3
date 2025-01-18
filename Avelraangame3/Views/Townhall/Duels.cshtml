@@ -29,21 +29,21 @@
             <div class="col col-12 d-flex flex-wrap justify-content-start">
                 @foreach (var character in Model.CharactersList)
                 {
-                    if (character.IsLocked)
+                    if (character.Details.IsLocked)
                     {
                         <img class="rounded-3 m-1 pointer item-char item-7 character-img"
-                             onclick="navigateTo('/Townhall/Duel/' + getPlayerId() + '/' + '@character.Id' + '/' + 'Easy')"
-                             id="character-@character.Id"
-                             src="@character.Portrait"
-                             title="@character.Name" />
+                             onclick="navigateTo('/Townhall/Duel/' + getPlayerId() + '/' + '@character.CharacterId' + '/' + 'Easy')"
+                             id="character-@character.CharacterId"
+                             src="@character.Details.Portrait"
+                             title="@character.Details.Name" />
                     }
                     else 
                     {
                         <img class="rounded-3 m-1 pointer item-char item-1 character-img"
-                             onclick="selectCharacterLocal('@character.Id')"
-                             id="character-@character.Id"
-                             src="@character.Portrait"
-                             title="@character.Name" />
+                             onclick="selectCharacterLocal('@character.CharacterId')"
+                             id="character-@character.CharacterId"
+                             src="@character.Details.Portrait"
+                             title="@character.Details.Name" />
                     }
                 }
             </div>
@@ -81,7 +81,7 @@ else
         });
         $('#character-' + characterId).addClass('selected-character1');
 
-        var name = getModel().charactersList.find(i => i.id === characterId).name;
+        var name = getModel().charactersList.find(i => i.characterId === characterId).details.name;
         $('#showName').empty().append('Name: ' + name).show();
     }
 

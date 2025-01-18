@@ -5,7 +5,7 @@ namespace Services;
 public interface IValidatorService
 {
     #region general
-    void ValidateAgainstNull(object obj, string message);
+    void ValidateAgainstNull(object obj, string message = "");
     void ValidateString(string str, string message);
     void ValidateGuid(Guid guid, string message);
     void ValidateGuid(string guid, string message);
@@ -405,17 +405,17 @@ public class ValidatorService : IValidatorService
 
         var board = _snapshot.Boards.Find(s => s.Id == actions.BoardId) ?? throw new Exception("Board not found.");
 
-        var source = board.GetAll().Find(s => s.Id == actions.SourceId)! ?? throw new Exception("Source character not found on board.");
+        var source = board.GetAllBoardCharacters().Find(s => s.CharacterId == actions.SourceId)! ?? throw new Exception("Source character not found on board.");
         if (!source.Details.IsAlive)
             throw new Exception("This character is critically wounded and cannot perform any actions at the time.");
 
-        if (board.Battlequeue.First().Id != source.Id)
+        if (board.Battlequeue.First().CharacterId != source.CharacterId)
             throw new Exception("It is not your turn.");
 
         if (source.Stats.Fights.Actions <= 0)
             throw new Exception("No more actions to perform for this character.");
 
-        var target = board.GetAll().Find(s => s.Id == actions.TargetId)! ?? throw new Exception("Target character not found on board.");
+        var target = board.GetAllBoardCharacters().Find(s => s.CharacterId == actions.TargetId)! ?? throw new Exception("Target character not found on board.");
         if (!target.Details.IsAlive)
             throw new Exception("The target is critically wounded and is out combat.");
     }
